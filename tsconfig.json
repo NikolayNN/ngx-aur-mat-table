@@ -11,6 +11,12 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
+    "paths": {
+      "ngx-aur-mat-table": [
+        "dist/ngx-aur-mat-table/ngx-aur-mat-table",
+        "dist/ngx-aur-mat-table"
+      ]
+    },
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
