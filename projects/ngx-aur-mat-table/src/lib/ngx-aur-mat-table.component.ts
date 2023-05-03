@@ -1,10 +1,12 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {TableColumn} from './TableColumn';
+import {TableConfig} from './model/TableConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
-import {SelectableContext, SelectionProvider} from './SelectionProvider';
-import {ActionEvent, RowActionContext, RowActionProvider} from './RowActionProvider';
+import {SelectableContext, SelectionProvider} from './providers/SelectionProvider';
+import {ActionEvent, RowActionConfig, RowActionProvider} from './providers/RowActionProvider';
+import {TableRow} from "./model/TableRow";
+
 
 @Component({
   selector: 'aur-mat-table',
@@ -13,7 +15,7 @@ import {ActionEvent, RowActionContext, RowActionProvider} from './RowActionProvi
 })
 export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
 
-  public tableDataSource = new MatTableDataSource<T>([]);
+  public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   public displayedColumns: string[] = [];
   // @ts-ignore
   @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
@@ -23,26 +25,27 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   @Input() isPageable = false;
   @Input() isSortable = false;
   @Input() isFilterable = false;
-  @Input() tableColumns: TableColumn<T>[] = [];
   @Input() paginationSizes: number[] = [5, 10, 15];
   @Input() defaultPageSize = this.paginationSizes[1];
 
   @Output() sort: EventEmitter<Sort> = new EventEmitter();
 
   // @ts-ignore
-  @Input() rowActionable: RowActionContext;
+  @Input() rowActionable: RowActionConfig;
   @Output() onRowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
 
   // @ts-ignore
   @Input() selectable: SelectableContext;
-  @Output() selected = new EventEmitter<T[]>();
-  @Output() onSelect = new EventEmitter<T[]>();
-  @Output() onDeselect = new EventEmitter<T[]>();
+  @Output() selected = new EventEmitter<TableRow<T>[]>();
+  @Output() onSelect = new EventEmitter<TableRow<T>[]>();
+  @Output() onDeselect = new EventEmitter<TableRow<T>[]>();
 
-  @Output() onRowClick = new EventEmitter<T>();
+  @Output() onRowClick = new EventEmitter<TableRow<T>>();
+
+  @Input() tableConfig: TableConfig<any>[] = [];
 
   // this property needs to have a setter, to dynamically get changes from parent component
-  @Input() set tableData(data: T[]) {
+  @Input() set tableData(data: TableRow<T>[]) {
     this.setTableDataSource(data);
   }
 
@@ -55,9 +58,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    this.displayedColumns = this.tableColumns.map((tableColumn: TableColumn<any>) => tableColumn.name);
+    this.displayedColumns = this.tableConfig.map((tableColumn: TableConfig<any>) => tableColumn.name);
     if (this.rowActionable) {
-      this.rowActionsProvider = new RowActionProvider<T>(this.rowActionable, this.displayedColumns);
+      this.rowActionsProvider = new RowActionProvider<TableRow<T>>(this.rowActionable, this.displayedColumns);
     } else if (this.selectable) {
       this.selectionProvider = new SelectionProvider<T>(this.selectable, this.displayedColumns, this.tableDataSource);
       this.selectionProvider.bind(this.selected, this.onSelect, this.onDeselect);
@@ -84,7 +87,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   sortTable(sortParameters: Sort) {
     // defining name of data property, to sort by, instead of column name
     // @ts-ignore
-    sortParameters.active = this.tableColumns.find(column => column.name === sortParameters.active).dataKey;
+    sortParameters.active = this.tableConfig.find(column => column.name === sortParameters.active).dataKey;
     this.sort.emit(sortParameters);
   }
 

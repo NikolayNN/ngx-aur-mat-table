@@ -33,28 +33,28 @@
       <td mat-cell *matCellDef="let element">
         <button mat-icon-button
                 (click)="emitRowAction(action.action, element, $event)"
-                [matTooltip]="action.tooltip? action.tooltip: ''"
+                [matTooltip]="action.icon.tooltip || ''"
                 *ngFor="let action of rowActionable.actions">
-          <mat-icon [style.color]="action.color">
-            {{action.icon}}
+          <mat-icon [style.color]="action.icon.color">
+            {{action.icon.name}}
           </mat-icon>
         </button>
       </td>
     </ng-container>
 
-    <ng-container *ngFor="let tableColumn of tableColumns" [matColumnDef]="tableColumn.name">
+    <ng-container *ngFor="let columnConfig of tableConfig" [matColumnDef]="columnConfig.name">
 
       <!-- if sortable column header -->
-      <ng-container *ngIf="tableColumn.isSortable; else notSortable">
-        <th mat-header-cell *matHeaderCellDef [mat-sort-header]="tableColumn.name"
-            [arrowPosition]="tableColumn.position === 'right' ? 'before' : 'after'">
+      <ng-container *ngIf="columnConfig.sort?.enable; else notSortable">
+        <th mat-header-cell *matHeaderCellDef [mat-sort-header]="columnConfig.name"
+            [arrowPosition]="columnConfig.sort?.position === 'right' ? 'before' : 'after'">
           <ng-container *ngTemplateOutlet="headerValue"></ng-container>
         </th>
       </ng-container>
       <!-- else not sortable -->
       <ng-template #notSortable>
         <th mat-header-cell *matHeaderCellDef
-            [class.text-right]="tableColumn.position == 'right'"
+            [class.text-right]="columnConfig.sort?.position == 'right'"
         >
           <ng-container *ngTemplateOutlet="headerValue"></ng-container>
         </th>
@@ -62,23 +62,31 @@
 
       <!--      header value-->
       <ng-template #headerValue>
-        <mat-icon *ngIf="tableColumn.headerIcon"
-                  [matTooltip]="tableColumn.headerTooltip? tableColumn.headerTooltip: ''"
-                  [style.color]="tableColumn.headerIconColor">{{tableColumn.headerIcon}}</mat-icon>
-        <span *ngIf="!tableColumn.headerIcon || tableColumn.headerIconWithText"
-              [matTooltip]="tableColumn.headerTooltip? tableColumn.headerTooltip: ''"
-        >{{tableColumn.name}}</span>
+        <mat-icon *ngIf="columnConfig.headerColumn?.icon"
+                  [matTooltip]="columnConfig.headerColumn?.icon?.tooltip?.toString() || ''"
+                  [style.color]="columnConfig.headerColumn?.icon?.color"
+        >
+          {{columnConfig.headerColumn?.icon?.name}}
+        </mat-icon>
+        <span *ngIf="columnConfig.headerColumn?.text?.show != false"
+              [matTooltip]="columnConfig.headerColumn?.text?.tooltip?.toString() || ''"
+        >
+          {{columnConfig.name}}
+        </span>
       </ng-template>
 
       <!-- column data -->
-      <td mat-cell *matCellDef="let element" [class.text-right]="tableColumn.position == 'right'">
-        <mat-icon *ngIf="tableColumn.valueIcon "
-                  [style.color]="tableColumn.valueIconColor? tableColumn.valueIconColor(element): null"
+      <td mat-cell *matCellDef="let element">
+
+        <mat-icon *ngIf="columnConfig.valueColumn?.icon"
+                  [matTooltip]="columnConfig.valueColumn?.icon?.tooltip? columnConfig.valueColumn?.icon?.tooltip!(element): ''"
+                  [style.color]="columnConfig.valueColumn?.icon?.color? columnConfig.valueColumn?.icon?.color!(element): null"
         >
-          {{tableColumn.valueIcon ? tableColumn.valueIcon(element) : 'X'}}
+          {{columnConfig.valueColumn?.icon?.name(element)}}
         </mat-icon>
-        <span *ngIf="!tableColumn.valueIcon || tableColumn.valueIconWithText">
-          {{element | dataPropertyGetter: tableColumn.dataKey}}
+
+        <span *ngIf="columnConfig.valueColumn?.text?.show != false">
+          {{element | dataPropertyGetter: columnConfig.key}}
         </span>
       </td>
     </ng-container>

@@ -6,7 +6,7 @@ import {MatTableModule} from "@angular/material/table";
 import {MatPaginatorModule} from "@angular/material/paginator";
 import {MatButtonModule} from "@angular/material/button";
 import {MatInputModule} from "@angular/material/input";
-import {MatSort, MatSortModule} from "@angular/material/sort";
+import {MatSortModule} from "@angular/material/sort";
 import {MatTooltipModule} from "@angular/material/tooltip";
 import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatFormFieldModule} from "@angular/material/form-field";
@@ -33,7 +33,8 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     MatFormFieldModule
   ],
   exports: [
-    NgxAurMatTableComponent
+    NgxAurMatTableComponent,
+    DataPropertyGetterPipe
   ]
 })
 export class NgxAurMatTableModule {

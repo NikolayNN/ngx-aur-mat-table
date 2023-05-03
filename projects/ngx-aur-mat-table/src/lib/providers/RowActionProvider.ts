@@ -1,26 +1,26 @@
+import {IconConfig} from "../model/TableConfig";
+
 export interface ActionEvent<T> {
     action: string;
     value: T;
 }
 
-export interface RowActionContext {
+export interface RowActionConfig {
+    actions: ActionConfig[];
     position?: 'start' | 'end';
-    actions: ActionContext[];
 }
 
-export interface ActionContext {
-    icon: string;
+export interface ActionConfig {
     action: string;
-    color?: string;
-    tooltip?: string;
+    icon: IconConfig<string>;
 }
 
 export class RowActionProvider<T> {
 
     readonly COLUMN_NAME = 'tbl_actions';
-    context: RowActionContext;
+    context: RowActionConfig;
 
-    constructor(ctx: RowActionContext, columns: string[]) {
+    constructor(ctx: RowActionConfig, columns: string[]) {
         this.context = ctx;
         if (ctx.position === 'start') {
             columns.unshift(this.COLUMN_NAME);
