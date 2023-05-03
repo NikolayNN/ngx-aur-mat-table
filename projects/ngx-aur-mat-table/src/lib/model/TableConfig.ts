@@ -27,6 +27,7 @@ export interface TextConfig<T> {
   show?: boolean;
   /** tooltip */
   tooltip?: T;
+  color?: T;
 }
 
 export interface ColumnConfig<T> {

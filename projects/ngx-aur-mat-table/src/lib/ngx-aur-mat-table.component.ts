@@ -3,7 +3,7 @@ import {TableConfig} from './model/TableConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
-import {SelectableContext, SelectionProvider} from './providers/SelectionProvider';
+import {SelectionConfig, SelectionProvider} from './providers/SelectionProvider';
 import {ActionEvent, RowActionConfig, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 
@@ -22,10 +22,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
 
-  @Input() isPageable = false;
   @Input() isSortable = false;
   @Input() isFilterable = false;
-  @Input() paginationSizes: number[] = [5, 10, 15];
+
+
+  @Input() isPageable = false;
+  @Input() paginationSizes: number[] = [5, 10, 15, 25, 50];
   @Input() defaultPageSize = this.paginationSizes[1];
 
   @Output() sort: EventEmitter<Sort> = new EventEmitter();
@@ -35,12 +37,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   @Output() onRowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
 
   // @ts-ignore
-  @Input() selectable: SelectableContext;
-  @Output() selected = new EventEmitter<TableRow<T>[]>();
-  @Output() onSelect = new EventEmitter<TableRow<T>[]>();
-  @Output() onDeselect = new EventEmitter<TableRow<T>[]>();
+  @Input() selectable: SelectionConfig;
+  @Output() selected = new EventEmitter<T[]>();
+  @Output() onSelect = new EventEmitter<T[]>();
+  @Output() onDeselect = new EventEmitter<T[]>();
 
-  @Output() onRowClick = new EventEmitter<TableRow<T>>();
+  @Output() onRowClick = new EventEmitter<T>();
 
   @Input() tableConfig: TableConfig<any>[] = [];
 
@@ -102,5 +104,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
 
   isAllSelected(): boolean {
     return this.selectionProvider.isAllSelected();
+  }
+
+  castSrc(row: any): TableRow<T> {
+    return row;
   }
 }

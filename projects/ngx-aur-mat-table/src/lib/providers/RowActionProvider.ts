@@ -6,8 +6,8 @@ export interface ActionEvent<T> {
 }
 
 export interface RowActionConfig {
-    actions: ActionConfig[];
     position?: 'start' | 'end';
+    actions: ActionConfig[];
 }
 
 export interface ActionConfig {
