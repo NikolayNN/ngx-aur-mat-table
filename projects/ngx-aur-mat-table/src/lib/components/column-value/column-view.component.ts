@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ColumnConfig} from "../../model/TableConfig";
+import {ColumnViewConfig} from "../../model/ColumnConfig";
 
 @Component({
   selector: 'lib-column-view',
@@ -7,5 +7,5 @@ import {ColumnConfig} from "../../model/TableConfig";
   styleUrls: ['./column-view.component.css']
 })
 export class ColumnViewComponent {
-  @Input() config: ColumnConfig<string> | undefined;
+  @Input() config: ColumnViewConfig<string> | undefined;
 }

@@ -6,7 +6,7 @@ export * from './lib/ngx-aur-mat-table.component';
 export * from './lib/ngx-aur-mat-table.module';
 export * from './lib/data-property-getter-pipe/data-property-getter.pipe';
 export * from './lib/model/TableRow'
-export * from './lib/model/TableConfig'
+export * from './lib/model/ColumnConfig'
 export * from './lib/providers/RowActionProvider'
 export * from './lib/providers/SelectionProvider'
 export * from './lib/providers/IndexProvider'

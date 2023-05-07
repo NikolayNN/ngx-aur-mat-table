@@ -1,11 +1,11 @@
 import {TableRow} from "../model/TableRow";
-import {ColumnConfig, IconConfig, TableConfig, TextConfig} from "../model/TableConfig";
+import {ColumnViewConfig, IconConfig, TextConfig, TableConfig} from "../model/ColumnConfig";
 
 export class TableViewConverter {
 
-  public static toView<T>(rows: TableRow<T>[], tableConfig: TableConfig<TableRow<T>>[]): Map<string, ColumnConfig<string>>[] {
-    const result: Map<string, ColumnConfig<(value: TableRow<T>) => string>> = new Map();
-    tableConfig.forEach(c => {
+  public static toView<T>(rows: TableRow<T>[], tableConfig: TableConfig<T>): Map<string, ColumnViewConfig<string>>[] {
+    const result: Map<string, ColumnViewConfig<(value: TableRow<T>) => string>> = new Map();
+    tableConfig.columnsCfg.forEach(c => {
       if (c.valueColumn) {
         result.set(c.key, c.valueColumn)
       }
@@ -13,14 +13,14 @@ export class TableViewConverter {
     return this.toViewInternal(rows, result);
   }
 
-  private static toViewInternal<T>(rows: TableRow<T>[], source: Map<string, ColumnConfig<(value: TableRow<T>) => string>>): Map<string, ColumnConfig<string>>[] {
+  private static toViewInternal<T>(rows: TableRow<T>[], source: Map<string, ColumnViewConfig<(value: TableRow<T>) => string>>): Map<string, ColumnViewConfig<string>>[] {
     return rows.map(row => this.columnConfig(source, row));
   }
 
-  private static columnConfig<T>(source: Map<string, ColumnConfig<(value: TableRow<T>) => string>>, row: TableRow<T>): Map<string, ColumnConfig<string>> {
-    const result: Map<string, ColumnConfig<string>> = new Map();
+  private static columnConfig<T>(source: Map<string, ColumnViewConfig<(value: TableRow<T>) => string>>, row: TableRow<T>): Map<string, ColumnViewConfig<string>> {
+    const result: Map<string, ColumnViewConfig<string>> = new Map();
     source.forEach((source, key) => {
-      const value: ColumnConfig<string> = {
+      const value: ColumnViewConfig<string> = {
         icon: this.iconConfig(source.icon, row),
         text: this.textConfig(source.text, row)
       }

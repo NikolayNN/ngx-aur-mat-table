@@ -1,14 +1,16 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {ColumnConfig, TableConfig} from './model/TableConfig';
+import {ColumnViewConfig, ColumnConfig, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
-import {SelectionConfig, SelectionProvider} from './providers/SelectionProvider';
-import {ActionEvent, RowActionConfig, RowActionProvider} from './providers/RowActionProvider';
+import {SelectionProvider} from './providers/SelectionProvider';
+import {ActionEvent, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewConverter} from "./providers/TableViewConverter";
-import {IndexProvider, IndexConfig} from "./providers/IndexProvider";
+import {IndexProvider} from "./providers/IndexProvider";
 import {TableDataProvider} from "./providers/TableDataProvider";
+import {PaginationProvider} from "./providers/PaginationProvider";
+import {FilterProvider} from "./providers/FilterProvider";
 
 
 @Component({
@@ -21,39 +23,32 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   public displayedColumns: string[] = [];
 
-  public tableView: Map<string, ColumnConfig<string>>[] = [];
+  private tableView: Map<string, ColumnViewConfig<string>>[] = [];
+
+  // @ts-ignore
+  @Input() tableConfig: TableConfig<T>;
+
+  @Input() tableData: T[] = [];
 
   // @ts-ignore
   @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
-  @Input() isFilterable = false;
-
-  // @ts-ignore
-  @Input() indexable: IndexConfig;
-
-
-  @Input() isPageable = false;
-  @Input() paginationSizes: number[] = [5, 10, 15, 25, 50];
-  @Input() defaultPageSize = this.paginationSizes[1];
 
   @Output() sort: EventEmitter<Sort> = new EventEmitter();
 
-  // @ts-ignore
-  @Input() rowActionable: RowActionConfig;
+  // events if enabled actions
   @Output() onRowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
+  // -----------------------
 
-  // @ts-ignore
-  @Input() selectable: SelectionConfig;
+  // events if enabled select event
   @Output() selected = new EventEmitter<T[]>();
   @Output() onSelect = new EventEmitter<T[]>();
   @Output() onDeselect = new EventEmitter<T[]>();
+  //------------------------
+
 
   @Output() onRowClick = new EventEmitter<T>();
-
-  @Input() tableConfig: TableConfig<any>[] = [];
-
-  @Input() tableData: T[] = [];
 
   // @ts-ignore
   selectionProvider: SelectionProvider<T>;
@@ -63,22 +58,36 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   // @ts-ignore
   indexProvider: IndexProvider;
 
+  // @ts-ignore
+  paginationProvider: PaginationProvider;
+
   tableDataProvider = new TableDataProvider<T>();
+
+  // @ts-ignore
+  filterProvider: FilterProvider;
 
   constructor() {
   }
 
   ngOnInit(): void {
+    if (!this.tableConfig || !this.tableData) {
+      throw new Error("init inputs [tableConfig] and [tableData] is mandatory!")
+    }
     this.setTableDataSource();
     this.tableView = TableViewConverter.toView(this.tableDataSource.data, this.tableConfig)
-    this.displayedColumns = this.tableConfig.map((tableColumn: TableConfig<any>) => tableColumn.name);
-    if (this.indexable) {
-      this.indexProvider = new IndexProvider(this.indexable, this.displayedColumns);
-    } else if (this.rowActionable) {
-      this.rowActionsProvider = new RowActionProvider<TableRow<T>>(this.rowActionable, this.displayedColumns);
-    } else if (this.selectable) {
-      this.selectionProvider = new SelectionProvider<T>(this.selectable, this.displayedColumns, this.tableDataSource);
+    this.displayedColumns = this.tableConfig.columnsCfg.map((tableColumn: ColumnConfig<any>) => tableColumn.name);
+
+    if (this.tableConfig.indexCfg && this.tableConfig.indexCfg.enable) {
+      this.indexProvider = new IndexProvider(this.tableConfig.indexCfg, this.displayedColumns);
+    } else if (this.tableConfig.actionCfg) {
+      this.rowActionsProvider = new RowActionProvider<TableRow<T>>(this.tableConfig.actionCfg, this.displayedColumns);
+    } else if (this.tableConfig.selectionCfg) {
+      this.selectionProvider = new SelectionProvider<T>(this.tableConfig.selectionCfg, this.displayedColumns, this.tableDataSource);
       this.selectionProvider.bind(this.selected, this.onSelect, this.onDeselect);
+    } else if (this.tableConfig.pageableCfg) {
+      this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
+    } else if (this.tableConfig.filterCfg) {
+      this.filterProvider = new FilterProvider();
     }
   }
 
@@ -89,7 +98,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
 
 
   setTableDataSource() {
-    let convert = this.tableDataProvider.convert(this.tableData, this.tableConfig);
+    let convert = this.tableDataProvider.convert(this.tableData, this.tableConfig.columnsCfg);
     this.tableDataSource = new MatTableDataSource<TableRow<T>>(convert);
     this.tableDataSource.paginator = this.matPaginator;
     this.tableDataSource.sort = this.matSort;
@@ -124,7 +133,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
     return row;
   }
 
-  getView(rowIndex: number, columnKey: string): ColumnConfig<string> | undefined {
+  getView(rowIndex: number, columnKey: string): ColumnViewConfig<string> | undefined {
     return this.tableView[rowIndex].get(columnKey);
   }
 }

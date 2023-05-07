@@ -2,11 +2,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material/table';
 import {EventEmitter} from '@angular/core';
 import {TableRow} from "../model/TableRow";
-
-export interface SelectionConfig {
-  position?: 'start' | 'end';
-  multiple?: boolean;
-}
+import {SelectionConfig} from "../model/ColumnConfig";
 
 export class SelectionProvider<T> {
 
