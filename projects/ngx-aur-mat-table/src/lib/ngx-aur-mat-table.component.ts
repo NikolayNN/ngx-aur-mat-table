@@ -1,28 +1,39 @@
-import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {TableConfig} from './model/TableConfig';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild
+} from '@angular/core';
+import {ColumnConfig, TableConfig} from './model/TableConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {SelectionConfig, SelectionProvider} from './providers/SelectionProvider';
 import {ActionEvent, RowActionConfig, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
+import {TableViewConverter} from "./providers/TableViewConverter";
 
 
 @Component({
   selector: 'aur-mat-table',
   templateUrl: './ngx-aur-mat-table.component.html',
-  styleUrls: ['./ngx-aur-mat-table.component.scss']
+  styleUrls: ['./ngx-aur-mat-table.component.scss'],
 })
 export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
 
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   public displayedColumns: string[] = [];
+
+  public tableView: Map<string, ColumnConfig<string>>[] = [];
+
   // @ts-ignore
   @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
-
-  @Input() isSortable = false;
   @Input() isFilterable = false;
 
 
@@ -60,6 +71,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+    this.tableView = TableViewConverter.toView(this.tableDataSource.data, this.tableConfig)
     this.displayedColumns = this.tableConfig.map((tableColumn: TableConfig<any>) => tableColumn.name);
     if (this.rowActionable) {
       this.rowActionsProvider = new RowActionProvider<TableRow<T>>(this.rowActionable, this.displayedColumns);
@@ -108,5 +120,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
 
   castSrc(row: any): TableRow<T> {
     return row;
+  }
+
+  getView(rowIndex: number, columnKey: string):ColumnConfig<string>|undefined {
+    return this.tableView[rowIndex].get(columnKey);
   }
 }
