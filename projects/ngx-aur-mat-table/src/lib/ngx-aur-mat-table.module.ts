@@ -12,12 +12,14 @@ import {MatCheckboxModule} from "@angular/material/checkbox";
 import {MatFormFieldModule} from "@angular/material/form-field";
 import {DataPropertyGetterPipe} from "./data-property-getter-pipe/data-property-getter.pipe";
 import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
+import { ColumnViewComponent } from './components/column-value/column-view.component';
 
 
 @NgModule({
   declarations: [
     NgxAurMatTableComponent,
-    DataPropertyGetterPipe
+    DataPropertyGetterPipe,
+    ColumnViewComponent
   ],
   imports: [
     BrowserModule,

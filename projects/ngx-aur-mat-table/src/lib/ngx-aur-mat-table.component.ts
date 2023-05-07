@@ -1,13 +1,4 @@
-import {
-  AfterViewInit,
-  ChangeDetectionStrategy,
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild
-} from '@angular/core';
+import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
 import {ColumnConfig, TableConfig} from './model/TableConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -16,6 +7,7 @@ import {SelectionConfig, SelectionProvider} from './providers/SelectionProvider'
 import {ActionEvent, RowActionConfig, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewConverter} from "./providers/TableViewConverter";
+import {IndexProvider, IndexConfig} from "./providers/IndexProvider";
 
 
 @Component({
@@ -35,6 +27,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
   @Input() isFilterable = false;
+
+  // @ts-ignore
+  @Input() indexable: IndexConfig;
 
 
   @Input() isPageable = false;
@@ -67,13 +62,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   // @ts-ignore
   rowActionsProvider: RowActionProvider<T>;
 
+  // @ts-ignore
+  indexProvider: IndexProvider;
+
   constructor() {
   }
 
   ngOnInit(): void {
     this.tableView = TableViewConverter.toView(this.tableDataSource.data, this.tableConfig)
     this.displayedColumns = this.tableConfig.map((tableColumn: TableConfig<any>) => tableColumn.name);
-    if (this.rowActionable) {
+    if (this.indexable) {
+      this.indexProvider = new IndexProvider(this.indexable, this.displayedColumns);
+    } else if (this.rowActionable) {
       this.rowActionsProvider = new RowActionProvider<TableRow<T>>(this.rowActionable, this.displayedColumns);
     } else if (this.selectable) {
       this.selectionProvider = new SelectionProvider<T>(this.selectable, this.displayedColumns, this.tableDataSource);
@@ -122,7 +122,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
     return row;
   }
 
-  getView(rowIndex: number, columnKey: string):ColumnConfig<string>|undefined {
+  getView(rowIndex: number, columnKey: string): ColumnConfig<string> | undefined {
     return this.tableView[rowIndex].get(columnKey);
   }
 }

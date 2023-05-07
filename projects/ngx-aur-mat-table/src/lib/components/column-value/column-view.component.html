@@ -1,0 +1,12 @@
+<mat-icon *ngIf="config?.icon"
+          [matTooltip]="config?.icon?.tooltip?.toString() || ''"
+          [style.color]="config?.icon?.color"
+>
+  {{config?.icon?.name}}
+</mat-icon>
+
+<span *ngIf="config?.text?.show != false"
+      [matTooltip]="config?.text?.tooltip?.toString() || ''"
+>
+        <ng-content></ng-content>
+</span>
