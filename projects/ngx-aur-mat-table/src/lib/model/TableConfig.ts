@@ -4,6 +4,9 @@ export interface TableConfig<T> {
 
   /** column key in data source */
   key: string;
+
+  /** return value to save in MatTableDataSource */
+  valueConverter: (value: T) => any;
   sort?: SortConfig;
   headerColumn?: ColumnConfig<string>;
   valueColumn?: ColumnConfig<(value: T) => string>;

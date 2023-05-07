@@ -46,7 +46,7 @@
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <button mat-icon-button
-                (click)="emitRowAction(action.action, element, $event)"
+                (click)="emitRowAction(action.action, castSrc(element).rowSrc, $event)"
                 [matTooltip]="action.icon.tooltip || ''"
                 *ngFor="let action of rowActionable.actions">
           <mat-icon [style.color]="action.icon.color">

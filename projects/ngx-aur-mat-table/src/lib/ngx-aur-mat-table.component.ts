@@ -8,6 +8,7 @@ import {ActionEvent, RowActionConfig, RowActionProvider} from './providers/RowAc
 import {TableRow} from "./model/TableRow";
 import {TableViewConverter} from "./providers/TableViewConverter";
 import {IndexProvider, IndexConfig} from "./providers/IndexProvider";
+import {TableDataProvider} from "./providers/TableDataProvider";
 
 
 @Component({
@@ -52,10 +53,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
 
   @Input() tableConfig: TableConfig<any>[] = [];
 
-  // this property needs to have a setter, to dynamically get changes from parent component
-  @Input() set tableData(data: TableRow<T>[]) {
-    this.setTableDataSource(data);
-  }
+  @Input() tableData: T[] = [];
 
   // @ts-ignore
   selectionProvider: SelectionProvider<T>;
@@ -65,10 +63,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   // @ts-ignore
   indexProvider: IndexProvider;
 
+  tableDataProvider = new TableDataProvider<T>();
+
   constructor() {
   }
 
   ngOnInit(): void {
+    this.setTableDataSource();
     this.tableView = TableViewConverter.toView(this.tableDataSource.data, this.tableConfig)
     this.displayedColumns = this.tableConfig.map((tableColumn: TableConfig<any>) => tableColumn.name);
     if (this.indexable) {
@@ -87,8 +88,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   }
 
 
-  setTableDataSource(data: any) {
-    this.tableDataSource = new MatTableDataSource<any>(data);
+  setTableDataSource() {
+    let convert = this.tableDataProvider.convert(this.tableData, this.tableConfig);
+    this.tableDataSource = new MatTableDataSource<TableRow<T>>(convert);
     this.tableDataSource.paginator = this.matPaginator;
     this.tableDataSource.sort = this.matSort;
   }
