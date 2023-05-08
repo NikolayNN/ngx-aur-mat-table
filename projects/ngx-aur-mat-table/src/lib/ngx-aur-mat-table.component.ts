@@ -110,9 +110,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   }
 
   sortTable(sortParameters: Sort) {
-    // defining name of data property, to sort by, instead of column name
-    // @ts-ignore
-    sortParameters.active = this.tableConfig.find(column => column.name === sortParameters.active).dataKey;
     this.sort.emit(sortParameters);
   }
 
