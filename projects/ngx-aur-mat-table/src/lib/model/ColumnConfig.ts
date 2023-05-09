@@ -19,11 +19,11 @@ export interface ColumnConfig<T> {
   /** return value to save in MatTableDataSource */
   valueConverter: (value: T) => any;
   sort?: SortConfig;
-  headerColumn?: ColumnViewConfig<string>;
-  valueColumn?: ColumnViewConfig<(value: TableRow<T>) => string>;
+  headerView?: ColumnView<string>;
+  valueView?: ColumnView<(value: TableRow<T>) => string>;
 }
 
-export interface IconConfig<T> {
+export interface IconView<T> {
   /** icon name */
   name: T;
 
@@ -36,7 +36,7 @@ export interface IconConfig<T> {
   position?: 'right' | 'left';
 }
 
-export interface TextConfig<T> {
+export interface TextView<T> {
   /** default true*/
   show?: boolean;
   /** tooltip */
@@ -44,12 +44,12 @@ export interface TextConfig<T> {
   color?: T;
 }
 
-export interface ColumnViewConfig<T> {
+export interface ColumnView<T> {
 
   /** settings for icon in column */
-  icon?: IconConfig<T>;
+  icon?: IconView<T>;
 
-  text?: TextConfig<T>;
+  text?: TextView<T>;
 }
 
 export interface SortConfig {
@@ -63,7 +63,7 @@ export interface IndexConfig {
   /** смещение для первого индекса например 1 чтобы нумерация началась с 1 по умолчанию от нуля */
   offset?: number,
 
-  headerColumn?: ColumnViewConfig<string>
+  headerColumn?: ColumnView<string>
 
   /** название для колонки, по умолчанию ''*/
   name?: string;
@@ -80,7 +80,7 @@ export interface ActionConfig {
 
 export interface Action {
   action: string;
-  icon: IconConfig<string>;
+  icon: IconView<string>;
 }
 
 export interface SelectionConfig {

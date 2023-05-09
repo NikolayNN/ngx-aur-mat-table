@@ -1,9 +1,9 @@
-import {ColumnViewConfig, IndexConfig} from "../model/ColumnConfig";
+import {ColumnView, IndexConfig} from "../model/ColumnConfig";
 
 
 export class IndexProvider {
   public readonly COLUMN_NAME = 'tbl_index';
-  public headerView: ColumnViewConfig<string> | undefined;
+  public headerView: ColumnView<string> | undefined;
   public name: string;
 
   public offset: number;

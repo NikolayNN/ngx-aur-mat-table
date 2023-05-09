@@ -1,5 +1,5 @@
 import {AfterViewInit, Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {ColumnViewConfig, ColumnConfig, TableConfig} from './model/ColumnConfig';
+import {ColumnView, ColumnConfig, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
@@ -23,7 +23,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   public displayedColumns: string[] = [];
 
-  private tableView: Map<string, ColumnViewConfig<string>>[] = [];
+  private tableView: Map<string, ColumnView<string>>[] = [];
 
   // @ts-ignore
   @Input() tableConfig: TableConfig<T>;
@@ -130,7 +130,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
     return row;
   }
 
-  getView(rowIndex: number, columnKey: string): ColumnViewConfig<string> | undefined {
+  getView(rowIndex: number, columnKey: string): ColumnView<string> | undefined {
     return this.tableView[rowIndex].get(columnKey);
   }
 }
