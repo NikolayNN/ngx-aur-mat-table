@@ -1,24 +1,77 @@
 # NgxAurMatTable
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.0.
+NgxAurMatTable - это компонент-обертка над mat-table в Angular, который может быть использован для построения таблиц на
+основе конфигурации, переданной пользователем.
 
-## Code scaffolding
+## Установка
 
-Run `ng generate component component-name --project ngx-aur-mat-table` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project ngx-aur-mat-table`.
-> Note: Don't forget to add `--project ngx-aur-mat-table` or else it will be added to the default project in your `angular.json` file. 
+Для установки вашей библиотеки, выполните следующую команду:
 
-## Build
+```
+npm i ngx-aur-mat-table
+```
 
-Run `ng build ngx-aur-mat-table` to build the project. The build artifacts will be stored in the `dist/` directory.
+## Использование
 
-## Publishing
+Необходимо импортировать его в модуль вашего приложения:
+```agsl
+import { NgModule } from '@angular/core';
+import { ВашаБиблиотекаModule } from '@ваша-библиотека';
 
-After building your library with `ng build ngx-aur-mat-table`, go to the dist folder `cd dist/ngx-aur-mat-table` and run `npm publish`.
+@NgModule({
+  declarations: [AppComponent],
+  imports: [NgxAurMatTableModule],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
 
-## Running unit tests
+После импорта модуля вашей библиотеки, вы можете использовать его компоненты в вашем шаблоне:
+```
+<aur-mat-table
+[tableData]="tableData"
+[tableConfig]="tableConfig"
+>
+</aur-mat-table>
+```
 
-Run `ng test ngx-aur-mat-table` to execute the unit tests via [Karma](https://karma-runner.github.io).
+tableData - данные для таблицы
+tableConfig - конфигурация таблицы
 
-## Further help
+Реализация для простой таблицы
+```agsl
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+export interface Customer {
+  name: string;
+  age: number;
+}
+
+@Component({
+  selector: 'app-simple-table',
+  templateUrl: './simple-table.component.html',
+  styleUrls: ['./simple-table.component.scss']
+})
+export class SimpleTableComponent {
+
+  tableConfig: TableConfig<Customer> = {
+    columnsCfg: [
+      {
+        name: 'customers name',
+        key: 'name',
+        valueConverter: v => v.name
+      },
+      {
+        name: 'customers age',
+        key: 'age',
+        valueConverter: v => v.age
+      }
+    ]
+  }
+  tableData: Customer[] = [
+    new Customer('Steave', 30),
+    new Customer('Jack', 22)
+  ];
+}
+
+
+```
