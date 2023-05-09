@@ -79,14 +79,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, AfterViewInit {
 
     if (this.tableConfig.indexCfg && this.tableConfig.indexCfg.enable) {
       this.indexProvider = new IndexProvider(this.tableConfig.indexCfg, this.displayedColumns);
-    } else if (this.tableConfig.actionCfg) {
+    }
+    if (this.tableConfig.actionCfg) {
       this.rowActionsProvider = new RowActionProvider<TableRow<T>>(this.tableConfig.actionCfg, this.displayedColumns);
-    } else if (this.tableConfig.selectionCfg) {
+    }
+    if (this.tableConfig.selectionCfg) {
       this.selectionProvider = new SelectionProvider<T>(this.tableConfig.selectionCfg, this.displayedColumns, this.tableDataSource);
       this.selectionProvider.bind(this.selected, this.onSelect, this.onDeselect);
-    } else if (this.tableConfig.pageableCfg) {
+    }
+    if (this.tableConfig.pageableCfg) {
       this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
-    } else if (this.tableConfig.filterCfg) {
+    }
+    if (this.tableConfig.filterCfg) {
       this.filterProvider = new FilterProvider();
     }
   }
