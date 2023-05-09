@@ -67,6 +67,7 @@ export class SimpleTableComponent {
       }
     ]
   }
+  
   tableData: Customer[] = [
     new Customer('Steave', 30),
     new Customer('Jack', 22)
