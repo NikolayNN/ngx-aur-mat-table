@@ -91,7 +91,11 @@
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-    <tr mat-row (click)="onRowAction.emit(row)" *matRowDef="let row; columns: displayedColumns;"></tr>
+    <tr mat-row
+        (click)="onRowAction.emit(row)"
+        *matRowDef="let row; columns: displayedColumns;"
+        [ngClass]="{'pointer': tableConfig.pointerCfg?.enable || false}"
+    ></tr>
   </table>
 
   <!-- Pagination -->

@@ -6,7 +6,8 @@ export interface TableConfig<T> {
   filterCfg?: FilterConfig,
   actionCfg?: ActionConfig,
   selectionCfg?: SelectionConfig,
-  pageableCfg?: PaginationConfig
+  pageableCfg?: PaginationConfig,
+  pointerCfg?: PointerConfig
 }
 
 export interface ColumnConfig<T> {
@@ -93,4 +94,8 @@ export interface PaginationConfig {
   enable: true;
   sizes?: number[];
   size?: number;
+}
+
+export interface PointerConfig {
+  enable: true;
 }
