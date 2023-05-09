@@ -35,8 +35,8 @@ export class AppModule {}
 </aur-mat-table>
 ```
 
-tableData - данные для таблицы
-tableConfig - конфигурация таблицы
+* tableData - данные для таблицы
+* tableConfig - конфигурация таблицы
 
 Реализация для простой таблицы
 ```agsl
