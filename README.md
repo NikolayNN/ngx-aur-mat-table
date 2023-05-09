@@ -1,27 +1,80 @@
-# NgxAurMatTableLibs
+# NgxAurMatTable
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 13.1.2.
+NgxAurMatTable - это компонент-обертка над mat-table в Angular, который может быть использован для построения таблиц на
+основе конфигурации, переданной пользователем.
 
-## Development server
+## Установка
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+Для установки вашей библиотеки, выполните следующую команду:
 
-## Code scaffolding
+```
+npm i ngx-aur-mat-table
+```
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Использование
 
-## Build
+Необходимо импортировать его в модуль вашего приложения:
+```agsl
+import { NgModule } from '@angular/core';
+import { ВашаБиблиотекаModule } from '@ваша-библиотека';
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+@NgModule({
+  declarations: [AppComponent],
+  imports: [NgxAurMatTableModule],
+  bootstrap: [AppComponent]
+})
+export class AppModule {}
+```
 
-## Running unit tests
+После импорта модуля вашей библиотеки, вы можете использовать его компоненты в вашем шаблоне:
+```
+<aur-mat-table
+[tableData]="tableData"
+[tableConfig]="tableConfig"
+>
+</aur-mat-table>
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+tableData - данные для таблицы
+tableConfig - конфигурация таблицы
 
-## Running end-to-end tests
+Реализация для простой таблицы
+```agsl
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+export interface Customer {
+  name: string;
+  age: number;
+}
 
-## Further help
+@Component({
+  selector: 'app-simple-table',
+  templateUrl: './simple-table.component.html',
+  styleUrls: ['./simple-table.component.scss']
+})
+export class SimpleTableComponent {
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+  tableConfig: TableConfig<Customer> = {
+    columnsCfg: [
+      {
+        name: 'customers name',
+        key: 'name',
+        valueConverter: v => v.name
+      },
+      {
+        name: 'customers age',
+        key: 'age',
+        valueConverter: v => v.age
+      }
+    ]
+  }
+  tableData: Customer[] = [
+    new Customer('Steave', 30),
+    new Customer('Jack', 22)
+  ];
+}
+
+
+```
+
+больше примеров:
+https://github.com/NikolayNN/ngx-aur-mat-table-demo
