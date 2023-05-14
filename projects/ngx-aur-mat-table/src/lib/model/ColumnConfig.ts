@@ -7,7 +7,8 @@ export interface TableConfig<T> {
   actionCfg?: ActionConfig,
   selectionCfg?: SelectionConfig,
   pageableCfg?: PaginationConfig,
-  pointerCfg?: PointerConfig
+  pointerCfg?: PointerConfig,
+  stickyCfg?: StickyConfig
 }
 
 export interface ColumnConfig<T> {
@@ -87,7 +88,7 @@ export interface Action {
 export interface SelectionConfig {
   position?: 'start' | 'end';
   multiple?: boolean;
-  enable: true;
+  enable: boolean;
 }
 
 export interface PaginationConfig {
@@ -98,4 +99,8 @@ export interface PaginationConfig {
 
 export interface PointerConfig {
   enable: true;
+}
+
+export interface StickyConfig {
+  header: boolean;
 }
