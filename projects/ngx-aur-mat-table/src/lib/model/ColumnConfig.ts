@@ -8,7 +8,8 @@ export interface TableConfig<T> {
   selectionCfg?: SelectionConfig,
   pageableCfg?: PaginationConfig,
   pointerCfg?: PointerConfig,
-  stickyCfg?: StickyConfig
+  stickyCfg?: StickyConfig,
+  tableView?: TableView,
 }
 
 export interface ColumnConfig<T> {
@@ -38,6 +39,12 @@ export interface IconView<T> {
   position?: 'right' | 'left';
 }
 
+export interface ImageView<T> {
+  src: T;
+  width?: string;
+  height?: string;
+}
+
 export interface TextView<T> {
   /** default true*/
   show?: boolean;
@@ -50,6 +57,8 @@ export interface ColumnView<T> {
 
   /** settings for icon in column */
   icon?: IconView<T>;
+
+  image?: ImageView<T>
 
   text?: TextView<T>;
 }
@@ -103,4 +112,10 @@ export interface PointerConfig {
 
 export interface StickyConfig {
   header: boolean;
+}
+
+export interface TableView {
+  height?: string;
+  minHeight?: string;
+  maxHeight?: string;
 }

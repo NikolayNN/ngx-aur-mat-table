@@ -1,5 +1,5 @@
 import {TableRow} from "../model/TableRow";
-import {ColumnView, IconView, TextView, TableConfig} from "../model/ColumnConfig";
+import {ColumnView, IconView, TextView, TableConfig, ImageView} from "../model/ColumnConfig";
 
 export class TableViewConverter {
 
@@ -22,7 +22,8 @@ export class TableViewConverter {
     source.forEach((source, key) => {
       const value: ColumnView<string> = {
         icon: this.iconConfig(source.icon, row),
-        text: this.textConfig(source.text, row)
+        text: this.textConfig(source.text, row),
+        image: this.imageConfig(source.image, row)
       }
       result.set(key, value)
     });
@@ -49,6 +50,17 @@ export class TableViewConverter {
       show: textSource.show,
       tooltip: textSource.tooltip ? textSource.tooltip(row) : undefined,
       color: textSource.color ? textSource.color(row) : undefined,
+    }
+  }
+
+  private static imageConfig<T>(imageSource: ImageView<(value: TableRow<T>) => string> | undefined, row: TableRow<T>): ImageView<string> | undefined {
+    if (!imageSource) {
+      return undefined;
+    }
+    return {
+      src: imageSource.src(row),
+      width: imageSource.width || undefined,
+      height: imageSource.height || undefined
     }
   }
 }

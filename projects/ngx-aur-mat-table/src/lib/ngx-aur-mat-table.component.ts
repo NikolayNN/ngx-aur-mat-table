@@ -20,7 +20,6 @@ import {FilterProvider} from "./providers/FilterProvider";
   selector: 'aur-mat-table',
   templateUrl: './ngx-aur-mat-table.component.html',
   styleUrls: ['./ngx-aur-mat-table.component.scss'],
-  encapsulation: ViewEncapsulation.None,
 })
 export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit {
 

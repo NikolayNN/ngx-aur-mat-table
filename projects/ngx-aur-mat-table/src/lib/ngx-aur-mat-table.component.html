@@ -10,7 +10,15 @@
     </ng-container>
 
     <!-- Table -->
-    <table mat-table [dataSource]="tableDataSource" matSort (matSortChange)="sortTable($event)">
+    <table
+      mat-table
+      matSort
+      [dataSource]="tableDataSource"
+      (matSortChange)="sortTable($event)"
+      [style.height]="tableConfig.tableView?.height"
+      [style.max-height]="tableConfig.tableView?.maxHeight"
+      [style.min-height]="tableConfig.tableView?.minHeight"
+    >
 
       <!--        index-column-->
       <ng-container *ngIf="indexProvider" [matColumnDef]="indexProvider.COLUMN_NAME">

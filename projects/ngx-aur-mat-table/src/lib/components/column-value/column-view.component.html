@@ -6,6 +6,14 @@
     {{config?.icon?.name}}
   </mat-icon>
 
+  <img
+    *ngIf="config?.image"
+      [src]="config?.image?.src"
+      [style.height]="config?.image?.height"
+      [style.width]="config?.image?.width"
+      alt="img"
+  >
+
   <span *ngIf="config?.text?.show != false"
         [matTooltip]="config?.text?.tooltip?.toString() || ''"
   >
