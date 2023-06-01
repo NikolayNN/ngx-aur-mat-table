@@ -13,7 +13,7 @@ import {TableViewConverter} from "./providers/TableViewConverter";
 import {IndexProvider} from "./providers/IndexProvider";
 import {TableDataProvider} from "./providers/TableDataProvider";
 import {PaginationProvider} from "./providers/PaginationProvider";
-import {FilterProvider} from "./providers/FilterProvider";
+
 
 
 @Component({
@@ -66,9 +66,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   tableDataProvider = new TableDataProvider<T>();
 
-  // @ts-ignore
-  filterProvider: FilterProvider;
-
   constructor() {
   }
 
@@ -107,9 +104,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
     if (this.tableConfig.pageableCfg) {
       this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
-    }
-    if (this.tableConfig.filterCfg) {
-      this.filterProvider = new FilterProvider();
     }
   }
 

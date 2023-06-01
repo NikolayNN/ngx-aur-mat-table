@@ -81,7 +81,9 @@ export interface IndexConfig {
 }
 
 export interface FilterConfig {
-  enable: true;
+  enable: boolean;
+  label?: string;
+  placeholder?: string;
 }
 
 export interface ActionConfig {

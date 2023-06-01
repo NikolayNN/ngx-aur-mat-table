@@ -2,10 +2,11 @@
   <ng-container>
 
     <!-- Filter -->
-    <ng-container *ngIf="filterProvider">
+    <ng-container *ngIf="tableConfig.filterCfg">
       <mat-form-field>
-        <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="filter">
+        <mat-label>{{tableConfig.filterCfg?.label}}</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="{{tableConfig.filterCfg?.placeholder}}">
+        <mat-icon matPrefix>search</mat-icon>
       </mat-form-field>
     </ng-container>
 
