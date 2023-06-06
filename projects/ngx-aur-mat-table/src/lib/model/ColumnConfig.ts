@@ -7,9 +7,26 @@ export interface TableConfig<T> {
   actionCfg?: ActionConfig,
   selectionCfg?: SelectionConfig,
   pageableCfg?: PaginationConfig,
-  pointerCfg?: PointerConfig,
+  clickCfg?: ClickConfig,
   stickyCfg?: StickyConfig,
   tableView?: TableView,
+}
+
+export interface ClickConfig {
+  pointer?: boolean;
+  highlightClicked?: DecorStyles;
+
+  /**
+   * default false
+   * если true первое нажатие генерирует событие с этой строкой, второе нажатие вернет undefined
+   */
+  cancelable?: boolean;
+}
+
+export interface DecorStyles {
+  color?: string;
+  background?: string;
+  border?: string;
 }
 
 export interface ColumnConfig<T> {

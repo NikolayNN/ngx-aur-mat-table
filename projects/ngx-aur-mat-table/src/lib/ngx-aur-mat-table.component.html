@@ -105,9 +105,14 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns;  sticky: this.tableConfig.stickyCfg?.header"></tr>
       <tr mat-row
-          (click)="onRowClick.emit(castSrc(row).rowSrc)"
+          (click)="rowClick(row)"
           *matRowDef="let row; columns: displayedColumns;"
-          [ngClass]="{'pointer': tableConfig.pointerCfg?.enable || false}"
+          [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false}"
+          [ngStyle]="{
+          'color': lastClickedRow===row? tableConfig?.clickCfg?.highlightClicked?.color : undefined,
+          'background-color': lastClickedRow === row? tableConfig?.clickCfg?.highlightClicked?.background : undefined,
+          'border': lastClickedRow === row? tableConfig?.clickCfg?.highlightClicked?.border : undefined
+          }"
       ></tr>
     </table>
 

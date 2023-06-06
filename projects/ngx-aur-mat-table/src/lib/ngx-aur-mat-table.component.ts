@@ -65,6 +65,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   tableDataProvider = new TableDataProvider<T>();
 
+  // @ts-ignore
+  lastClickedRow: TableRow<T> | undefined;
+
   constructor() {
   }
 
@@ -140,5 +143,15 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   getView(row: TableRow<T>, columnKey: string): ColumnView<string> | undefined {
     return this.tableView[row.id] ? this.tableView[row.id].get(columnKey) : undefined;
+  }
+
+  rowClick(row: TableRow<T>) {
+    if (row !== this.lastClickedRow && !this.tableConfig.clickCfg?.cancelable) {
+      this.onRowClick.emit(row.rowSrc);
+      this.lastClickedRow = row;
+    } else {
+      this.onRowClick.emit(undefined);
+      this.lastClickedRow = undefined;
+    }
   }
 }
