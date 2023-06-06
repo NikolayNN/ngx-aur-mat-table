@@ -17,6 +17,6 @@
   <span *ngIf="config?.text?.show != false"
         [matTooltip]="config?.text?.tooltip?.toString() || ''"
   >
-        <ng-content></ng-content>
+       {{value}}
   </span>
 </div>

@@ -6,11 +6,7 @@ import {ColumnView} from "../../model/ColumnConfig";
   templateUrl: './column-view.component.html',
   styleUrls: ['./column-view.component.css']
 })
-export class ColumnViewComponent implements OnInit {
+export class ColumnViewComponent {
   @Input() config: ColumnView<string> | undefined;
-
-  ngOnInit(): void {
-    console.log(this.config);
-  }
-
+  @Input() value: any;
 }

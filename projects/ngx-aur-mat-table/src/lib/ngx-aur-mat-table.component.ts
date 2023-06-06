@@ -1,6 +1,6 @@
 import {
   AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges,
-  ViewChild, ViewEncapsulation
+  ViewChild
 } from '@angular/core';
 import {ColumnView, ColumnConfig, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
@@ -13,7 +13,6 @@ import {TableViewConverter} from "./providers/TableViewConverter";
 import {IndexProvider} from "./providers/IndexProvider";
 import {TableDataProvider} from "./providers/TableDataProvider";
 import {PaginationProvider} from "./providers/PaginationProvider";
-
 
 
 @Component({
@@ -87,7 +86,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private prepare() {
-    console.log("Prepare tableData: ", this.tableData)
     this.setTableDataSource();
     this.tableView = TableViewConverter.toView(this.tableDataSource.data, this.tableConfig)
     this.displayedColumns = this.tableConfig.columnsCfg.map((tableColumn: ColumnConfig<any>) => tableColumn.key);
@@ -140,7 +138,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return row;
   }
 
-  getView(rowIndex: number, columnKey: string): ColumnView<string> | undefined {
-    return this.tableView[rowIndex].get(columnKey);
+  getView(row: TableRow<T>, columnKey: string): ColumnView<string> | undefined {
+    return this.tableView[row.id] ? this.tableView[row.id].get(columnKey) : undefined;
   }
 }
