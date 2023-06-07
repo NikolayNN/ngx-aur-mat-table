@@ -146,7 +146,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   rowClick(row: TableRow<T>) {
-    if (row !== this.lastClickedRow && !this.tableConfig.clickCfg?.cancelable) {
+    if (row !== this.lastClickedRow || (row === this.lastClickedRow && !this.tableConfig.clickCfg?.cancelable)) {
       this.onRowClick.emit(row.rowSrc);
       this.lastClickedRow = row;
     } else {
