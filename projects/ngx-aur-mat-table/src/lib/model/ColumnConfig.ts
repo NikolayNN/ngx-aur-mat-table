@@ -54,6 +54,12 @@ export interface IconView<T> {
   tooltip?: T;
 
   position?: 'right' | 'left';
+
+  wrapper?: IconWrapper<T>;
+}
+
+export interface IconWrapper<T> {
+  color: T;
 }
 
 export interface ImageView<T> {

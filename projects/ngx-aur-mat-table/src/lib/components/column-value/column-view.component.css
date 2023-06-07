@@ -6,3 +6,12 @@
 span {
   margin-left: 4px;
 }
+
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}

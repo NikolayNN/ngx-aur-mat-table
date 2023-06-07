@@ -23,7 +23,7 @@ export class TableViewConverter {
       const value: ColumnView<string> = {
         icon: this.iconConfig(source.icon, row),
         text: this.textConfig(source.text, row),
-        image: this.imageConfig(source.image, row)
+        image: this.imageConfig(source.image, row),
       }
       result.set(key, value)
     });
@@ -39,6 +39,7 @@ export class TableViewConverter {
       color: iconSource.color ? iconSource.color(row) : undefined,
       tooltip: iconSource.tooltip ? iconSource.tooltip(row) : undefined,
       position: iconSource.position,
+      wrapper: iconSource.wrapper? {color: iconSource.wrapper.color(row)}: undefined
     }
   }
 
