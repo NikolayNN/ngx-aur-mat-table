@@ -107,7 +107,7 @@
       <tr mat-row
           (click)="rowClick(row)"
           *matRowDef="let row; columns: displayedColumns;"
-          [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false}"
+          [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': lastClickedRow===row && tableConfig?.clickCfg?.highlightClicked?.color}"
           [ngStyle]="{
           'color': lastClickedRow===row? tableConfig?.clickCfg?.highlightClicked?.color : undefined,
           'background-color': lastClickedRow === row? tableConfig?.clickCfg?.highlightClicked?.background : undefined,
