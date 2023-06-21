@@ -131,10 +131,6 @@ export interface PaginationConfig {
   size?: number;
 }
 
-export interface PointerConfig {
-  enable: true;
-}
-
 export interface StickyConfig {
   header: boolean;
 }
