@@ -4,7 +4,7 @@ import {AppComponent} from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TableWithIconsComponent } from './table-with-icons/table-with-icons.component';
 import { ComplexObjectComponent } from './complex-object/complex-object.component';
-import {NgxAurMatTableModule} from "ngx-aur-mat-table";
+
 import {SimpleTableComponent} from "./simple-table/simple-table.component";
 import { TableWithActionsComponent } from './with-actions/table-with-actions/table-with-actions.component';
 import {MatTabsModule} from "@angular/material/tabs";
@@ -19,6 +19,7 @@ import { TableWithStickyHeaderComponent } from './table-with-sticky-header/table
 import { TableEditableComponent } from './table-editable/table-editable.component';
 import { TableHighlightClickedRowComponent } from './table-highlight-clicked-row/table-highlight-clicked-row.component';
 import { TableWithWrappedIconComponent } from './table-with-wrapped-icon/table-with-wrapped-icon.component';
+import {NgxAurMatTableModule} from "../../../ngx-aur-mat-table/src/lib/ngx-aur-mat-table.module";
 
 @NgModule({
   declarations: [
