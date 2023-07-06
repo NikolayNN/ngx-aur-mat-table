@@ -1,0 +1,9 @@
+<aur-mat-table
+  [tableData]="tableData"
+  [tableConfig]="tableConfig"
+  (selected)="selected = $event"
+></aur-mat-table>
+
+<p>Выбранные</p>
+{{selected|json}}
+

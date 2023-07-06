@@ -34,35 +34,32 @@
         }
       }
     },
-    "demo": {
+    "aur-demo": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
         }
       },
-      "root": "projects/demo",
-      "sourceRoot": "projects/demo/src",
+      "root": "projects/aur-demo",
+      "sourceRoot": "projects/aur-demo/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/demo",
-            "index": "projects/demo/src/index.html",
-            "main": "projects/demo/src/main.ts",
-            "polyfills": "projects/demo/src/polyfills.ts",
-            "tsConfig": "projects/demo/tsconfig.app.json",
+            "outputPath": "dist/aur-demo",
+            "index": "projects/aur-demo/src/index.html",
+            "main": "projects/aur-demo/src/main.ts",
+            "polyfills": "",
+            "tsConfig": "projects/aur-demo/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "projects/demo/src/favicon.ico",
-              "projects/demo/src/assets"
+              "projects/aur-demo/src/favicon.ico",
+              "projects/aur-demo/src/assets"
             ],
             "styles": [
-              "projects/demo/src/styles.scss"
+              "projects/aur-demo/src/styles.scss"
             ],
             "scripts": []
           },
@@ -78,12 +75,6 @@
                   "type": "anyComponentStyle",
                   "maximumWarning": "2kb",
                   "maximumError": "4kb"
-                }
-              ],
-              "fileReplacements": [
-                {
-                  "replace": "projects/demo/src/environments/environment.ts",
-                  "with": "projects/demo/src/environments/environment.prod.ts"
                 }
               ],
               "outputHashing": "all"
@@ -103,10 +94,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "demo:build:production"
+              "browserTarget": "aur-demo:build:production"
             },
             "development": {
-              "browserTarget": "demo:build:development"
+              "browserTarget": "aur-demo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -114,23 +105,24 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "demo:build"
+            "browserTarget": "aur-demo:build"
           }
         },
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "main": "projects/demo/src/test.ts",
-            "polyfills": "projects/demo/src/polyfills.ts",
-            "tsConfig": "projects/demo/tsconfig.spec.json",
-            "karmaConfig": "projects/demo/karma.conf.js",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ],
+            "tsConfig": "projects/aur-demo/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [
-              "projects/demo/src/favicon.ico",
-              "projects/demo/src/assets"
+              "projects/aur-demo/src/favicon.ico",
+              "projects/aur-demo/src/assets"
             ],
             "styles": [
-              "projects/demo/src/styles.scss"
+              "projects/aur-demo/src/styles.scss"
             ],
             "scripts": []
           }
@@ -138,5 +130,8 @@
       }
     }
   },
-  "defaultProject": "ngx-aur-mat-table"
+  "defaultProject": "ngx-aur-mat-table",
+  "cli": {
+    "analytics": false
+  }
 }

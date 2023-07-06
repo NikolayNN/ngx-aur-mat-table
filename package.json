@@ -6,7 +6,12 @@
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "build_lib": "ng build ngx-aur-mat-table",
+    "copy_license": "copy .\\LICENSE .\\dist\\ngx-aur-mat-table",
+    "copy_files": "npm run copy_license",
+    "npm_pack": "cd dist/ngx-aur-mat-tabl && npm pack",
+    "package": "npm run build_lib && npm run copy_files && npm run npm_pack"
   },
   "private": true,
   "dependencies": {

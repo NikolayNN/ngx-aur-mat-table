@@ -12,10 +12,7 @@
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "paths": {
-      "ngx-aur-mat-table": [
-        "dist/ngx-aur-mat-table/ngx-aur-mat-table",
-        "dist/ngx-aur-mat-table"
-      ]
+      "ngx-aur-mat-table": ["projects/ngx-aur-mat-table/src/public-api"]
     },
     "declaration": false,
     "downlevelIteration": true,
