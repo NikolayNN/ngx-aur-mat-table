@@ -10,6 +10,9 @@ import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 })
 export class TableHighlightClickedRowComponent {
 
+  // @ts-ignore
+  highlightedCustomer: Customer | undefined;
+
   tableConfig: TableConfig<Customer> = {
     columnsCfg: [
       {
@@ -35,4 +38,11 @@ export class TableHighlightClickedRowComponent {
   }
   tableData: Customer[] = CustomerGenerator.generate(10);
 
+  externalHighlight(customer: Customer) {
+    if (this.highlightedCustomer === customer) {
+      this.highlightedCustomer = undefined;
+    } else {
+      this.highlightedCustomer = customer;
+    }
+  }
 }

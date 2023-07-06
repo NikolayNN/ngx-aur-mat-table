@@ -4,4 +4,9 @@
 <aur-mat-table
   [tableData]="tableData"
   [tableConfig]="tableConfig"
+  [(highlight)]="highlightedCustomer"
 ></aur-mat-table>
+
+<mat-chip-list>
+  <mat-chip *ngFor="let customer of tableData" (click)="externalHighlight(customer)"> {{customer.name}} </mat-chip>
+</mat-chip-list>

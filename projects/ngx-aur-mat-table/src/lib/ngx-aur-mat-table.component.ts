@@ -66,7 +66,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   tableDataProvider = new TableDataProvider<T>();
 
   // @ts-ignore
-  lastClickedRow: TableRow<T> | undefined;
+  @Input() highlight: T | undefined;
+  @Output() highlightChange = new EventEmitter<T>();
 
   constructor() {
   }
@@ -146,12 +147,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   rowClick(row: TableRow<T>) {
-    if (row !== this.lastClickedRow || (row === this.lastClickedRow && !this.tableConfig.clickCfg?.cancelable)) {
+    if (row.rowSrc !== this.highlight || (row.rowSrc === this.highlight && !this.tableConfig.clickCfg?.cancelable)) {
       this.onRowClick.emit(row.rowSrc);
-      this.lastClickedRow = row;
+      this.highlight = row.rowSrc;
+      this.highlightChange.emit(row.rowSrc);
     } else {
       this.onRowClick.emit(undefined);
-      this.lastClickedRow = undefined;
+      this.highlight = undefined;
+      this.highlightChange.emit(undefined);
     }
   }
 }

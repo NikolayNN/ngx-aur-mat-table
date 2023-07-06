@@ -107,11 +107,11 @@
       <tr mat-row
           (click)="rowClick(row)"
           *matRowDef="let row; columns: displayedColumns;"
-          [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': lastClickedRow===row && tableConfig?.clickCfg?.highlightClicked?.color}"
+          [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': highlight===row.rowSrc && tableConfig?.clickCfg?.highlightClicked?.color}"
           [ngStyle]="{
-          'color': lastClickedRow===row? tableConfig?.clickCfg?.highlightClicked?.color : undefined,
-          'background-color': lastClickedRow === row? tableConfig?.clickCfg?.highlightClicked?.background : undefined,
-          'border': lastClickedRow === row? tableConfig?.clickCfg?.highlightClicked?.border : undefined
+          'color': highlight===row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.color : undefined,
+          'background-color': highlight === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.background : undefined,
+          'border': highlight === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.border : undefined
           }"
       ></tr>
     </table>
