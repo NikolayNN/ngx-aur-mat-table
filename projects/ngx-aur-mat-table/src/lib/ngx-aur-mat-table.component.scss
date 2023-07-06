@@ -1,9 +1,15 @@
 .aur-mat-table table {
   width: 100%;
+  border-collapse: collapse;
 }
 
 .aur-mat-table  th, td {
   padding: 10px !important;
+}
+
+.aur-mat-table .new-color td.mat-cell,
+.aur-mat-table .new-color td.mat-footer-cell {
+  color: inherit;
 }
 
 .aur-mat-table mat-form-field {
