@@ -1,6 +1,6 @@
 import {
-  AfterViewInit, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges,
-  ViewChild
+  AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges,
+  ViewChild, ViewChildren
 } from '@angular/core';
 import {ColumnView, ColumnConfig, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
@@ -29,6 +29,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   public displayedColumns: string[] = [];
 
   private tableView: Map<string, ColumnView<string>>[] = [];
+
+  // @ts-ignore
+  @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
 
   // @ts-ignore
   @Input() tableConfig: TableConfig<T>;
@@ -82,16 +85,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       this.prepare();
     }
     if (changes['highlight'] && this.highlight) {
-     this.doHighlightRow(this.highlight);
+      this.doExternalHighlightRow(this.highlight);
     }
   }
 
-  private doHighlightRow(h: HighlightContainer<T>){
+  private doExternalHighlightRow(h: HighlightContainer<T>) {
     if (this.highlighted === h.value) {
       this.highlight = undefined;
       this.highlighted = undefined;
     } else {
       this.highlighted = h.value;
+      const index = this.tableDataSource.data.findIndex(row => row.rowSrc === h.value);
+      this.rows.toArray()[index]?.nativeElement.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
     }
   }
 

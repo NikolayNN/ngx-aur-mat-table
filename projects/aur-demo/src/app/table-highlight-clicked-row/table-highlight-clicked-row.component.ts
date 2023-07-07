@@ -34,9 +34,10 @@ export class TableHighlightClickedRowComponent {
         border: '2px solid green'
       },
       cancelable: true
+    },
+    stickyCfg: {
+      header: true
     }
   }
-  tableData: Customer[] = CustomerGenerator.generate(10);
-
-
+  tableData: Customer[] = CustomerGenerator.generate(30);
 }

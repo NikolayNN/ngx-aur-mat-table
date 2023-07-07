@@ -1,12 +1,14 @@
 <p>
   Подсвечивается последняя нажатая строчка таблицы
 </p>
-<aur-mat-table
-  [tableData]="tableData"
-  [tableConfig]="tableConfig"
-  [highlight]="highlightedCustomer"
-></aur-mat-table>
 
 <mat-chip-list>
   <mat-chip *ngFor="let customer of tableData" (click)="highlightedCustomer = {value: customer}"> {{customer.name}} </mat-chip>
 </mat-chip-list>
+
+<aur-mat-table
+  class="limit-size"
+  [tableData]="tableData"
+  [tableConfig]="tableConfig"
+  [highlight]="highlightedCustomer"
+></aur-mat-table>
