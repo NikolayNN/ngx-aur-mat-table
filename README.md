@@ -77,5 +77,4 @@ export class SimpleTableComponent {
 
 ```
 
-больше примеров:
-https://github.com/NikolayNN/ngx-aur-mat-table-demo
+больше примеров: в проекте aur-demo
