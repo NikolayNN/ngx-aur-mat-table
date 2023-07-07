@@ -14,7 +14,7 @@ import {IndexProvider} from "./providers/IndexProvider";
 import {TableDataProvider} from "./providers/TableDataProvider";
 import {PaginationProvider} from "./providers/PaginationProvider";
 
-export interface HighlightContainer {
+export interface HighlightContainer<T> {
   value: any;
 }
 
@@ -72,7 +72,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
   // @ts-ignore
-  @Input() highlight: HighlightContainer | undefined;
+  @Input() highlight: HighlightContainer<T> | undefined;
 
   constructor() {
   }
@@ -86,7 +86,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
   }
 
-  private doHighlightRow(h: HighlightContainer){
+  private doHighlightRow(h: HighlightContainer<T>){
     if (this.highlighted === h.value) {
       this.highlight = undefined;
       this.highlighted = undefined;
