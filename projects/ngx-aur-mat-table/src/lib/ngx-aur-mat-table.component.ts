@@ -96,7 +96,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     } else {
       this.highlighted = h.value;
       const index = this.tableDataSource.data.findIndex(row => row.rowSrc === h.value);
-      this.rows?.toArray()[index]?.nativeElement.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+      if (index >= 0) {
+        this.rows?.toArray()[index]?.nativeElement.scrollIntoView({
+          behavior: "smooth",
+          block: "center",
+          inline: "center"
+        });
+      }
     }
   }
 
