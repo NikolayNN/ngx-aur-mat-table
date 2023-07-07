@@ -1,11 +1,35 @@
 import {TableRow} from "./TableRow";
 
 export interface TableConfig<T> {
+
+  /**
+   * Настройка колонок
+   */
   columnsCfg: ColumnConfig<T>[],
+
+  /**
+   * Настройка отображения порядкового индекса строки в таблице
+   */
   indexCfg?: IndexConfig,
+
+  /**
+   * Настройка отображения строки поиска в таблице
+   */
   filterCfg?: FilterConfig,
+
+  /**
+   * Настройка отображения кнопок для совершения действий с объктом в строке
+   */
   actionCfg?: ActionConfig,
+
+  /**
+   * Настройка для отображения чекбоксов
+   */
   selectionCfg?: SelectionConfig,
+
+  /**
+   * Настройка пагинации таблицы
+   */
   pageableCfg?: PaginationConfig,
   clickCfg?: ClickConfig,
   stickyCfg?: StickyConfig,
@@ -13,12 +37,18 @@ export interface TableConfig<T> {
 }
 
 export interface ClickConfig {
+  /**
+  * Show pointer on hovered row
+  */
   pointer?: boolean;
   highlightClicked?: DecorStyles;
 
   /**
    * default false
-   * если true первое нажатие генерирует событие с этой строкой, второе нажатие вернет undefined
+   * false первое и второе нажатие генерирует событие с этой строкой выделение со строки не снимается
+   *
+   * если true первое нажатие генерирует событие с этой строкой, второе нажатие вернет undefined,
+   * первое нажатие выделяет строку второе отменяет выделение
    */
   cancelable?: boolean;
 }

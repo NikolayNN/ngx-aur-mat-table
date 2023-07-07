@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {TableConfig} from "ngx-aur-mat-table";
+import {HighlightContainer, TableConfig} from "ngx-aur-mat-table";
 import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
@@ -11,7 +11,7 @@ import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 export class TableHighlightClickedRowComponent {
 
   // @ts-ignore
-  highlightedCustomer: Customer | undefined;
+  highlightedCustomer: HighlightContainer<Customer>;
 
   tableConfig: TableConfig<Customer> = {
     columnsCfg: [
@@ -38,11 +38,5 @@ export class TableHighlightClickedRowComponent {
   }
   tableData: Customer[] = CustomerGenerator.generate(10);
 
-  externalHighlight(customer: Customer) {
-    if (this.highlightedCustomer === customer) {
-      this.highlightedCustomer = undefined;
-    } else {
-      this.highlightedCustomer = customer;
-    }
-  }
+
 }

@@ -14,6 +14,9 @@ import {IndexProvider} from "./providers/IndexProvider";
 import {TableDataProvider} from "./providers/TableDataProvider";
 import {PaginationProvider} from "./providers/PaginationProvider";
 
+export interface HighlightContainer {
+  value: any;
+}
 
 @Component({
   selector: 'aur-mat-table',
@@ -65,9 +68,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   tableDataProvider = new TableDataProvider<T>();
 
+  highlighted: T | undefined;
+
+  //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
   // @ts-ignore
-  @Input() highlight: T | undefined;
-  @Output() highlightChange = new EventEmitter<T>();
+  @Input() highlight: HighlightContainer | undefined;
 
   constructor() {
   }
@@ -75,6 +80,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['tableData'] && this.tableData) {
       this.prepare();
+    }
+    if (changes['highlight'] && this.highlight) {
+     this.doHighlightRow(this.highlight);
+    }
+  }
+
+  private doHighlightRow(h: HighlightContainer){
+    if (this.highlighted === h.value) {
+      this.highlight = undefined;
+      this.highlighted = undefined;
+    } else {
+      this.highlighted = h.value;
     }
   }
 
@@ -147,14 +164,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   rowClick(row: TableRow<T>) {
-    if (row.rowSrc !== this.highlight || (row.rowSrc === this.highlight && !this.tableConfig.clickCfg?.cancelable)) {
+    if (row.rowSrc !== this.highlighted || (row.rowSrc === this.highlighted && !this.tableConfig.clickCfg?.cancelable)) {
       this.onRowClick.emit(row.rowSrc);
-      this.highlight = row.rowSrc;
-      this.highlightChange.emit(row.rowSrc);
+      this.highlighted = row.rowSrc;
     } else {
       this.onRowClick.emit(undefined);
-      this.highlight = undefined;
-      this.highlightChange.emit(undefined);
+      this.highlighted = undefined;
     }
   }
 }
