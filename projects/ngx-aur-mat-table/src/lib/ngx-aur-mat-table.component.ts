@@ -58,6 +58,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   @Output() onRowClick = new EventEmitter<T>();
 
+  /**
+   * return filtered rows
+   */
+  @Output() onFilter = new EventEmitter<T[]>();
+
   // @ts-ignore
   selectionProvider: SelectionProvider<T>;
   // @ts-ignore
@@ -147,6 +152,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.tableDataSource.filter = filterValue.trim().toLowerCase();
+    this.onFilter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc))
   }
 
   sortTable(sortParameters: Sort) {

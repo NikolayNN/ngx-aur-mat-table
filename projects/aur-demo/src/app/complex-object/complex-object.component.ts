@@ -33,4 +33,7 @@ export class ComplexObjectComponent {
 
   tableData = BooksGenerator.generate(10);
 
+  onFilter($event: Book[]) {
+    console.log($event)
+  }
 }
