@@ -1,4 +1,18 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  height: calc(100vh - 60px);
+  padding: 5px;
+}
+
 .limit-size {
-  display: block;
-  height: 400px;
+  height: calc(100vh - 200px);
+  overflow: auto;
+}
+
+mat-chip-list {
+  padding: 5px;
+  overflow: auto;
 }
