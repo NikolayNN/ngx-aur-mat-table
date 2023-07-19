@@ -1,3 +1,12 @@
+<div class="buttons-box">
+  <div *ngFor="let offset of columnOffsetList"
+       class="wrapper-button"
+       [ngStyle]="{ 'left': offset.left + 'px', 'width': offset.width  + 'px'}"
+  >
+    <button class="header-button"></button>
+  </div>
+</div>
+
 <aur-mat-table
   [tableData]="tableData"
   [tableConfig]="tableConfig"

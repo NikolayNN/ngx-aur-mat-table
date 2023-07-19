@@ -1,7 +1,7 @@
-import {Component} from '@angular/core';
-import {ColumnOffset, TableConfig} from "ngx-aur-mat-table";
-import {Customer} from "../shared/model/customer";
-import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
+import { Component } from '@angular/core';
+import { ColumnOffset, TableConfig } from "ngx-aur-mat-table";
+import { CustomerGenerator } from "../shared/generator/CustomerGenerator";
+import { Customer } from "../shared/model/customer";
 
 @Component({
   selector: 'app-table-custom-header',
@@ -9,6 +9,8 @@ import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
   styleUrls: ['./table-custom-header.component.scss']
 })
 export class TableCustomHeaderComponent {
+
+  public columnOffsetList: ColumnOffset[] = [];
 
   tableConfig: TableConfig<Customer> = {
     columnsCfg: [
@@ -28,6 +30,6 @@ export class TableCustomHeaderComponent {
 
 
   changeColumnOffsets($event: ColumnOffset[]) {
-    console.log($event)
+    setTimeout(() => this.columnOffsetList = $event, 0);
   }
 }
