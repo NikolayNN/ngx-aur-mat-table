@@ -1,53 +1,86 @@
 <mat-tab-group>
   <mat-tab label="Минимальная">
-    <app-simple-table></app-simple-table>
+    <ng-template matTabContent>
+      <app-simple-table></app-simple-table>
+    </ng-template>
   </mat-tab>
   <mat-tab label="С иконками">
-    <app-table-with-icons></app-table-with-icons>
+    <ng-template matTabContent>
+      <app-table-with-icons></app-table-with-icons>
+    </ng-template>
   </mat-tab>
   <mat-tab label="Сложный объект. Поиск">
-    <app-complex-object></app-complex-object>
+    <ng-template matTabContent>
+      <app-complex-object></app-complex-object>
+    </ng-template>
   </mat-tab>
   <mat-tab label="С действиями">
-    <app-table-with-actions></app-table-with-actions>
-    <h3>Действия в начале</h3>
-    <app-actions-before></app-actions-before>
+    <ng-template matTabContent>
+      <app-table-with-actions></app-table-with-actions>
+      <h3>Действия в начале</h3>
+      <app-actions-before></app-actions-before>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="С пагинацией">
-    <app-table-with-pagination></app-table-with-pagination>
+    <ng-template matTabContent>
+      <app-table-with-pagination></app-table-with-pagination>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="С чекбоксами">
-    <app-table-with-selection></app-table-with-selection>
+    <ng-template matTabContent>
+      <app-table-with-selection></app-table-with-selection>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="С индексом">
-    <app-table-with-index></app-table-with-index>
+    <ng-template matTabContent>
+      <app-table-with-index></app-table-with-index>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="С сортировкой">
-    <app-table-with-sort></app-table-with-sort>
+    <ng-template matTabContent>
+      <app-table-with-sort></app-table-with-sort>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="Sticky">
-    <app-table-with-sticky-header></app-table-with-sticky-header>
+    <ng-template matTabContent>
+      <app-table-with-sticky-header></app-table-with-sticky-header>
+    </ng-template>
   </mat-tab>
 
 
   <mat-tab label="Редактируемая">
-    <app-table-editable></app-table-editable>
+    <ng-template matTabContent>
+      <app-table-editable></app-table-editable>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="Highlight">
-    <app-table-highlight-clicked-row></app-table-highlight-clicked-row>
+    <ng-template matTabContent>
+      <app-table-highlight-clicked-row></app-table-highlight-clicked-row>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="Wrapped icons">
-   <app-table-with-wrapped-icon></app-table-with-wrapped-icon>
+    <ng-template matTabContent>
+      <app-table-with-wrapped-icon></app-table-with-wrapped-icon>
+    </ng-template>
   </mat-tab>
 
   <mat-tab label="Большая таблица">
-    <app-table-big></app-table-big>
+    <ng-template matTabContent>
+      <app-table-big></app-table-big>
+    </ng-template>
+  </mat-tab>
+
+
+  <mat-tab label="Custom header">
+    <ng-template matTabContent>
+      <app-table-custom-header></app-table-custom-header>
+    </ng-template>
   </mat-tab>
 </mat-tab-group>
