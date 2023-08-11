@@ -1,6 +1,17 @@
 import {
-  AfterViewInit, Component, ElementRef, EventEmitter, Input, OnChanges, OnInit, Output, QueryList, SimpleChanges,
-  ViewChild, ViewChildren
+  AfterViewInit,
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  QueryList,
+  SimpleChanges,
+  ViewChild,
+  ViewChildren
 } from '@angular/core';
 import {ColumnView, ColumnConfig, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
@@ -18,12 +29,17 @@ export interface HighlightContainer<T> {
   value: any;
 }
 
+export interface ColumnOffset {
+  left: number,
+  width: number
+}
+
 @Component({
   selector: 'aur-mat-table',
   templateUrl: './ngx-aur-mat-table.component.html',
   styleUrls: ['./ngx-aur-mat-table.component.scss'],
 })
-export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit {
+export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   public displayedColumns: string[] = [];
@@ -32,6 +48,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
+  // @ts-ignore
+  @ViewChild('table', {read: ElementRef}) table: ElementRef;
 
   // @ts-ignore
   @Input() tableConfig: TableConfig<T>;
@@ -62,6 +80,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
    * return filtered rows
    */
   @Output() onFilter = new EventEmitter<T[]>();
+
+  @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
+
+  // @ts-ignore
+  private resizeColumnOffsetsObserver: ResizeObserver;
 
   // @ts-ignore
   selectionProvider: SelectionProvider<T>;
@@ -120,6 +143,16 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // we need this, in order to make pagination work with *ngIf
   ngAfterViewInit(): void {
     this.tableDataSource.paginator = this.matPaginator;
+    this.updateColumnOffsets();
+    this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
+    this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
+  }
+
+  private updateColumnOffsets() {
+    const offsets: ColumnOffset[] = Array.from(this.table.nativeElement.querySelectorAll('th'))
+      .map(c => (c as HTMLElement))
+      .map(c => ({left: c.offsetLeft, width: c.offsetWidth}))
+    this.columnOffsets.emit(offsets);
   }
 
   private prepare() {
@@ -188,5 +221,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       this.onRowClick.emit(undefined);
       this.highlighted = undefined;
     }
+  }
+
+  ngOnDestroy() {
+    // Останавливаем наблюдение при уничтожении компонента
+    this.resizeColumnOffsetsObserver.disconnect();
   }
 }

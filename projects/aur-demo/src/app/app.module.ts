@@ -21,6 +21,7 @@ import {TableHighlightClickedRowComponent} from './table-highlight-clicked-row/t
 import {TableWithWrappedIconComponent} from './table-with-wrapped-icon/table-with-wrapped-icon.component';
 import {NgxAurMatTableModule} from "../../../ngx-aur-mat-table/src/lib/ngx-aur-mat-table.module";
 import {MatChipsModule} from "@angular/material/chips";
+import { TableCustomHeaderComponent } from './table-custom-header/table-custom-header.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import {MatChipsModule} from "@angular/material/chips";
     TableWithStickyHeaderComponent,
     TableEditableComponent,
     TableHighlightClickedRowComponent,
-    TableWithWrappedIconComponent
+    TableWithWrappedIconComponent,
+    TableCustomHeaderComponent
   ],
   imports: [
     BrowserModule,
