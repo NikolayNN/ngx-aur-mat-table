@@ -20,7 +20,7 @@ export interface TableConfig<T> {
   /**
    * Настройка отображения кнопок для совершения действий с объктом в строке
    */
-  actionCfg?: ActionConfig,
+  actionCfg?: ActionConfig<T>,
 
   /**
    * Настройка для отображения чекбоксов
@@ -139,14 +139,14 @@ export interface FilterConfig {
   placeholder?: string;
 }
 
-export interface ActionConfig {
-  actions: Action[];
+export interface ActionConfig<T> {
+  actions: Action<(value: T) => string>[];
   position?: 'start' | 'end';
 }
 
-export interface Action {
-  action: string;
-  icon: IconView<string>;
+export interface Action<T> {
+  action: T;
+  icon: IconView<T>;
 }
 
 export interface SelectionConfig {

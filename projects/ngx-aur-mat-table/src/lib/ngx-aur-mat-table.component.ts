@@ -13,7 +13,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {ColumnView, ColumnConfig, TableConfig} from './model/ColumnConfig';
+import {ColumnView, ColumnConfig, TableConfig, ActionConfig, Action} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
@@ -45,6 +45,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   public displayedColumns: string[] = [];
 
   private tableView: Map<string, ColumnView<string>>[] = [];
+
+  // number rowId
+  private actionView: Map<number, Action<string>[]> = new Map();
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
@@ -164,7 +167,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       this.indexProvider = new IndexProvider(this.tableConfig.indexCfg, this.displayedColumns);
     }
     if (this.tableConfig.actionCfg) {
-      this.rowActionsProvider = new RowActionProvider<TableRow<T>>(this.tableConfig.actionCfg, this.displayedColumns);
+      this.rowActionsProvider = new RowActionProvider(this.tableConfig.actionCfg, this.displayedColumns);
+      this.actionView = this.rowActionsProvider.toView(this.tableDataSource.data, <ActionConfig<(value: T) => string>><unknown> this.tableConfig.actionCfg)
     }
     if (this.tableConfig.selectionCfg && this.tableConfig.selectionCfg.enable) {
       this.selectionProvider = new SelectionProvider<T>(this.tableConfig.selectionCfg, this.displayedColumns, this.tableDataSource);
@@ -211,6 +215,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   getView(row: TableRow<T>, columnKey: string): ColumnView<string> | undefined {
     return this.tableView[row.id] ? this.tableView[row.id].get(columnKey) : undefined;
+  }
+
+  getActionsView(row: TableRow<T>): Action<string>[] | undefined {
+    return this.actionView.get(row.id) ? this.actionView.get(row.id) : undefined;
   }
 
   rowClick(row: TableRow<T>) {

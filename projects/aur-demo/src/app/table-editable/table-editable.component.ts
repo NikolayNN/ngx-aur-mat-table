@@ -30,9 +30,9 @@ export class TableEditableComponent {
       actions: [
         {
           icon: {
-            name: 'edit'
+            name: (v) => v.age === 5 ? 'delete' : 'edit'
           },
-          action: 'edit'
+          action: (v) => v.age === 5 ? 'delete' : 'edit'
         },
       ]
     }
@@ -44,7 +44,13 @@ export class TableEditableComponent {
   }
 
   onAction($event: ActionEvent<Customer>) {
-    $event.value.age = 5;
-    this.tableData = this.tableData.map(c => c.name === $event.value.name ? $event.value : c);
+    if ($event.action === 'delete') {
+      $event.value.age = 30;
+    }
+    if ($event.action === 'edit') {
+      $event.value.age = 5;
+    }
+    // изменились данные в источнике таблицы, новая ссылка для данных для пересчета таблицы
+    this.tableData = this.tableData.slice();
   }
 }

@@ -27,19 +27,19 @@ export class TableWithActionsComponent {
     actionCfg: {
       actions: [
         {
-          action: 'edit',
+          action: () =>'edit',
           icon: {
-            name: 'edit',
-            tooltip: 'редактировать',
-            color: 'blue'
+            name: () => 'edit',
+            tooltip: () => 'редактировать',
+            color: () => 'blue'
           }
         },
         {
-          action: 'delete',
+          action: () => 'delete',
           icon: {
-            name: 'delete',
-            tooltip: 'удалить',
-            color: 'red'
+            name: () => 'delete',
+            tooltip:  () => 'удалить',
+            color: () => 'red'
           }
         }
       ]

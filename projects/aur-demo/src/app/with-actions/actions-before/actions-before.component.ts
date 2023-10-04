@@ -10,8 +10,8 @@ import {CustomerGenerator} from "../../shared/generator/CustomerGenerator";
 })
 export class ActionsBeforeComponent {
 
-  tableConfig: TableConfig<Customer> ={
-    columnsCfg:  [
+  tableConfig: TableConfig<Customer> = {
+    columnsCfg: [
       {
         name: 'customers name',
         key: 'name',
@@ -27,19 +27,19 @@ export class ActionsBeforeComponent {
       position: 'start',
       actions: [
         {
-          action: 'edit',
+          action: () => 'edit',
           icon: {
-            name: 'edit',
-            tooltip: 'редактировать',
-            color: 'blue'
+            name: () => 'edit',
+            tooltip: () => 'редактировать',
+            color: () => 'blue'
           }
         },
         {
-          action: 'delete',
+          action: () => 'delete',
           icon: {
-            name: 'delete',
-            tooltip: 'удалить',
-            color: 'red'
+            name: () => 'delete',
+            tooltip: () =>  'удалить',
+            color: () => 'red'
           }
         }
       ]

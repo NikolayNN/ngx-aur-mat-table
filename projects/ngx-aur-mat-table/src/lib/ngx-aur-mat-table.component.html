@@ -59,7 +59,7 @@
           <button mat-icon-button
                   (click)="emitRowAction(action.action, castSrc(element).rowSrc, $event)"
                   [matTooltip]="action.icon.tooltip || ''"
-                  *ngFor="let action of rowActionsProvider.config.actions">
+                  *ngFor="let action of getActionsView(castSrc(element))">
             <mat-icon [style.color]="action.icon.color">
               {{action.icon.name}}
             </mat-icon>
