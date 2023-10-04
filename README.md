@@ -78,3 +78,6 @@ export class SimpleTableComponent {
 ```
 
 больше примеров: в проекте aur-demo
+
+Публикация новой версии
+run publish.bat
