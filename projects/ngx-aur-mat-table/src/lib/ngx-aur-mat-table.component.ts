@@ -92,7 +92,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   selectionProvider: SelectionProvider<T>;
   // @ts-ignore
-  rowActionsProvider: RowActionProvider<T>;
+  rowActionsProvider: RowActionProvider;
 
   // @ts-ignore
   indexProvider: IndexProvider;
@@ -168,7 +168,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
     if (this.tableConfig.actionCfg) {
       this.rowActionsProvider = new RowActionProvider(this.tableConfig.actionCfg, this.displayedColumns);
-      this.actionView = this.rowActionsProvider.toView(this.tableDataSource.data, <ActionConfig<(value: T) => string>><unknown> this.tableConfig.actionCfg)
+      this.actionView = this.rowActionsProvider.toView(this.tableDataSource.data, this.tableConfig.actionCfg)
     }
     if (this.tableConfig.selectionCfg && this.tableConfig.selectionCfg.enable) {
       this.selectionProvider = new SelectionProvider<T>(this.tableConfig.selectionCfg, this.displayedColumns, this.tableDataSource);
