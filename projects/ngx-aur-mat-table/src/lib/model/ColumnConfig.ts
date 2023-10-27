@@ -140,6 +140,7 @@ export interface FilterConfig {
 }
 
 export interface ActionConfig<T> {
+  enable: boolean;
   actions: Action<(value: T) => string>[];
   position?: 'start' | 'end';
 }
