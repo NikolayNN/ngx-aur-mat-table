@@ -155,6 +155,7 @@ export interface SelectionConfig {
   multiple?: boolean;
   showSelectedCount?: boolean;
   enable: boolean;
+  actions?: Action<string>[];
 }
 
 export interface PaginationConfig {

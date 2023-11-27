@@ -74,6 +74,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() selected = new EventEmitter<T[]>();
   @Output() onSelect = new EventEmitter<T[]>();
   @Output() onDeselect = new EventEmitter<T[]>();
+
+  @Output() onSelectedRowsAction = new EventEmitter<ActionEvent<T[]>>();
   //------------------------
 
 
@@ -194,6 +196,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   sortTable(sortParameters: Sort) {
     this.sort.emit(sortParameters);
+  }
+
+  emitSelectedRowsAction(action: string, rows: T[]) {
+    this.onSelectedRowsAction.emit({action, value: rows});
   }
 
   emitRowAction(action: string, row: T, $event: MouseEvent) {
