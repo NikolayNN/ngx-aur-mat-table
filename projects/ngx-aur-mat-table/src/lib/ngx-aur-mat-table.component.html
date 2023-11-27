@@ -45,6 +45,10 @@
                         [checked]="selectionProvider.selection.hasValue() && isAllSelected()"
                         [indeterminate]="selectionProvider.selection.hasValue() && !isAllSelected()">
           </mat-checkbox>
+          <span
+            *ngIf="tableConfig.selectionCfg?.showSelectedCount && selectionProvider.selection.hasValue()">
+            ({{selectionProvider.selection.selected.length}}/{{tableDataSource.data.length}})
+          </span>
         </th>
         <td mat-cell *matCellDef="let row">
           <mat-checkbox (click)="$event.stopPropagation()"

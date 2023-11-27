@@ -153,6 +153,7 @@ export interface Action<T> {
 export interface SelectionConfig {
   position?: 'start' | 'end';
   multiple?: boolean;
+  showSelectedCount?: boolean;
   enable: boolean;
 }
 
