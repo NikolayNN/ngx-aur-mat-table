@@ -20,7 +20,7 @@ import {MatPaginator} from '@angular/material/paginator';
 import {SelectionProvider} from './providers/SelectionProvider';
 import {ActionEvent, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
-import {TableViewConverter} from "./providers/TableViewConverter";
+import {TableViewFactory} from "./providers/TableViewFactory";
 import {IndexProvider} from "./providers/IndexProvider";
 import {TableDataProvider} from "./providers/TableDataProvider";
 import {PaginationProvider} from "./providers/PaginationProvider";
@@ -162,7 +162,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private prepareTableData() {
     this.setTableDataSource();
-    this.tableView = TableViewConverter.toView(this.tableDataSource.data, this.tableConfig)
+    this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
     this.displayedColumns = this.tableConfig.columnsCfg.map((tableColumn: ColumnConfig<any>) => tableColumn.key);
 
     if (this.tableConfig.indexCfg && this.tableConfig.indexCfg.enable) {
