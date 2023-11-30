@@ -159,7 +159,7 @@ export interface SelectionConfig {
 }
 
 export interface PaginationConfig {
-  enable: true;
+  enable: boolean;
   sizes?: number[];
   size?: number;
 }

@@ -176,7 +176,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       this.selectionProvider = new SelectionProvider<T>(this.tableConfig.selectionCfg, this.displayedColumns, this.tableDataSource);
       this.selectionProvider.bind(this.selected, this.onSelect, this.onDeselect);
     }
-    if (this.tableConfig.pageableCfg) {
+    if (this.tableConfig.pageableCfg && this.tableConfig.pageableCfg.enable) {
       this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
     }
   }
