@@ -25,6 +25,7 @@ import {IndexProvider} from "./providers/IndexProvider";
 import {TableRowsFactory} from "./factories/TableRowsFactory";
 import {PaginationProvider} from "./providers/PaginationProvider";
 import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
+import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -163,7 +164,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData() {
     this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
-    this.displayedColumns = this.tableConfig.columnsCfg.map((tableColumn: ColumnConfig<any>) => tableColumn.key);
+    this.displayedColumns = DisplayColumnsFactory.create(this.tableConfig);
 
     if (this.tableConfig.indexCfg && this.tableConfig.indexCfg.enable) {
       this.indexProvider = new IndexProvider(this.tableConfig.indexCfg, this.displayedColumns);
