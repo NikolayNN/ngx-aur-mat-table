@@ -148,6 +148,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // we need this, in order to make pagination work with *ngIf
   ngAfterViewInit(): void {
     this.tableDataSource.paginator = this.matPaginator;
+    this.tableDataSource.sort = this.matSort;
     this.updateColumnOffsets();
     this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
     this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
@@ -184,8 +185,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private setTableDataSource() {
     let convert = this.tableDataProvider.convert(this.tableData, this.tableConfig.columnsCfg);
     this.tableDataSource = new MatTableDataSource<TableRow<T>>(convert);
-    this.tableDataSource.paginator = this.matPaginator;
-    this.tableDataSource.sort = this.matSort;
   }
 
   applyFilter(event: Event) {
