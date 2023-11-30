@@ -18,7 +18,7 @@ export class SelectionProvider<T> {
     this.initCheckboxColumn(columns);
   }
 
-  initCheckboxColumn(columns: string[]) {
+  private initCheckboxColumn(columns: string[]): void {
     if (this.config.position === 'start') {
       columns.unshift(this.COLUMN_NAME);
     } else {
@@ -26,9 +26,8 @@ export class SelectionProvider<T> {
     }
   }
 
-  bind(selected: EventEmitter<T[]>, onSelect: EventEmitter<T[]>, onDeselect: EventEmitter<T[]>) {
-    this.selection.changed
-      .subscribe(event => {
+  public bind(selected: EventEmitter<T[]>, onSelect: EventEmitter<T[]>, onDeselect: EventEmitter<T[]>) {
+    this.selection.changed.subscribe(event => {
         if (event.added) {
           onSelect.emit(event.added);
         }
@@ -39,10 +38,12 @@ export class SelectionProvider<T> {
       });
   }
 
-  masterToggle() {
-    this.isAllSelected() ?
-      this.selection.clear() :
+  public masterToggle(): void {
+    if (this.isAllSelected()) {
+      this.selection.clear();
+    } else {
       this.tableDataSource.data.forEach(row => this.selection.select(row.rowSrc));
+    }
   }
 
   isAllSelected(): boolean {
