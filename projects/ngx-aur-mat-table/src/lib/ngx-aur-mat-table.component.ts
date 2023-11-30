@@ -20,11 +20,11 @@ import {MatPaginator} from '@angular/material/paginator';
 import {SelectionProvider} from './providers/SelectionProvider';
 import {ActionEvent, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
-import {TableViewFactory} from "./providers/TableViewFactory";
+import {TableViewFactory} from "./model/TableViewFactory";
 import {IndexProvider} from "./providers/IndexProvider";
-import {TableRowsFactory} from "./providers/TableRowsFactory";
+import {TableRowsFactory} from "./factories/TableRowsFactory";
 import {PaginationProvider} from "./providers/PaginationProvider";
-import {MatTableDataSourceFactory} from "./providers/MatTableDataSourceFactory";
+import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 
 export interface HighlightContainer<T> {
   value: any;

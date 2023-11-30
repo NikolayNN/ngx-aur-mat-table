@@ -1,5 +1,5 @@
-import {TableRow} from "../model/TableRow";
-import {ColumnView, IconView, TextView, TableConfig, ImageView} from "../model/ColumnConfig";
+import {TableRow} from "./TableRow";
+import {ColumnView, IconView, TextView, TableConfig, ImageView} from "./ColumnConfig";
 
 export class TableViewFactory {
 
