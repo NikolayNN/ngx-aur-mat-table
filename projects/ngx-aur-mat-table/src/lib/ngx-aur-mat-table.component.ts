@@ -162,9 +162,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private prepareTableData() {
-    this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
-    this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
-    this.displayedColumns = DisplayColumnsFactory.create(this.tableConfig);
+    this.initTable();
 
     if (this.tableConfig.indexCfg && this.tableConfig.indexCfg.enable) {
       this.indexProvider = new IndexProvider(this.tableConfig.indexCfg, this.displayedColumns);
@@ -180,6 +178,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (this.tableConfig.pageableCfg && this.tableConfig.pageableCfg.enable) {
       this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
     }
+  }
+
+  private initTable() {
+    this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
+    this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
+    this.displayedColumns = DisplayColumnsFactory.create(this.tableConfig);
   }
 
   applyFilter(event: Event) {
