@@ -39,14 +39,13 @@ export class RowActionProvider {
    * @return Array of actions for the row.
    */
   private prepareActionsForRow<T>(row: TableRow<T>, actionConfig: ActionConfig<T>): Action<string>[] {
-    return actionConfig.actions.map(action => {
-      const actionPrepared = action.action(row.rowSrc);
-      const iconPrepared: IconView<string> = <IconView<string>> this.iconConfig(action.icon, row.rowSrc);
-      return { action: actionPrepared, icon: iconPrepared };
-    });
+    return actionConfig.actions.map(action => ({
+      action: action.action(row.rowSrc),
+      icon: this.prepareIconConfig(action.icon, row.rowSrc)
+    }));
   }
 
-  private iconConfig<T>(iconSource: IconView<(value: T) => string>, value: T): IconView<string> {
+  private prepareIconConfig<T>(iconSource: IconView<(value: T) => string>, value: T): IconView<string> {
     return {
       name: iconSource.name(value),
       color: iconSource.color ? iconSource.color(value) : undefined,
