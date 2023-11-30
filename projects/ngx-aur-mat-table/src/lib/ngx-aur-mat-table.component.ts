@@ -22,8 +22,9 @@ import {ActionEvent, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewFactory} from "./providers/TableViewFactory";
 import {IndexProvider} from "./providers/IndexProvider";
-import {TableDataProvider} from "./providers/TableDataProvider";
+import {TableRowsFactory} from "./providers/TableRowsFactory";
 import {PaginationProvider} from "./providers/PaginationProvider";
+import {MatTableDataSourceFactory} from "./providers/MatTableDataSourceFactory";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -102,8 +103,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   paginationProvider: PaginationProvider;
 
-  tableDataProvider = new TableDataProvider<T>();
-
   highlighted: T | undefined;
 
   //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
@@ -162,7 +161,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private prepareTableData() {
-    this.setTableDataSource();
+    this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
     this.displayedColumns = this.tableConfig.columnsCfg.map((tableColumn: ColumnConfig<any>) => tableColumn.key);
 
@@ -180,11 +179,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (this.tableConfig.pageableCfg && this.tableConfig.pageableCfg.enable) {
       this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
     }
-  }
-
-  private setTableDataSource() {
-    let convert = this.tableDataProvider.convert(this.tableData, this.tableConfig.columnsCfg);
-    this.tableDataSource = new MatTableDataSource<TableRow<T>>(convert);
   }
 
   applyFilter(event: Event) {
