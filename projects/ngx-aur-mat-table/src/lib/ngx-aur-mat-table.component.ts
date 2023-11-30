@@ -164,8 +164,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData() {
     this.initTable();
 
-    if (this.tableConfig.indexCfg && this.tableConfig.indexCfg.enable) {
-      this.indexProvider = new IndexProvider(this.tableConfig.indexCfg, this.displayedColumns);
+    if (IndexProvider.canCreate(this.tableConfig)) {
+      this.indexProvider = IndexProvider.create(this.tableConfig, this.displayedColumns);
     }
     if (this.tableConfig.actionCfg && (this.tableConfig.actionCfg.enable === undefined || this.tableConfig.actionCfg.enable === null || this.tableConfig.actionCfg.enable)) {
       this.rowActionsProvider = new RowActionProvider(this.tableConfig.actionCfg, this.displayedColumns);
