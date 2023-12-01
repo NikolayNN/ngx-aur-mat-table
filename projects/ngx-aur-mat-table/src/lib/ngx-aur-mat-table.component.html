@@ -104,8 +104,7 @@
         <!--      header value-->
         <ng-template #headerValue>
           <lib-column-view [config]="columnConfig.headerView"
-                           [value]="columnConfig.name"
-          >
+                           [value]="columnConfig.name">
           </lib-column-view>
         </ng-template>
 
@@ -120,17 +119,16 @@
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns;  sticky: this.tableConfig.stickyCfg?.header"></tr>
-      <tr mat-row
-          (click)="rowClick(row)"
+      <tr mat-row #rowLink
           *matRowDef="let row; columns: displayedColumns;"
+          (click)="rowClick(row)"
           [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': highlighted===row.rowSrc && tableConfig?.clickCfg?.highlightClicked?.color}"
           [ngStyle]="{
           'color': highlighted===row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.color : undefined,
           'background-color': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.background : undefined,
           'border': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.border : undefined
-          }"
-          #rowLink
-      ></tr>
+          }">
+      </tr>
     </table>
 
     <!-- Pagination -->
