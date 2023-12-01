@@ -21,7 +21,7 @@ import {SelectionProvider} from './providers/SelectionProvider';
 import {ActionEvent, RowActionProvider} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewFactory} from "./model/TableViewFactory";
-import {IndexProvider} from "./providers/IndexProvider";
+import {IndexProvider, IndexProviderDummy} from "./providers/IndexProvider";
 import {TableRowsFactory} from "./factories/TableRowsFactory";
 import {PaginationProvider} from "./providers/PaginationProvider";
 import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
@@ -99,7 +99,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   rowActionsProvider: RowActionProvider;
 
   // @ts-ignore
-  indexProvider: IndexProvider;
+  indexProvider = new IndexProviderDummy();
 
   // @ts-ignore
   paginationProvider: PaginationProvider;
@@ -164,9 +164,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData() {
     this.initTable();
 
-    if (IndexProvider.canCreate(this.tableConfig)) {
-      this.indexProvider = IndexProvider.create(this.tableConfig, this.displayedColumns);
-    }
+    this.indexProvider = IndexProvider.create(this.tableConfig).addIndexColumn(this.displayedColumns);
+
     if (this.tableConfig.actionCfg && (this.tableConfig.actionCfg.enable === undefined || this.tableConfig.actionCfg.enable === null || this.tableConfig.actionCfg.enable)) {
       this.rowActionsProvider = new RowActionProvider(this.tableConfig.actionCfg, this.displayedColumns);
       this.actionView = this.rowActionsProvider.toView(this.tableDataSource.data, this.tableConfig.actionCfg)

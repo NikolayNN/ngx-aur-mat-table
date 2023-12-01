@@ -25,7 +25,7 @@
     >
 
       <!--        index-column-->
-      <ng-container *ngIf="indexProvider" [matColumnDef]="indexProvider.COLUMN_NAME">
+      <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">
 
         <th mat-header-cell *matHeaderCellDef>
           <lib-column-view [config]="indexProvider.headerView">
