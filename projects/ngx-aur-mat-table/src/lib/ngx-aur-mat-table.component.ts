@@ -14,7 +14,7 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {Action, ColumnView, TableConfig} from './model/ColumnConfig';
+import {ColumnView, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
@@ -23,7 +23,7 @@ import {ActionEvent, RowActionProvider, RowActionProviderDummy} from './provider
 import {TableRow} from "./model/TableRow";
 import {TableViewFactory} from "./model/TableViewFactory";
 import {IndexProvider, IndexProviderDummy} from "./providers/IndexProvider";
-import {PaginationProvider} from "./providers/PaginationProvider";
+import {PaginationProvider, PaginationProviderDummy} from "./providers/PaginationProvider";
 import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
 
@@ -91,16 +91,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver;
 
-  // @ts-ignore
   selectionProvider: SelectionProvider<T> | SelectionProviderDummy<T> = new SelectionProviderDummy();
-  // @ts-ignore
-  rowActionsProvider: RowActionProvider = new RowActionProviderDummy<T>();
 
-  // @ts-ignore
+  rowActionsProvider: RowActionProvider<T> = new RowActionProviderDummy<T>();
+
   indexProvider: IndexProvider = new IndexProviderDummy();
 
-  // @ts-ignore
-  paginationProvider: PaginationProvider;
+  paginationProvider: PaginationProvider = new PaginationProviderDummy();
 
   highlighted: T | undefined;
 
