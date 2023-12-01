@@ -39,7 +39,7 @@
       </ng-container>
 
       <!--        selection-column-->
-      <ng-container [matColumnDef]="selectionProvider.COLUMN_NAME" *ngIf="selectionProvider">
+      <ng-container [matColumnDef]="selectionProvider.COLUMN_NAME" *ngIf="selectionProvider.isEnabled">
         <th mat-header-cell *matHeaderCellDef>
           <div class="flex-container">
             <mat-checkbox (change)="$event ? masterToggle() : null"
@@ -139,7 +139,7 @@
     </table>
 
     <!-- Pagination -->
-    <mat-paginator *ngIf="paginationProvider"
+    <mat-paginator *ngIf="paginationProvider.isEnabled"
                    [pageSizeOptions]="paginationProvider.sizes"
                    [pageSize]="paginationProvider.size"
                    showFirstLastButtons>

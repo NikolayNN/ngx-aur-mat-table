@@ -173,9 +173,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .addCheckboxColumn(this.displayedColumns)
       .bindEventEmitters(this.selected, this.onSelect, this.onDeselect);
 
-    if (this.tableConfig.pageableCfg && this.tableConfig.pageableCfg.enable) {
-      this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
-    }
+    this.paginationProvider = PaginationProvider.create(this.tableConfig);
   }
 
   private initTable() {

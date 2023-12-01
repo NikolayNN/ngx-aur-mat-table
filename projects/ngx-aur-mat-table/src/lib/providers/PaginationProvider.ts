@@ -1,7 +1,8 @@
-import {PaginationConfig} from "../model/ColumnConfig";
+import {PaginationConfig, TableConfig} from "../model/ColumnConfig";
+import {EmptyValue} from "../model/EmptyValue";
 
 export class PaginationProvider {
-
+  public readonly isEnabled: boolean = true;
   public sizes: number[];
   public size;
 
@@ -10,4 +11,23 @@ export class PaginationProvider {
     this.size = config.size || this.sizes[1];
   }
 
+  public static canEnable<T>(tableConfig: TableConfig<T>): boolean {
+    return (tableConfig.pageableCfg && tableConfig.pageableCfg.enable) || false;
+  }
+
+  public static create<T>(tableConfig: TableConfig<T>): PaginationProvider {
+    if (this.canEnable(tableConfig) && tableConfig.pageableCfg) {
+      return new PaginationProvider(tableConfig.pageableCfg)
+    }
+    return new PaginationProviderDummy()
+  }
+
+}
+
+export class PaginationProviderDummy extends PaginationProvider {
+  public override readonly isEnabled: boolean = false;
+
+  constructor() {
+    super(EmptyValue.PAGINATION_CONFIG);
+  }
 }

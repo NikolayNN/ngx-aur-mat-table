@@ -1,4 +1,4 @@
-import {ActionConfig, IndexConfig, SelectionConfig, TableConfig, TableRow} from "ngx-aur-mat-table";
+import {ActionConfig, IndexConfig, PaginationConfig, SelectionConfig, TableConfig, TableRow} from "ngx-aur-mat-table";
 import {MatTableDataSource} from "@angular/material/table";
 
 export class EmptyValue {
@@ -16,12 +16,19 @@ export class EmptyValue {
     enable: false,
   }
 
+  public static readonly PAGINATION_CONFIG: PaginationConfig = {
+    enable: false,
+    size: 0,
+    sizes: []
+  }
+
 
   public static readonly TABLE_CONFIG: TableConfig<any> = {
     columnsCfg: [],
     selectionCfg: EmptyValue.SELECTION_CONFIG,
     actionCfg: EmptyValue.ACTION_CONFIG,
-    indexCfg: EmptyValue.INDEX_CONFIG
+    indexCfg: EmptyValue.INDEX_CONFIG,
+    pageableCfg: EmptyValue.PAGINATION_CONFIG
   }
 
   public static readonly MAT_TABLE_DATA_SOURCE: MatTableDataSource<TableRow<any>> = new MatTableDataSource();
