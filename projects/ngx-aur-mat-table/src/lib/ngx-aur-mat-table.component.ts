@@ -18,7 +18,7 @@ import {Action, ColumnView, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
-import {SelectionProvider} from './providers/SelectionProvider';
+import {SelectionProvider, SelectionProviderDummy} from './providers/SelectionProvider';
 import {ActionEvent, RowActionProvider, RowActionProviderDummy} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewFactory} from "./model/TableViewFactory";
@@ -92,7 +92,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private resizeColumnOffsetsObserver: ResizeObserver;
 
   // @ts-ignore
-  selectionProvider: SelectionProvider<T>;
+  selectionProvider: SelectionProvider<T> | SelectionProviderDummy<T> = new SelectionProviderDummy();
   // @ts-ignore
   rowActionsProvider: RowActionProvider = new RowActionProviderDummy<T>();
 
@@ -169,10 +169,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .addActionColumn(this.displayedColumns)
       .setView(this.tableDataSource.data);
 
-    if (this.tableConfig.selectionCfg && this.tableConfig.selectionCfg.enable) {
-      this.selectionProvider = new SelectionProvider<T>(this.tableConfig.selectionCfg, this.displayedColumns, this.tableDataSource);
-      this.selectionProvider.bind(this.selected, this.onSelect, this.onDeselect);
-    }
+    this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource)
+      .addCheckboxColumn(this.displayedColumns)
+      .bindEventEmitters(this.selected, this.onSelect, this.onDeselect);
+
     if (this.tableConfig.pageableCfg && this.tableConfig.pageableCfg.enable) {
       this.paginationProvider = new PaginationProvider(this.tableConfig.pageableCfg);
     }

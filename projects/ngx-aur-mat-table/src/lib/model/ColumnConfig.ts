@@ -1,5 +1,4 @@
 import {TableRow} from "./TableRow";
-
 export interface TableConfig<T> {
 
   /**
