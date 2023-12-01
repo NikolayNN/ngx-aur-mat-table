@@ -117,9 +117,8 @@
         подготовленные значения для использования-->
         <td mat-cell *matCellDef="let element;">
           <lib-column-view
-            [config]="getView(element, columnConfig.key)"
-            [value]="element | dataPropertyGetter: columnConfig.key"
-          >
+            [config]="tableView[element.id]?.get(columnConfig.key)"
+            [value]="element | dataPropertyGetter: columnConfig.key">
           </lib-column-view>
         </td>
       </ng-container>

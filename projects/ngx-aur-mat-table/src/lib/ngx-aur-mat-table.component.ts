@@ -48,7 +48,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   public displayedColumns: string[] = [];
 
-  private tableView: Map<string, ColumnView<string>>[] = [];
+  tableView: Map<string, ColumnView<string>>[] = [];
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
@@ -209,10 +209,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   castSrc(row: any): TableRow<T> {
     return row;
-  }
-
-  getView(row: TableRow<T>, columnKey: string): ColumnView<string> | undefined {
-    return this.tableView[row.id] ? this.tableView[row.id].get(columnKey) : undefined;
   }
 
   rowClick(row: TableRow<T>) {
