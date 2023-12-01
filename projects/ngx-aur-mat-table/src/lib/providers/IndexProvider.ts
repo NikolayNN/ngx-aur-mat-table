@@ -5,7 +5,7 @@ import {ColumnView, IndexConfig, TableConfig} from "../model/ColumnConfig";
  * The class can handle index configurations and modify the column array to include an index column.
  */
 export class IndexProvider {
-  public isEnabled = true;
+  public readonly isEnabled: boolean = true;
   public readonly COLUMN_NAME = 'tbl_index';
   public headerView: ColumnView<string> | undefined;
   public name: string;
@@ -51,7 +51,7 @@ export class IndexProvider {
  * This class overrides certain methods to provide no-operation implementations.
  */
 export class IndexProviderDummy extends IndexProvider {
-  public override isEnabled = false;
+  public override readonly isEnabled = false;
 
   /**
    * Overrides the addIndexColumn method to return itself without modifying the columns array.

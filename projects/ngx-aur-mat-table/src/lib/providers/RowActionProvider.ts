@@ -9,7 +9,7 @@ export interface ActionEvent<T> {
 
 export class RowActionProvider<T> {
   readonly COLUMN_NAME = 'tbl_actions';
-  public isEnabled = true;
+  public readonly isEnabled: boolean = true;
 
   private readonly config: ActionConfig<T> | undefined;
 
@@ -59,7 +59,7 @@ export class RowActionProvider<T> {
 }
 
 export class RowActionProviderDummy<T> extends RowActionProvider<T> {
-  public override isEnabled = false;
+  public override readonly isEnabled = false;
 
   constructor() {
     super(undefined);
