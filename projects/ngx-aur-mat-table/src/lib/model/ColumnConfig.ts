@@ -121,7 +121,7 @@ export interface SortConfig {
 }
 
 export interface IndexConfig {
-  enable: true,
+  enable: boolean,
 
   /** смещение для первого индекса например 1 чтобы нумерация началась с 1 по умолчанию от нуля */
   offset?: number,

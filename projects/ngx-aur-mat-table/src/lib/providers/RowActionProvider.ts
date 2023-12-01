@@ -1,6 +1,7 @@
 import {Action, ActionConfig, TableConfig} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
 import {ActionViewFactory} from "../factories/ActionViewFactory";
+import {EmptyValue} from "../model/EmptyValue";
 
 export interface ActionEvent<T> {
   action: string;
@@ -11,13 +12,16 @@ export class RowActionProvider<T> {
   readonly COLUMN_NAME = 'tbl_actions';
   public readonly isEnabled: boolean = true;
 
-  private readonly config: ActionConfig<T> | undefined;
+  private readonly config: ActionConfig<T>;
 
   // key is rowId
   public actionView: Map<number, Action<string>[]> = new Map();
 
-  constructor(tableConfig?: TableConfig<T>) {
-    this.config = tableConfig?.actionCfg
+  constructor(tableConfig: TableConfig<T>) {
+    if (!tableConfig.actionCfg) {
+      throw new Error("Actions is undefined")
+    }
+    this.config = tableConfig.actionCfg;
   }
 
   public addActionColumn(columns: string[]): RowActionProvider<T> {
@@ -62,7 +66,7 @@ export class RowActionProviderDummy<T> extends RowActionProvider<T> {
   public override readonly isEnabled = false;
 
   constructor() {
-    super(undefined);
+    super(EmptyValue.TABLE_CONFIG);
   }
 
   public override addActionColumn(columns: string[]): RowActionProviderDummy<T> {
