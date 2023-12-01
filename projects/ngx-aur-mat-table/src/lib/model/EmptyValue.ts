@@ -33,5 +33,6 @@ export class EmptyValue {
 
   public static readonly MAT_TABLE_DATA_SOURCE: MatTableDataSource<TableRow<any>> = new MatTableDataSource();
 
-  public static readonly DISPLAY_COLUMNS: string[] = [];
+  public static readonly RESIZE_OBSERVER = new ResizeObserver(() => {
+  })
 }

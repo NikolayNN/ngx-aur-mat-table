@@ -26,6 +26,7 @@ import {IndexProvider, IndexProviderDummy} from "./providers/IndexProvider";
 import {PaginationProvider, PaginationProviderDummy} from "./providers/PaginationProvider";
 import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
+import {EmptyValue} from "./model/EmptyValue";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -89,9 +90,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
 
   // @ts-ignore
-  private resizeColumnOffsetsObserver: ResizeObserver;
+  private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
 
-  selectionProvider: SelectionProvider<T> | SelectionProviderDummy<T> = new SelectionProviderDummy();
+  selectionProvider: SelectionProvider<T> = new SelectionProviderDummy();
 
   rowActionsProvider: RowActionProvider<T> = new RowActionProviderDummy<T>();
 
