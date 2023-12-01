@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -13,16 +14,15 @@ import {
   ViewChild,
   ViewChildren
 } from '@angular/core';
-import {ColumnView, ColumnConfig, TableConfig, ActionConfig, Action} from './model/ColumnConfig';
+import {Action, ColumnView, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator} from '@angular/material/paginator';
 import {SelectionProvider} from './providers/SelectionProvider';
-import {ActionEvent, RowActionProvider} from './providers/RowActionProvider';
+import {ActionEvent, RowActionProvider, RowActionProviderDummy} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewFactory} from "./model/TableViewFactory";
 import {IndexProvider, IndexProviderDummy} from "./providers/IndexProvider";
-import {TableRowsFactory} from "./factories/TableRowsFactory";
 import {PaginationProvider} from "./providers/PaginationProvider";
 import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
@@ -40,6 +40,7 @@ export interface ColumnOffset {
   selector: 'aur-mat-table',
   templateUrl: './ngx-aur-mat-table.component.html',
   styleUrls: ['./ngx-aur-mat-table.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy {
 
@@ -47,9 +48,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   public displayedColumns: string[] = [];
 
   private tableView: Map<string, ColumnView<string>>[] = [];
-
-  // number rowId
-  private actionView: Map<number, Action<string>[]> = new Map();
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
@@ -96,10 +94,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   selectionProvider: SelectionProvider<T>;
   // @ts-ignore
-  rowActionsProvider: RowActionProvider;
+  rowActionsProvider: RowActionProvider = new RowActionProviderDummy<T>();
 
   // @ts-ignore
-  indexProvider = new IndexProviderDummy();
+  indexProvider: IndexProvider = new IndexProviderDummy();
 
   // @ts-ignore
   paginationProvider: PaginationProvider;
@@ -164,12 +162,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData() {
     this.initTable();
 
-    this.indexProvider = IndexProvider.create(this.tableConfig).addIndexColumn(this.displayedColumns);
+    this.indexProvider = IndexProvider.create(this.tableConfig)
+      .addIndexColumn(this.displayedColumns);
 
-    if (this.tableConfig.actionCfg && (this.tableConfig.actionCfg.enable === undefined || this.tableConfig.actionCfg.enable === null || this.tableConfig.actionCfg.enable)) {
-      this.rowActionsProvider = new RowActionProvider(this.tableConfig.actionCfg, this.displayedColumns);
-      this.actionView = this.rowActionsProvider.toView(this.tableDataSource.data, this.tableConfig.actionCfg)
-    }
+    this.rowActionsProvider = RowActionProvider.create(this.tableConfig)
+      .addActionColumn(this.displayedColumns)
+      .setView(this.tableDataSource.data);
+
     if (this.tableConfig.selectionCfg && this.tableConfig.selectionCfg.enable) {
       this.selectionProvider = new SelectionProvider<T>(this.tableConfig.selectionCfg, this.displayedColumns, this.tableDataSource);
       this.selectionProvider.bind(this.selected, this.onSelect, this.onDeselect);
@@ -218,10 +217,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   getView(row: TableRow<T>, columnKey: string): ColumnView<string> | undefined {
     return this.tableView[row.id] ? this.tableView[row.id].get(columnKey) : undefined;
-  }
-
-  getActionsView(row: TableRow<T>): Action<string>[] | undefined {
-    return this.actionView.get(row.id) ? this.actionView.get(row.id) : undefined;
   }
 
   rowClick(row: TableRow<T>) {

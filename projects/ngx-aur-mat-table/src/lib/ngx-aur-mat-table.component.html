@@ -73,13 +73,13 @@
       </ng-container>
 
       <!-- action column -->
-      <ng-container *ngIf="rowActionsProvider" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
+      <ng-container *ngIf="rowActionsProvider.isEnabled" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
         <th mat-header-cell *matHeaderCellDef></th>
         <td mat-cell *matCellDef="let element">
           <button mat-icon-button
-                  (click)="emitRowAction(action.action, castSrc(element).rowSrc, $event)"
+                  (click)="emitRowAction(action.action, element.rowSrc, $event)"
                   [matTooltip]="action.icon.tooltip || ''"
-                  *ngFor="let action of getActionsView(castSrc(element))">
+                  *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
             <mat-icon [style.color]="action.icon.color">
               {{action.icon.name}}
             </mat-icon>

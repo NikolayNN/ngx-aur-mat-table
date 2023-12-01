@@ -1,21 +1,35 @@
-import {Action, ActionConfig, IconView} from "../model/ColumnConfig";
+import {Action, ActionConfig, TableConfig} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
+import {ActionViewFactory} from "../factories/ActionViewFactory";
 
 export interface ActionEvent<T> {
   action: string;
   value: T;
 }
 
-export class RowActionProvider {
-
+export class RowActionProvider<T> {
   readonly COLUMN_NAME = 'tbl_actions';
+  public isEnabled = true;
 
-  constructor(ctx: ActionConfig<any>, columns: string[]) {
-    if (ctx.position === 'start') {
+  private readonly config: ActionConfig<T> | undefined;
+
+  // key is rowId
+  public actionView: Map<number, Action<string>[]> = new Map();
+
+  constructor(tableConfig?: TableConfig<T>) {
+    this.config = tableConfig?.actionCfg
+  }
+
+  public addActionColumn(columns: string[]): RowActionProvider<T> {
+    if (!this.config) {
+      return this;
+    }
+    if (this.config.position === 'start') {
       columns.unshift(this.COLUMN_NAME);
     } else {
       columns.push(this.COLUMN_NAME);
     }
+    return this;
   }
 
   /**
@@ -24,34 +38,38 @@ export class RowActionProvider {
    * @param actionConfig - Configuration for actions on rows.
    * @return Map of row IDs to their associated action views.
    */
-  public toView<T>(rows: TableRow<T>[], actionConfig: ActionConfig<T>): Map<number, Action<string>[]> {
-    const result = new Map<number, Action<string>[]>();
-    for (const row of rows) {
-      result.set(row.id, this.prepareActionsForRow(row, actionConfig));
+  public setView(rows: TableRow<T>[]): RowActionProvider<T> {
+    if (!this.config) {
+      throw new Error("ActionConfig is undefined");
     }
-    return result;
+    this.actionView = ActionViewFactory.create(rows, this.config);
+    return this;
   }
 
-  /**
-   * Prepare the actions for a specific row based on the action configuration.
-   * @param row - The data row for which actions need to be prepared.
-   * @param actionConfig - Configuration for actions on rows.
-   * @return Array of actions for the row.
-   */
-  private prepareActionsForRow<T>(row: TableRow<T>, actionConfig: ActionConfig<T>): Action<string>[] {
-    return actionConfig.actions.map(action => ({
-      action: action.action(row.rowSrc),
-      icon: this.prepareIconConfig(action.icon, row.rowSrc)
-    }));
+  private static canEnabled<T>(tableConfig: TableConfig<T>): boolean {
+    return (tableConfig.actionCfg && (tableConfig.actionCfg.enable === undefined || tableConfig.actionCfg.enable === null || tableConfig.actionCfg.enable)) || false
   }
 
-  private prepareIconConfig<T>(iconSource: IconView<(value: T) => string>, value: T): IconView<string> {
-    return {
-      name: iconSource.name(value),
-      color: iconSource.color ? iconSource.color(value) : undefined,
-      tooltip: iconSource.tooltip ? iconSource.tooltip(value) : undefined,
-      position: iconSource.position,
-      wrapper: iconSource.wrapper? {color: iconSource.wrapper.color(value)}: undefined
+  public static create<T>(tableConfig: TableConfig<T>): RowActionProvider<T> {
+    if (RowActionProvider.canEnabled(tableConfig)) {
+      return new RowActionProvider<T>(tableConfig);
     }
+    return new RowActionProviderDummy<T>();
+  }
+}
+
+export class RowActionProviderDummy<T> extends RowActionProvider<T> {
+  public override isEnabled = false;
+
+  constructor() {
+    super(undefined);
+  }
+
+  public override addActionColumn(columns: string[]): RowActionProviderDummy<T> {
+    return this;
+  }
+
+  public override setView(rows: TableRow<T>[]): RowActionProvider<T> {
+    return this;
   }
 }
