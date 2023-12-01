@@ -13,16 +13,12 @@
     </ng-container>
 
     <!-- Table -->
-    <table
-      #table
-      mat-table
-      matSort
+    <table #table mat-table matSort
       [dataSource]="tableDataSource"
       (matSortChange)="sortTable($event)"
       [style.height]="tableConfig.tableView?.height"
       [style.max-height]="tableConfig.tableView?.maxHeight"
-      [style.min-height]="tableConfig.tableView?.minHeight"
-    >
+      [style.min-height]="tableConfig.tableView?.minHeight">
 
       <!--        index-column-->
       <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">
