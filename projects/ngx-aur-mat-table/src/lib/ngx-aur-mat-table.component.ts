@@ -27,6 +27,7 @@ import {PaginationProvider, PaginationProviderDummy} from "./providers/Paginatio
 import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
 import {EmptyValue} from "./model/EmptyValue";
+import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvider";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -100,6 +101,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   paginationProvider: PaginationProvider = new PaginationProviderDummy();
 
+  totalRowProvider: TotalRowProvider<T> = new TotalRowProviderDummy();
+
   highlighted: T | undefined;
 
   //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
@@ -159,6 +162,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private prepareTableData() {
     this.initTable();
+
+    this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
+      .setStyle()
+      .setTotalRow();
 
     this.indexProvider = IndexProvider.create(this.tableConfig)
       .addIndexColumn(this.displayedColumns);

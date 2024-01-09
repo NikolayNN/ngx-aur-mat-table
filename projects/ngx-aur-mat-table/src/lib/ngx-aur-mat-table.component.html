@@ -14,11 +14,11 @@
 
     <!-- Table -->
     <table #table mat-table matSort
-      [dataSource]="tableDataSource"
-      (matSortChange)="sortTable($event)"
-      [style.height]="tableConfig.tableView?.height"
-      [style.max-height]="tableConfig.tableView?.maxHeight"
-      [style.min-height]="tableConfig.tableView?.minHeight">
+           [dataSource]="tableDataSource"
+           (matSortChange)="sortTable($event)"
+           [style.height]="tableConfig.tableView?.height"
+           [style.max-height]="tableConfig.tableView?.maxHeight"
+           [style.min-height]="tableConfig.tableView?.minHeight">
 
       <!--        index-column-->
       <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">
@@ -116,6 +116,11 @@
             [value]="element | dataPropertyGetter: columnConfig.key">
           </lib-column-view>
         </td>
+        <div *ngIf="totalRowProvider.isEnabled">
+          <td mat-footer-cell  *matFooterCellDef [style]="totalRowProvider.style">
+            {{totalRowProvider.totals.get(columnConfig.key)}}
+          </td>
+        </div>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns;  sticky: this.tableConfig.stickyCfg?.header"></tr>
@@ -129,6 +134,9 @@
           'border': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.border : undefined
           }">
       </tr>
+      <div *ngIf="totalRowProvider.isEnabled">
+        <tr mat-footer-row *matFooterRowDef="displayedColumns" [style]="totalRowProvider.style"></tr>
+      </div>
     </table>
 
     <!-- Pagination -->

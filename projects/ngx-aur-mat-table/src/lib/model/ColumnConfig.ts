@@ -1,4 +1,5 @@
 import {TableRow} from "./TableRow";
+
 export interface TableConfig<T> {
 
   /**
@@ -37,8 +38,8 @@ export interface TableConfig<T> {
 
 export interface ClickConfig {
   /**
-  * Show pointer on hovered row
-  */
+   * Show pointer on hovered row
+   */
   pointer?: boolean;
   highlightClicked?: DecorStyles;
 
@@ -70,6 +71,11 @@ export interface ColumnConfig<T> {
   sort?: SortConfig;
   headerView?: ColumnView<string>;
   valueView?: ColumnView<(value: TableRow<T>) => string>;
+  totalConverter?: (value: TableRow<T>[]) => any;
+}
+
+export interface TotalRowView {
+  style?: string;
 }
 
 export interface IconView<T> {
@@ -171,4 +177,5 @@ export interface TableView {
   height?: string;
   minHeight?: string;
   maxHeight?: string;
+  totalRowView?: TotalRowView;
 }

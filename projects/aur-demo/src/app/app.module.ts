@@ -23,6 +23,7 @@ import {NgxAurMatTableModule} from "../../../ngx-aur-mat-table/src/lib/ngx-aur-m
 import {MatChipsModule} from "@angular/material/chips";
 import { TableCustomHeaderComponent } from './table-custom-header/table-custom-header.component';
 import { TableWithPaginationAndCheckboxesComponent } from './table-with-pagination-and-checkboxes/table-with-pagination-and-checkboxes.component';
+import { TableWithTotalComponent } from './table-with-total/table-with-total.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { TableWithPaginationAndCheckboxesComponent } from './table-with-paginati
     TableHighlightClickedRowComponent,
     TableWithWrappedIconComponent,
     TableCustomHeaderComponent,
-    TableWithPaginationAndCheckboxesComponent
+    TableWithPaginationAndCheckboxesComponent,
+    TableWithTotalComponent
   ],
   imports: [
     BrowserModule,
