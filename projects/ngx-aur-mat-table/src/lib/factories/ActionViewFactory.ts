@@ -1,4 +1,5 @@
-import {Action, ActionConfig, IconView, TableRow} from "ngx-aur-mat-table";
+import {Action, ActionConfig, IconView} from "../model/ColumnConfig";
+import {TableRow} from "../model/TableRow";
 
 export class ActionViewFactory {
   /**

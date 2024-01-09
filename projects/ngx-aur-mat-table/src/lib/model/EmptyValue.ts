@@ -1,4 +1,5 @@
-import {ActionConfig, IndexConfig, PaginationConfig, SelectionConfig, TableConfig, TableRow} from "ngx-aur-mat-table";
+import {ActionConfig, IndexConfig, PaginationConfig, SelectionConfig, TableConfig} from "../model/ColumnConfig";
+import {TableRow} from "../model/TableRow";
 import {MatTableDataSource} from "@angular/material/table";
 
 export class EmptyValue {

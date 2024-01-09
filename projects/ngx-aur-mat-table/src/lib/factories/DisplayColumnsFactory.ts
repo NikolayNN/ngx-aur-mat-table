@@ -1,4 +1,4 @@
-import {ColumnConfig, TableConfig} from "ngx-aur-mat-table";
+import {ColumnConfig, TableConfig} from "../model/ColumnConfig";
 
 export class DisplayColumnsFactory {
   public static create<T>(tableConfig: TableConfig<T>): string[] {

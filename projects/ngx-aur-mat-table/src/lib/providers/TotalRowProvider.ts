@@ -1,4 +1,5 @@
-import {TableConfig, TableRow} from "ngx-aur-mat-table";
+import {TableConfig} from "../model/ColumnConfig";
+import {TableRow} from "../model/TableRow";
 import {MatTableDataSource} from "@angular/material/table";
 import {EmptyValue} from "../model/EmptyValue";
 
