@@ -5,6 +5,10 @@ export class RowStyleBuilder {
   private _color: string = '';
   private _border: string = '';
 
+  static builder(): RowStyleBuilder {
+    return new RowStyleBuilder();
+  }
+
   background(color: string): RowStyleBuilder {
     this._background = color;
     return this;
