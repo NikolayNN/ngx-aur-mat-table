@@ -32,6 +32,10 @@
         <td mat-cell *matCellDef="let element; let rowIndex = index">
           {{rowIndex + indexProvider.offset}}
         </td>
+
+        <td mat-footer-cell *matFooterCellDef>
+          {{totalRowProvider.totals.get(indexProvider.COLUMN_NAME) || ''}}
+        </td>
       </ng-container>
 
       <!--        selection-column-->
@@ -66,6 +70,9 @@
                         [checked]="selectionProvider.selection.isSelected(castSrc(row).rowSrc)">
           </mat-checkbox>
         </td>
+
+        <ng-container *ngTemplateOutlet="footerCellTemplate; context: {$implicit: selectionProvider.COLUMN_NAME}">
+        </ng-container>
       </ng-container>
 
       <!-- action column -->
@@ -81,6 +88,9 @@
             </mat-icon>
           </button>
         </td>
+
+        <ng-container *ngTemplateOutlet="footerCellTemplate; context: {$implicit: rowActionsProvider.COLUMN_NAME}">
+        </ng-container>
       </ng-container>
 
       <!--    value-icon-->
@@ -116,11 +126,11 @@
             [value]="element | dataPropertyGetter: columnConfig.key">
           </lib-column-view>
         </td>
-        <div *ngIf="totalRowProvider.isEnabled">
-          <td mat-footer-cell  *matFooterCellDef [style]="totalRowProvider.style">
-            {{totalRowProvider.totals.get(columnConfig.key)}}
-          </td>
-        </div>
+
+        <td mat-footer-cell *matFooterCellDef>
+          {{ totalRowProvider.totals.get(columnConfig.key) || '' }}
+        </td>
+
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns;  sticky: this.tableConfig.stickyCfg?.header"></tr>
@@ -134,9 +144,9 @@
           'border': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.border : undefined
           }">
       </tr>
-      <div *ngIf="totalRowProvider.isEnabled">
+      <ng-container *ngIf="totalRowProvider.isEnabled">
         <tr mat-footer-row *matFooterRowDef="displayedColumns" [style]="totalRowProvider.style"></tr>
-      </div>
+      </ng-container>
     </table>
 
     <!-- Pagination -->
@@ -147,3 +157,9 @@
     </mat-paginator>
   </ng-container>
 </div>
+
+<ng-template #footerCellTemplate let-columnName>
+  <td mat-footer-cell *matFooterCellDef>
+    {{ totalRowProvider.totals.get(columnName) || '' }}
+  </td>
+</ng-template>

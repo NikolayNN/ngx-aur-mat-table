@@ -163,10 +163,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData() {
     this.initTable();
 
-    this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
-      .setStyle()
-      .setTotalRow();
-
     this.indexProvider = IndexProvider.create(this.tableConfig)
       .addIndexColumn(this.displayedColumns);
 
@@ -179,6 +175,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .bindEventEmitters(this.selected, this.onSelect, this.onDeselect);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
+
+    this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
+      .setStyle()
+      .setTotalRow();
   }
 
   private initTable() {
