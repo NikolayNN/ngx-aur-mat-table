@@ -122,7 +122,7 @@ export interface ColumnView<T> {
 }
 
 export interface SortConfig<T> {
-  enable: true;
+  enable: boolean;
   position?: 'right' | 'left';
 
   /**
