@@ -97,7 +97,7 @@
       <ng-container *ngFor="let columnConfig of tableConfig.columnsCfg" [matColumnDef]="columnConfig.key">
 
         <!-- if sortable column header -->
-        <ng-container *ngIf="columnConfig.sort; else notSortable">
+        <ng-container *ngIf="columnConfig.sort && columnConfig.sort.enable; else notSortable">
           <th mat-header-cell *matHeaderCellDef [mat-sort-header]="columnConfig.key"
               [arrowPosition]="columnConfig.sort.position === 'right' ? 'before' : 'after'">
             <ng-container *ngTemplateOutlet="headerValue"></ng-container>

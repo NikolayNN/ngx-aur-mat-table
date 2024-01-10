@@ -40,7 +40,7 @@ export class TableWithSortComponent {
           }
         },
         sort: {
-          enable: true
+          enable: false
         }
       }
     ]
