@@ -148,19 +148,27 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   // we need this, in order to make pagination work with *ngIf
   ngAfterViewInit(): void {
-    this.tableDataSource.paginator = this.matPaginator;
+    this.initPaginator()
     this.initSortingDataAccessor();
     this.updateColumnOffsets();
     this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
     this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
   }
 
-  private initSortingDataAccessor() {
-    this.tableDataSource.sort = this.matSort;
-    this.tableDataSource.sortingDataAccessor = (data, key) => {
-      const customSortFunction = this.customSortFunctions.get(key);
-      return customSortFunction ? customSortFunction(data, key) : data[key];
-    };
+  private initPaginator(): void {
+    if (this.tableDataSource) {
+      this.tableDataSource.paginator = this.matPaginator;
+    }
+  }
+
+  private initSortingDataAccessor(): void {
+    if (this.tableDataSource) {
+      this.tableDataSource.sort = this.matSort;
+      this.tableDataSource.sortingDataAccessor = (data, key) => {
+        const customSortFunction = this.customSortFunctions.get(key);
+        return customSortFunction ? customSortFunction(data, key) : data[key];
+      };
+    }
   }
 
   private updateColumnOffsets() {
@@ -173,6 +181,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData() {
     this.initTable();
     this.initCustomSortFunctionsMap();
+    this.initPaginator();
+    this.initSortingDataAccessor();
     this.indexProvider = IndexProvider.create(this.tableConfig)
       .addIndexColumn(this.displayedColumns);
 

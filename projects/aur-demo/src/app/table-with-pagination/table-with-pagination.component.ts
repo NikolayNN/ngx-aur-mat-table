@@ -29,4 +29,8 @@ export class TableWithPaginationComponent {
     }
   }
   tableData: Customer[] = CustomerGenerator.generate(100);
+
+  updateTableData() {
+    this.tableData = CustomerGenerator.generate(100);
+  }
 }

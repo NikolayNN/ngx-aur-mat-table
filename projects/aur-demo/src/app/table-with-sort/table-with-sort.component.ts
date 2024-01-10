@@ -50,4 +50,8 @@ export class TableWithSortComponent {
   onSort($event: Sort) {
     console.log($event)
   }
+
+  updateTableData() {
+    this.tableData = CustomerGenerator.generate(10);
+  }
 }
