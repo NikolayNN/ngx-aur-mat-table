@@ -68,7 +68,7 @@ export interface ColumnConfig<T> {
 
   /** return value to save in MatTableDataSource */
   valueConverter: (value: T) => any;
-  sort?: SortConfig;
+  sort?: SortConfig<T>;
   headerView?: ColumnView<string>;
   valueView?: ColumnView<(value: TableRow<T>) => string>;
   totalConverter?: (value: TableRow<T>[]) => any;
@@ -121,9 +121,14 @@ export interface ColumnView<T> {
   text?: TextView<T>;
 }
 
-export interface SortConfig {
-  position?: 'right' | 'left';
+export interface SortConfig<T> {
   enable: true;
+  position?: 'right' | 'left';
+
+  /**
+   * column key
+   */
+  customSort?: (data: TableRow<T>, key: string) => any;
 }
 
 export interface IndexConfig {

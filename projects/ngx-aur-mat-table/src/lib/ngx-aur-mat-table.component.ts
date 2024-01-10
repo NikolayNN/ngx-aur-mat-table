@@ -105,6 +105,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   highlighted: T | undefined;
 
+  customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();
+
   //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
   // @ts-ignore
   @Input() highlight: HighlightContainer<T> | undefined;
@@ -147,10 +149,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // we need this, in order to make pagination work with *ngIf
   ngAfterViewInit(): void {
     this.tableDataSource.paginator = this.matPaginator;
-    this.tableDataSource.sort = this.matSort;
+    this.initSortingDataAccessor();
     this.updateColumnOffsets();
     this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
     this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
+  }
+
+  private initSortingDataAccessor() {
+    this.tableDataSource.sort = this.matSort;
+    this.tableDataSource.sortingDataAccessor = (data, key) => {
+      const customSortFunction = this.customSortFunctions.get(key);
+      return customSortFunction ? customSortFunction(data, key) : data[key];
+    };
   }
 
   private updateColumnOffsets() {
@@ -162,7 +172,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private prepareTableData() {
     this.initTable();
-
+    this.initCustomSortFunctionsMap();
     this.indexProvider = IndexProvider.create(this.tableConfig)
       .addIndexColumn(this.displayedColumns);
 
@@ -179,6 +189,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
       .setStyle()
       .setTotalRow();
+  }
+
+  private initCustomSortFunctionsMap() {
+    this.tableConfig.columnsCfg
+      .filter(c => c.sort && c.sort.enable && c.sort.customSort)
+      .forEach(c => this.customSortFunctions.set(c.key, c.sort!.customSort!))
   }
 
   private initTable() {
