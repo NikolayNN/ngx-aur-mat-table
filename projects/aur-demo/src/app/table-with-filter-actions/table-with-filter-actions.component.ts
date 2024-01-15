@@ -2,7 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {TableConfig, TableRow} from "ngx-aur-mat-table";
 import {PersonGenerator} from "../shared/generator/PersonGenerator";
 import {Person} from "../shared/model/person";
-import {Filters} from "../../../../ngx-aur-mat-table/src/lib/filters/NgxAurFilters";
+import {NgxAurFilters} from "../../../../ngx-aur-mat-table/src/lib/filters/NgxAurFilters";
 import {MinMax} from "./filter-min-max/filter-min-max.component";
 import {NgxAurMatTableFilterable} from "../../../../ngx-aur-mat-table/src/lib/ngx-aur-mat-table-filterable";
 
@@ -86,13 +86,13 @@ export class TableWithFilterActionsComponent {
   }
 }
 
-class FilterActionsFullNameContainsString extends Filters.ContainsStringIgnoreCase<Person> {
+class FilterActionsFullNameContainsString extends NgxAurFilters.ContainsStringIgnoreCase<Person> {
   extractProperty(data: TableRow<Person>): string {
     return data.rowSrc.getFullName();
   }
 }
 
-class FilterActionsAgeBetween extends Filters.NumberRangeInclMinExclMax<Person> {
+class FilterActionsAgeBetween extends NgxAurFilters.NumberRangeInclMinExclMax<Person> {
   extractProperty(data: TableRow<Person>): number {
     return data.rowSrc.age;
   }

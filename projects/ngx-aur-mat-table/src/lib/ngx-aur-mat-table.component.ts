@@ -28,7 +28,7 @@ import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
 import {EmptyValue} from "./model/EmptyValue";
 import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvider";
-import {Filters} from "./filters/NgxAurFilters";
+import {NgxAurFilters} from "./filters/NgxAurFilters";
 import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
 
 export interface HighlightContainer<T> {
@@ -109,7 +109,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();
 
-  private filterStorage = new Map<string, Filters.Base<T>>();
+  private filterStorage = new Map<string, NgxAurFilters.Base<T>>();
 
   //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
   // @ts-ignore
@@ -227,7 +227,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.filterStorage.delete(filterName);
   }
 
-  public applyFilter(filterName: string, filter: Filters.Base<T>): void {
+  public applyFilter(filterName: string, filter: NgxAurFilters.Base<T>): void {
     this.filterStorage.set(filterName, filter);
     this.applyFilterInternal();
   }

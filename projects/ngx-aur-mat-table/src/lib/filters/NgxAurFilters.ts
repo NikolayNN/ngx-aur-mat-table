@@ -1,6 +1,6 @@
 import {TableRow} from "../model/TableRow";
 
-export namespace Filters {
+export namespace NgxAurFilters {
 
   /**
    * Base abstract class for filter.
