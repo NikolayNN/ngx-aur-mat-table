@@ -1,4 +1,4 @@
-import {TableRow} from "ngx-aur-mat-table";
+import {TableRow} from "../model/TableRow";
 
 export namespace Filters {
 
