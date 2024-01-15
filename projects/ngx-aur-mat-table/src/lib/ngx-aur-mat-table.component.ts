@@ -28,7 +28,7 @@ import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
 import {EmptyValue} from "./model/EmptyValue";
 import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvider";
-import {Filters} from "./filter-action/Filters";
+import {Filters} from "./filter-action/NgxAurFilters";
 import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
 
 export interface HighlightContainer<T> {

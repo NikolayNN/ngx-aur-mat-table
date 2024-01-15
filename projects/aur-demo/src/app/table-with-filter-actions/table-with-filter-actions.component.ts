@@ -2,7 +2,7 @@ import {Component, ViewChild} from '@angular/core';
 import {TableConfig, TableRow} from "ngx-aur-mat-table";
 import {PersonGenerator} from "../shared/generator/PersonGenerator";
 import {Person} from "../shared/model/person";
-import {Filters} from "../../../../ngx-aur-mat-table/src/lib/filter-action/Filters";
+import {Filters} from "../../../../ngx-aur-mat-table/src/lib/filter-action/NgxAurFilters";
 import {MinMax} from "./filter-min-max/filter-min-max.component";
 import {NgxAurMatTableFilterable} from "../../../../ngx-aur-mat-table/src/lib/ngx-aur-mat-table-filterable";
 
