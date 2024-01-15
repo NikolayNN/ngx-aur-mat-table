@@ -5,7 +5,7 @@
     <ng-container *ngIf="tableConfig.filterCfg">
       <mat-form-field>
         <mat-label>{{tableConfig.filterCfg?.label}}</mat-label>
-        <input matInput (keyup)="applyFilter($event)"
+        <input matInput (keyup)="applySearchFilter($event)"
                placeholder="{{tableConfig.filterCfg?.placeholder}}"
                style="font-size: 18px;">
         <mat-icon matPrefix>search</mat-icon>

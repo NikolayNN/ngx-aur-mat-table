@@ -1,0 +1,10 @@
+<span>фильтр по полному имени</span>
+<app-filter-string (filter)="filterByFullName($event)"></app-filter-string>
+
+<span>фильтр по возрасту</span>
+<app-filter-min-max (filter)="filterByAge($event)"></app-filter-min-max>
+
+<aur-mat-table #table
+  [tableData]="tableData"
+  [tableConfig]="tableConfig"
+></aur-mat-table>

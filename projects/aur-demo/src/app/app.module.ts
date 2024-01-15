@@ -21,9 +21,16 @@ import {TableHighlightClickedRowComponent} from './table-highlight-clicked-row/t
 import {TableWithWrappedIconComponent} from './table-with-wrapped-icon/table-with-wrapped-icon.component';
 import {NgxAurMatTableModule} from "../../../ngx-aur-mat-table/src/lib/ngx-aur-mat-table.module";
 import {MatChipsModule} from "@angular/material/chips";
-import { TableCustomHeaderComponent } from './table-custom-header/table-custom-header.component';
-import { TableWithPaginationAndCheckboxesComponent } from './table-with-pagination-and-checkboxes/table-with-pagination-and-checkboxes.component';
-import { TableWithTotalComponent } from './table-with-total/table-with-total.component';
+import {TableCustomHeaderComponent} from './table-custom-header/table-custom-header.component';
+import {
+  TableWithPaginationAndCheckboxesComponent
+} from './table-with-pagination-and-checkboxes/table-with-pagination-and-checkboxes.component';
+import {TableWithTotalComponent} from './table-with-total/table-with-total.component';
+import {TableWithFilterActionsComponent} from './table-with-filter-actions/table-with-filter-actions.component';
+import { FilterStringComponent } from './table-with-filter-actions/filter-action-string-contains/filter-string.component';
+import {FormsModule} from "@angular/forms";
+import {MatInputModule} from "@angular/material/input";
+import { FilterMinMaxComponent } from './table-with-filter-actions/filter-min-max/filter-min-max.component';
 
 @NgModule({
   declarations: [
@@ -45,16 +52,22 @@ import { TableWithTotalComponent } from './table-with-total/table-with-total.com
     TableWithWrappedIconComponent,
     TableCustomHeaderComponent,
     TableWithPaginationAndCheckboxesComponent,
-    TableWithTotalComponent
+    TableWithTotalComponent,
+    TableWithFilterActionsComponent,
+    FilterStringComponent,
+    FilterMinMaxComponent,
   ],
   imports: [
     BrowserModule,
     NgxAurMatTableModule,
     BrowserAnimationsModule,
     MatTabsModule,
-    MatChipsModule
+    MatChipsModule,
+    FormsModule,
+    MatInputModule
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+}

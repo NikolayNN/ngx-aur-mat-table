@@ -28,6 +28,8 @@ import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
 import {EmptyValue} from "./model/EmptyValue";
 import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvider";
+import {Filters} from "./filter-action/Filters";
+import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -44,7 +46,7 @@ export interface ColumnOffset {
   styleUrls: ['./ngx-aur-mat-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy, NgxAurMatTablePublic<T> {
 
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   public displayedColumns: string[] = [];
@@ -105,7 +107,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   highlighted: T | undefined;
 
-  customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();
+  private customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();
+
+  private filterStorage = new Map<string, Filters.Base<T>>();
 
   //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
   // @ts-ignore
@@ -213,9 +217,37 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.displayedColumns = DisplayColumnsFactory.create(this.tableConfig);
   }
 
-  applyFilter(event: Event) {
+  applySearchFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.tableDataSource.filter = filterValue.trim().toLowerCase();
+    this.emitFilteredValues();
+  }
+
+  public removeFilter(filterName: string) {
+    this.filterStorage.delete(filterName);
+  }
+
+  public applyFilter(filterName: string, filter: Filters.Base<T>): void {
+    this.filterStorage.set(filterName, filter);
+    this.applyFilterInternal();
+  }
+
+  public clearFilters() {
+    this.filterStorage.clear();
+    this.applyFilterInternal();
+  }
+
+  private applyFilterInternal() {
+    const filterActions = [...this.filterStorage.values()];
+    this.tableDataSource.filterPredicate = (data) => {
+      return filterActions.every(filterAction => filterAction.filterFn()(data));
+    };
+    // Применение фильтрации. нужно передать уникальное значение чтобы фильтрация запустилась
+    this.tableDataSource.filter = 'trigger-' + Math.random();
+    this.emitFilteredValues();
+  }
+
+  private emitFilteredValues(): void {
     this.onFilter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc))
   }
 
