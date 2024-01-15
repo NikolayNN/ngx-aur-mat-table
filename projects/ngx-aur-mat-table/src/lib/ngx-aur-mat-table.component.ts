@@ -225,19 +225,20 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   public removeFilter(filterName: string) {
     this.filterStorage.delete(filterName);
+    this.applyFiltersInternal();
   }
 
   public applyFilter(filterName: string, filter: NgxAurFilters.Base<T>): void {
     this.filterStorage.set(filterName, filter);
-    this.applyFilterInternal();
+    this.applyFiltersInternal();
   }
 
   public clearFilters() {
     this.filterStorage.clear();
-    this.applyFilterInternal();
+    this.applyFiltersInternal();
   }
 
-  private applyFilterInternal() {
+  private applyFiltersInternal() {
     const filterActions = [...this.filterStorage.values()];
     this.tableDataSource.filterPredicate = (data) => {
       return filterActions.every(filterAction => filterAction.filterFn()(data));
