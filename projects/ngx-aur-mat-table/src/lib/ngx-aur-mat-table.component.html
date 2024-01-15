@@ -48,7 +48,7 @@
             </mat-checkbox>
             <div
               *ngIf="tableConfig.selectionCfg?.showSelectedCount && selectionProvider.selection.hasValue()">
-              ({{selectionProvider.selection.selected.length}}/{{tableDataSource.data.length}})
+              ({{selectionProvider.selection.selected.length}}/{{tableDataSource.filteredData.length}})
             </div>
 
             <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">
