@@ -75,6 +75,11 @@ export class TableWithFilterActionsComponent {
         valueConverter: v => v.occupation,
       }
     ],
+    selectionCfg: {
+      enable: true,
+      multiple: true,
+      showSelectedCount: true
+    }
   }
 
   filterByFullName($event: string) {

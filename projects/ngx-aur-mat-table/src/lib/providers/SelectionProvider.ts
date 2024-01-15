@@ -44,13 +44,14 @@ export class SelectionProvider<T> {
     if (this.isAllSelected()) {
       this.selection.clear();
     } else {
-      this.tableDataSource.data.forEach(row => this.selection.select(row.rowSrc));
+      this.tableDataSource.filteredData.forEach(row => this.selection.select(row.rowSrc));
     }
   }
 
   isAllSelected(): boolean {
+    const filteredData = this.tableDataSource.filteredData;
     const numSelected = this.selection.selected.length;
-    const numRows = this.tableDataSource.data.length;
+    const numRows = filteredData.length;
     return numSelected === numRows;
   }
 
@@ -60,7 +61,7 @@ export class SelectionProvider<T> {
 
   public static create<T>(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>): SelectionProvider<T> {
     if (SelectionProvider.canEnable(tableConfig)) {
-      return new SelectionProvider(tableConfig,  tableDataSource);
+      return new SelectionProvider(tableConfig, tableDataSource);
     }
     return new SelectionProviderDummy();
   }
@@ -70,7 +71,7 @@ export class SelectionProviderDummy<T> extends SelectionProvider<T> {
   public override readonly isEnabled = true;
 
   constructor() {
-    super(EmptyValue.TABLE_CONFIG,  EmptyValue.MAT_TABLE_DATA_SOURCE);
+    super(EmptyValue.TABLE_CONFIG, EmptyValue.MAT_TABLE_DATA_SOURCE);
   }
 
   public override addCheckboxColumn(columns: string[]): SelectionProvider<T> {
