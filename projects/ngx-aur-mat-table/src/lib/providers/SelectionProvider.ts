@@ -4,8 +4,9 @@ import {EventEmitter} from '@angular/core';
 import {TableRow} from "../model/TableRow";
 import {SelectionConfig, TableConfig} from "../model/ColumnConfig";
 import {EmptyValue} from "../model/EmptyValue";
+import {AbstractProvider} from "./AbstractProvider";
 
-export class SelectionProvider<T> {
+export class SelectionProvider<T> extends AbstractProvider {
   public readonly isEnabled = true;
   public static readonly COLUMN_NAME = 'tbl_selects';
   selection: SelectionModel<T>;
@@ -13,6 +14,7 @@ export class SelectionProvider<T> {
   tableDataSource: MatTableDataSource<TableRow<T>>;
 
   constructor(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>) {
+    super();
     this.config = tableConfig?.selectionCfg || EmptyValue.SELECTION_CONFIG;
     this.selection = new SelectionModel<T>(this.config.multiple, []);
     this.tableDataSource = tableDataSource;
@@ -22,12 +24,14 @@ export class SelectionProvider<T> {
     return SelectionProvider.COLUMN_NAME;
   }
 
-
   public addCheckboxColumn(columns: string[]): SelectionProvider<T> {
+    if (this.hasKey(this.COLUMN_NAME, columns)) {
+      return this;
+    }
     if (this.config.position === 'start') {
-      columns.unshift(SelectionProvider.COLUMN_NAME);
+      columns.unshift(this.COLUMN_NAME);
     } else {
-      columns.push(SelectionProvider.COLUMN_NAME);
+      columns.push(this.COLUMN_NAME);
     }
     return this;
   }

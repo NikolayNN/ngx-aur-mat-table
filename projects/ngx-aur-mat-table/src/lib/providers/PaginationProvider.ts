@@ -1,12 +1,14 @@
 import {PaginationConfig, TableConfig} from "../model/ColumnConfig";
 import {EmptyValue} from "../model/EmptyValue";
+import {AbstractProvider} from "./AbstractProvider";
 
-export class PaginationProvider {
+export class PaginationProvider extends AbstractProvider{
   public readonly isEnabled: boolean = true;
   public sizes: number[];
   public size;
 
   constructor(config: PaginationConfig) {
+    super();
     this.sizes = config.sizes || [5, 10, 15, 25, 50]
     this.size = config.size || this.sizes[1];
   }

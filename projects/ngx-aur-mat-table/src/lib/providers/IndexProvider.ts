@@ -1,10 +1,11 @@
 import {ColumnView, IndexConfig, TableConfig} from "../model/ColumnConfig";
+import {AbstractProvider} from "./AbstractProvider";
 
 /**
  * Provides functionality to manage the index column in a table.
  * The class can handle index configurations and modify the column array to include an index column.
  */
-export class IndexProvider {
+export class IndexProvider extends AbstractProvider {
   public readonly isEnabled: boolean = true;
   public static readonly COLUMN_NAME = 'tbl_index';
   public headerView: ColumnView<string> | undefined;
@@ -12,6 +13,7 @@ export class IndexProvider {
   public offset: number;
 
   constructor(private indexConfig?: IndexConfig) {
+    super();
     this.headerView = indexConfig?.headerColumn;
     this.name = indexConfig?.name || '';
     this.offset = indexConfig?.offset || 0;
@@ -27,7 +29,9 @@ export class IndexProvider {
    * @returns The instance of IndexProvider for method chaining.
    */
   public addIndexColumn(columns: string[]): IndexProvider {
-    columns.unshift(IndexProvider.COLUMN_NAME);
+    if (this.notHasKey(this.COLUMN_NAME, columns)) {
+      columns.unshift(this.COLUMN_NAME);
+    }
     return this;
   }
 

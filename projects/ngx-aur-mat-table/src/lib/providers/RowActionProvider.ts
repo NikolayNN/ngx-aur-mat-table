@@ -2,14 +2,15 @@ import {Action, ActionConfig, TableConfig} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
 import {ActionViewFactory} from "../factories/ActionViewFactory";
 import {EmptyValue} from "../model/EmptyValue";
+import {AbstractProvider} from "./AbstractProvider";
 
 export interface ActionEvent<T> {
   action: string;
   value: T;
 }
 
-export class RowActionProvider<T> {
-  public static readonly  COLUMN_NAME = 'tbl_actions';
+export class RowActionProvider<T> extends AbstractProvider {
+  public static readonly COLUMN_NAME = 'tbl_actions';
   public readonly isEnabled: boolean = true;
 
   private readonly config: ActionConfig<T>;
@@ -18,6 +19,7 @@ export class RowActionProvider<T> {
   public actionView: Map<number, Action<string>[]> = new Map();
 
   constructor(tableConfig: TableConfig<T>) {
+    super();
     if (!tableConfig.actionCfg) {
       throw new Error("Actions is undefined")
     }
@@ -29,13 +31,13 @@ export class RowActionProvider<T> {
   }
 
   public addActionColumn(columns: string[]): RowActionProvider<T> {
-    if (!this.config) {
+    if (!this.config || this.hasKey(this.COLUMN_NAME, columns)) {
       return this;
     }
     if (this.config.position === 'start') {
-      columns.unshift(RowActionProvider.COLUMN_NAME);
+      columns.unshift(this.COLUMN_NAME);
     } else {
-      columns.push(RowActionProvider.COLUMN_NAME);
+      columns.push(this.COLUMN_NAME);
     }
     return this;
   }
