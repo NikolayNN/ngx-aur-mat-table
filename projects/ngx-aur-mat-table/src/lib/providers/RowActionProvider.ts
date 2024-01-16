@@ -9,7 +9,7 @@ export interface ActionEvent<T> {
 }
 
 export class RowActionProvider<T> {
-  readonly COLUMN_NAME = 'tbl_actions';
+  public static readonly  COLUMN_NAME = 'tbl_actions';
   public readonly isEnabled: boolean = true;
 
   private readonly config: ActionConfig<T>;
@@ -24,14 +24,18 @@ export class RowActionProvider<T> {
     this.config = tableConfig.actionCfg;
   }
 
+  get COLUMN_NAME() {
+    return RowActionProvider.COLUMN_NAME;
+  }
+
   public addActionColumn(columns: string[]): RowActionProvider<T> {
     if (!this.config) {
       return this;
     }
     if (this.config.position === 'start') {
-      columns.unshift(this.COLUMN_NAME);
+      columns.unshift(RowActionProvider.COLUMN_NAME);
     } else {
-      columns.push(this.COLUMN_NAME);
+      columns.push(RowActionProvider.COLUMN_NAME);
     }
     return this;
   }

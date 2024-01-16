@@ -95,6 +95,6 @@ export class TableWithCustomColumnsComponent implements OnInit {
   }
 
   applyColumns() {
-    this.displayColumns = [...this.show];
+    this.displayColumns = this.show;
   }
 }

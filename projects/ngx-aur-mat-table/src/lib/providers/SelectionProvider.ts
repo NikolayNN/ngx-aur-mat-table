@@ -7,7 +7,7 @@ import {EmptyValue} from "../model/EmptyValue";
 
 export class SelectionProvider<T> {
   public readonly isEnabled = true;
-  public readonly COLUMN_NAME = 'tbl_selects';
+  public static readonly COLUMN_NAME = 'tbl_selects';
   selection: SelectionModel<T>;
   config: SelectionConfig;
   tableDataSource: MatTableDataSource<TableRow<T>>;
@@ -18,11 +18,16 @@ export class SelectionProvider<T> {
     this.tableDataSource = tableDataSource;
   }
 
+  get COLUMN_NAME() {
+    return SelectionProvider.COLUMN_NAME;
+  }
+
+
   public addCheckboxColumn(columns: string[]): SelectionProvider<T> {
     if (this.config.position === 'start') {
-      columns.unshift(this.COLUMN_NAME);
+      columns.unshift(SelectionProvider.COLUMN_NAME);
     } else {
-      columns.push(this.COLUMN_NAME);
+      columns.push(SelectionProvider.COLUMN_NAME);
     }
     return this;
   }

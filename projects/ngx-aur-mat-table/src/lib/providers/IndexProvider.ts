@@ -6,7 +6,7 @@ import {ColumnView, IndexConfig, TableConfig} from "../model/ColumnConfig";
  */
 export class IndexProvider {
   public readonly isEnabled: boolean = true;
-  public readonly COLUMN_NAME = 'tbl_index';
+  public static readonly COLUMN_NAME = 'tbl_index';
   public headerView: ColumnView<string> | undefined;
   public name: string;
   public offset: number;
@@ -17,13 +17,17 @@ export class IndexProvider {
     this.offset = indexConfig?.offset || 0;
   }
 
+  get COLUMN_NAME() {
+    return IndexProvider.COLUMN_NAME;
+  }
+
   /**
    * Adds the index column to the beginning of the columns array.
    * @param columns The array of column names to which the index column should be added.
    * @returns The instance of IndexProvider for method chaining.
    */
   public addIndexColumn(columns: string[]): IndexProvider {
-    columns.unshift(this.COLUMN_NAME);
+    columns.unshift(IndexProvider.COLUMN_NAME);
     return this;
   }
 
