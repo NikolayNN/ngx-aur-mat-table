@@ -1,6 +1,6 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
@@ -49,7 +49,13 @@ export interface ColumnOffset {
 export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy, NgxAurMatTablePublic<T> {
 
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
-  public displayedColumns: string[] = [];
+  _displayColumns: string[] = [];
+  _customDisplayColumnsEnabled = false;
+
+  @Input() set displayColumns(columns: string[]) {
+    this._displayColumns = columns;
+    this._customDisplayColumnsEnabled = columns && columns.length > 0;
+  }
 
   tableView: Map<string, ColumnView<string>>[] = [];
 
@@ -119,7 +125,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['tableData'] && this.tableData) {
+    if ((changes['tableData'] && this.tableData) || (changes['displayColumns'] && this._displayColumns)) {
       this.prepareTableData();
     }
     if (changes['highlight'] && this.highlight) {
@@ -188,14 +194,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.initPaginator();
     this.initSortingDataAccessor();
     this.indexProvider = IndexProvider.create(this.tableConfig)
-      .addIndexColumn(this.displayedColumns);
+      .addIndexColumn(this._displayColumns);
 
     this.rowActionsProvider = RowActionProvider.create(this.tableConfig)
-      .addActionColumn(this.displayedColumns)
+      .addActionColumn(this._displayColumns)
       .setView(this.tableDataSource.data);
 
     this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource)
-      .addCheckboxColumn(this.displayedColumns)
+      .addCheckboxColumn(this._displayColumns)
       .bindEventEmitters(this.selected, this.onSelect, this.onDeselect);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
@@ -214,7 +220,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private initTable() {
     this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
-    this.displayedColumns = DisplayColumnsFactory.create(this.tableConfig);
+    if (!this._customDisplayColumnsEnabled) {
+      this._displayColumns = DisplayColumnsFactory.create(this.tableConfig);
+    }
   }
 
   applySearchFilter(event: Event) {

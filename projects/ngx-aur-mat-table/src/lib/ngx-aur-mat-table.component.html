@@ -133,9 +133,9 @@
 
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="displayedColumns;  sticky: this.tableConfig.stickyCfg?.header"></tr>
+      <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header"></tr>
       <tr mat-row #rowLink
-          *matRowDef="let row; columns: displayedColumns;"
+          *matRowDef="let row; columns: _displayColumns;"
           (click)="rowClick(row)"
           [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': highlighted===row.rowSrc && tableConfig?.clickCfg?.highlightClicked?.color}"
           [ngStyle]="{
@@ -145,7 +145,7 @@
           }">
       </tr>
       <ng-container *ngIf="totalRowProvider.isEnabled">
-        <tr mat-footer-row *matFooterRowDef="displayedColumns" [style]="totalRowProvider.style"></tr>
+        <tr mat-footer-row *matFooterRowDef="_displayColumns" [style]="totalRowProvider.style"></tr>
       </ng-container>
     </table>
 

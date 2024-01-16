@@ -1,0 +1,33 @@
+<div class="example-container">
+  <h2>Скрыть колонку</h2>
+
+  <div
+    cdkDropList
+    #todoList="cdkDropList"
+    [cdkDropListData]="hide"
+    [cdkDropListConnectedTo]="[doneList]"
+    class="example-list"
+    (cdkDropListDropped)="drop($event)">
+    <div class="example-box" *ngFor="let item of hide" cdkDrag>{{item}}</div>
+  </div>
+</div>
+
+<div class="example-container">
+  <h2>Показать колонку</h2>
+
+  <div
+    cdkDropList
+    #doneList="cdkDropList"
+    [cdkDropListData]="show"
+    [cdkDropListConnectedTo]="[todoList]"
+    class="example-list"
+    (cdkDropListDropped)="drop($event)">
+    <div class="example-box" *ngFor="let item of show" cdkDrag>{{item}}</div>
+  </div>
+</div>
+
+
+<aur-mat-table [tableData]="tableData"
+               [tableConfig]="tableConfig"
+               [displayColumns]="displayColumns">
+</aur-mat-table>
