@@ -53,7 +53,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   _customDisplayColumnsEnabled = false;
 
   @Input() set displayColumns(columns: string[]) {
-    this._displayColumns = columns;
+    this._displayColumns = [...columns];
     this._customDisplayColumnsEnabled = columns && columns.length > 0;
   }
 
