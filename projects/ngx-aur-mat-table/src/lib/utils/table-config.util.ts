@@ -1,4 +1,4 @@
-import {TableConfig} from "ngx-aur-mat-table";
+import {TableConfig} from "../model/ColumnConfig";
 
 export class TableConfigUtil {
   public static keys(config: TableConfig<any>): string[] {
