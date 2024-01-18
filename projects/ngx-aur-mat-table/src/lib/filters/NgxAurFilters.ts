@@ -179,7 +179,7 @@ export namespace NgxAurFilters {
     }
   }
 
-  export abstract class NumberRangeInclMinInclMax<T, V> extends ValueMinMax<T, number> {
+  export abstract class NumberRangeInclMinInclMax<T> extends ValueMinMax<T, number> {
 
     public override filterFn(): (data: TableRow<T>) => boolean {
       return (data) => {
@@ -189,7 +189,7 @@ export namespace NgxAurFilters {
     }
   }
 
-  export abstract class NumberRangeExclMinExclMax<T, V> extends ValueMinMax<T, number> {
+  export abstract class NumberRangeExclMinExclMax<T> extends ValueMinMax<T, number> {
 
     public override filterFn(): (data: TableRow<T>) => boolean {
       return (data) => {
