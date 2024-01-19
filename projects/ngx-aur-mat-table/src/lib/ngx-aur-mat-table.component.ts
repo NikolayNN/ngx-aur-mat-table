@@ -232,13 +232,17 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   public removeFilter(filterName: string) {
-    this.filterStorage.delete(filterName);
-    this.applyFiltersInternal();
+    if (this.filterStorage.get(filterName)) {
+      this.filterStorage.delete(filterName);
+      this.applyFiltersInternal();
+    }
   }
 
   public applyFilter(filterName: string, filter: NgxAurFilters.Base<T>): void {
-    this.filterStorage.set(filterName, filter);
-    this.applyFiltersInternal();
+    if (!this.filterStorage.get(filterName) || (!this.filterStorage.get(filterName)!.equals(filter))) {
+      this.filterStorage.set(filterName, filter);
+      this.applyFiltersInternal();
+    }
   }
 
   public clearFilters() {

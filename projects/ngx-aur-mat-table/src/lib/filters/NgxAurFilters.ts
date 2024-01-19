@@ -28,6 +28,20 @@ export namespace NgxAurFilters {
      */
     public abstract filterFn(): (data: TableRow<T>) => boolean;
 
+    /**
+     * Determines whether the current filter is equivalent to another filter.
+     * This method is used to compare the current applied filter with a new filter.
+     * If the filters are equivalent, the method should return `true`, indicating that
+     * the data table does not need to be rebuilt. If they are not equivalent, it should
+     * return `false`, indicating that the table should be updated to reflect the new filter.
+     *
+     * Implementing this method in subclasses allows for optimized rendering by avoiding
+     * unnecessary table updates when the filter criteria have not actually changed.
+     *
+     * @param other The filter to compare with the current filter.
+     * @returns `true` if the current filter and the `other` filter are equivalent, otherwise `false`.
+     */
+    public abstract equals(other: Base<T>): boolean;
   }
 
   export abstract class ExtractableProperty<T, V> extends Base<T> {
@@ -44,6 +58,10 @@ export namespace NgxAurFilters {
 
     constructor(public value: V) {
       super();
+    }
+
+    override equals(other: ValueSingle<T, V>): boolean {
+      return this.value === other.value;
     }
   }
 
@@ -88,6 +106,11 @@ export namespace NgxAurFilters {
 
     get max(): V {
       return this._max;
+    }
+
+
+    override equals(other: ValueMinMax<T, V>): boolean {
+      return this._min === other._min && this._max === other._max;
     }
   }
 
