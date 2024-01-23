@@ -128,6 +128,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['tableData'] && this.tableData) || (changes['displayColumns'] && this._displayColumns)) {
+      this.tableData = this.tableData || [];
       this.prepareTableData();
     }
     if (changes['highlight'] && this.highlight) {
