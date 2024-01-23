@@ -1,9 +1,8 @@
 <div class="buttons-box">
   <div *ngFor="let offset of columnOffsetList"
        class="wrapper-button"
-       [ngStyle]="{ 'left': offset.left + 'px', 'width': offset.width  + 'px'}"
-  >
-    <button class="header-button"></button>
+       [ngStyle]="{ 'left': offset.left + 'px', 'width': offset.width  + 'px'}">
+    <button class="header-button">{{'column key: ' + offset.key}}</button>
   </div>
 </div>
 

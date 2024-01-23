@@ -37,7 +37,8 @@ export interface HighlightContainer<T> {
 
 export interface ColumnOffset {
   left: number,
-  width: number
+  width: number,
+  key: string
 }
 
 @Component({
@@ -186,8 +187,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private updateColumnOffsets() {
     const offsets: ColumnOffset[] = Array.from(this.table.nativeElement.querySelectorAll('th'))
-      .map(c => (c as HTMLElement))
-      .map(c => ({left: c.offsetLeft, width: c.offsetWidth}))
+      .map((c) => (c as HTMLElement))
+      .map((c, index) => ({
+        left: c.offsetLeft,
+        width: c.offsetWidth,
+        key: this._displayColumns[index]
+      }));
     this.columnOffsets.emit(offsets);
   }
 
