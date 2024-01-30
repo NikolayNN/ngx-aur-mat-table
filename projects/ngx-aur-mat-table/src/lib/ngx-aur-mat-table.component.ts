@@ -1,6 +1,7 @@
 import {
+  AfterViewChecked,
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
   Component,
   ElementRef,
   EventEmitter,
@@ -30,6 +31,7 @@ import {EmptyValue} from "./model/EmptyValue";
 import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvider";
 import {NgxAurFilters} from "./filters/NgxAurFilters";
 import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
+import {OffsetUtil} from "./utils/offset.util";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -47,7 +49,7 @@ export interface ColumnOffset {
   styleUrls: ['./ngx-aur-mat-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy, NgxAurMatTablePublic<T> {
+export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy, NgxAurMatTablePublic<T> {
 
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   _displayColumns: string[] = [];
@@ -100,6 +102,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() onFilter = new EventEmitter<T[]>();
 
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
+  private prevColumnOffsets: ColumnOffset[] = [];
 
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
@@ -164,9 +167,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   ngAfterViewInit(): void {
     this.initPaginator()
     this.initSortingDataAccessor();
-    this.updateColumnOffsets();
     this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
     this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
+  }
+
+  ngAfterViewChecked() {
+    this.updateColumnOffsets();
   }
 
   private initPaginator(): void {
@@ -186,14 +192,19 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private updateColumnOffsets() {
-    const offsets: ColumnOffset[] = Array.from(this.table.nativeElement.querySelectorAll('th'))
-      .map((c) => (c as HTMLElement))
-      .map((c, index) => ({
-        left: c.offsetLeft,
-        width: c.offsetWidth,
-        key: this._displayColumns[index]
-      }));
-    this.columnOffsets.emit(offsets);
+    if (this.table?.nativeElement?.querySelectorAll('th')) {
+      const offsets: ColumnOffset[] = Array.from(this.table.nativeElement.querySelectorAll('th'))
+        .map((c) => (c as HTMLElement))
+        .map((c, index) => ({
+          left: c.offsetLeft,
+          width: c.offsetWidth,
+          key: this._displayColumns[index]
+        }));
+      if (OffsetUtil.areNotEqual(this.prevColumnOffsets, offsets)) {
+        this.prevColumnOffsets = offsets;
+        this.columnOffsets.emit(offsets);
+      }
+    }
   }
 
   private prepareTableData() {
