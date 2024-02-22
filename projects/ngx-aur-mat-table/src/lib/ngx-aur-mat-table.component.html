@@ -71,8 +71,8 @@
           </mat-checkbox>
         </td>
 
-        <ng-container *ngTemplateOutlet="footerCellTemplate; context: {$implicit: selectionProvider.COLUMN_NAME}">
-        </ng-container>
+        <td mat-footer-cell *matFooterCellDef>
+        </td>
       </ng-container>
 
       <!-- action column -->
