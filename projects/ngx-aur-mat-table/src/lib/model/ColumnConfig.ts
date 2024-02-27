@@ -176,6 +176,7 @@ export interface PaginationConfig {
 
 export interface StickyConfig {
   header: boolean;
+  footer: boolean;
 }
 
 export interface TableView {

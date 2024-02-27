@@ -161,7 +161,7 @@
       <!--expanded-row-->
 
       <ng-container *ngIf="totalRowProvider.isEnabled">
-        <tr mat-footer-row *matFooterRowDef="_displayColumns" [style]="totalRowProvider.style"></tr>
+        <tr mat-footer-row *matFooterRowDef="_displayColumns; sticky: this.tableConfig.stickyCfg?.header" [style]="totalRowProvider.style"></tr>
       </ng-container>
 
 
