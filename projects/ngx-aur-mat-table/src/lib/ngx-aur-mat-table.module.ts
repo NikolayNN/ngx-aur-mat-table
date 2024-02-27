@@ -36,8 +36,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
   ],
   exports: [
     NgxAurMatTableComponent,
-    DataPropertyGetterPipe,
-    BrowserAnimationsModule
+    DataPropertyGetterPipe
   ]
 })
 export class NgxAurMatTableModule {
