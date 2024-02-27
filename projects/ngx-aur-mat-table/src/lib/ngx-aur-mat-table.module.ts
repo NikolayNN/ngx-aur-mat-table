@@ -12,7 +12,6 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {DataPropertyGetterPipe} from "./data-property-getter-pipe/data-property-getter.pipe";
 import {ColumnViewComponent} from './components/column-value/column-view.component';
 import {CommonModule} from "@angular/common";
-import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
 
 
 @NgModule({
@@ -31,8 +30,7 @@ import {BrowserAnimationsModule} from "@angular/platform-browser/animations";
     MatSortModule,
     MatTooltipModule,
     MatCheckboxModule,
-    MatFormFieldModule,
-    BrowserAnimationsModule
+    MatFormFieldModule
   ],
   exports: [
     NgxAurMatTableComponent,

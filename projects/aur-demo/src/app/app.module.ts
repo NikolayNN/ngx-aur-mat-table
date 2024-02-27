@@ -72,8 +72,7 @@ import { RowDetailsComponent } from './table-expanding-row/row-details/row-detai
     MatChipsModule,
     FormsModule,
     MatInputModule,
-    DragDropModule,
-    BrowserAnimationsModule
+    DragDropModule
   ],
   providers: [],
   bootstrap: [AppComponent]
