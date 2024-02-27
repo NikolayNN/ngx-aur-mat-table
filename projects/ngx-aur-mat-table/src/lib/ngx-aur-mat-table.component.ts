@@ -11,7 +11,7 @@ import {
   OnInit,
   Output,
   QueryList,
-  SimpleChanges,
+  SimpleChanges, TemplateRef,
   ViewChild,
   ViewChildren
 } from '@angular/core';
@@ -32,6 +32,7 @@ import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvi
 import {NgxAurFilters} from "./filters/NgxAurFilters";
 import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
 import {OffsetUtil} from "./utils/offset.util";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -43,13 +44,27 @@ export interface ColumnOffset {
   key: string
 }
 
+enum ExpandState {
+  COLLAPSED = 'collapsed',
+  EXPANDED = 'expanded'
+}
+
 @Component({
   selector: 'aur-mat-table',
   templateUrl: './ngx-aur-mat-table.component.html',
   styleUrls: ['./ngx-aur-mat-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('detailExpand', [
+      state(ExpandState.COLLAPSED, style({height: '0px', minHeight: '0'})),
+      state(ExpandState.EXPANDED, style({height: '*'})),
+      transition(`${ExpandState.EXPANDED} <=> ${ExpandState.COLLAPSED}`, animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ],
 })
 export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy, NgxAurMatTablePublic<T> {
+
+  expandedStateEnum = ExpandState;
 
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   _displayColumns: string[] = [];
@@ -73,6 +88,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Input() tableConfig: TableConfig<T>;
 
   @Input() tableData: T[] = [];
+
+  @Input() extendedRowTemplate: TemplateRef<any> | null = null;
 
   // @ts-ignore
   @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;

@@ -4,7 +4,7 @@
 }
 
 .aur-mat-table  th, td {
-  padding: 10px !important;
+  padding-right: 10px !important;
 }
 
 .aur-mat-table .new-color td.mat-cell,
@@ -29,3 +29,13 @@
   display: flex;
   align-items: center;
 }
+
+.expanded-row {
+  height: 0;
+}
+
+.row-detail {
+  overflow: hidden;
+  display: flex;
+}
+

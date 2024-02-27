@@ -1,0 +1,29 @@
+<p>Позволяет отображать расширенную информацию при нажатии на строку</p>
+<p> Необхходимо задать Input extendedRowTemplate передать template который будет отображать подробную информацию</p>
+<pre>
+  &lt;ng-template #rowTemplate let-row&gt;
+    &lt;app-row-details [row]="row"&gt;&lt;/app-row-details&gt;
+  &lt;/ng-template&gt;
+</pre>
+<p>Также можно настроить clickCfg для управления подсветкой строк и тп </p>
+<p>Пример</p>
+<pre>
+  clickCfg: &#123;
+  pointer: true,
+  highlightClicked: &#123;
+        background: 'blue',
+        color: 'red',
+        border: '2px solid green'
+      &#125;,
+      cancelable: true
+    &#125;,
+</pre>
+
+<aur-mat-table
+  [tableData]="tableData"
+  [tableConfig]="tableConfig"
+  [extendedRowTemplate]="rowTemplate"
+></aur-mat-table>
+<ng-template #rowTemplate let-row>
+  <app-row-details [row]="row"></app-row-details>
+</ng-template>

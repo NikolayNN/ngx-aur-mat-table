@@ -4,7 +4,7 @@
     <!-- Filter -->
     <ng-container *ngIf="tableConfig.filterCfg">
       <mat-form-field>
-        <mat-label>{{tableConfig.filterCfg?.label}}</mat-label>
+        <mat-label>{{ tableConfig.filterCfg?.label }}</mat-label>
         <input matInput (keyup)="applySearchFilter($event)"
                placeholder="{{tableConfig.filterCfg?.placeholder}}"
                style="font-size: 18px;">
@@ -14,6 +14,7 @@
 
     <!-- Table -->
     <table #table mat-table matSort
+           [multiTemplateDataRows]="extendedRowTemplate !== null"
            [dataSource]="tableDataSource"
            (matSortChange)="sortTable($event)"
            [style.height]="tableConfig.tableView?.height"
@@ -25,16 +26,16 @@
 
         <th mat-header-cell *matHeaderCellDef>
           <lib-column-view [config]="indexProvider.headerView">
-            {{indexProvider.name}}
+            {{ indexProvider.name }}
           </lib-column-view>
         </th>
 
         <td mat-cell *matCellDef="let element; let rowIndex = index">
-          {{rowIndex + indexProvider.offset}}
+          {{ rowIndex + indexProvider.offset }}
         </td>
 
         <td mat-footer-cell *matFooterCellDef>
-          {{totalRowProvider.totals.get(indexProvider.COLUMN_NAME) || ''}}
+          {{ totalRowProvider.totals.get(indexProvider.COLUMN_NAME) || '' }}
         </td>
       </ng-container>
 
@@ -48,7 +49,7 @@
             </mat-checkbox>
             <div
               *ngIf="tableConfig.selectionCfg?.showSelectedCount && selectionProvider.selection.hasValue()">
-              ({{selectionProvider.selection.selected.length}}/{{tableDataSource.filteredData.length}})
+              ({{ selectionProvider.selection.selected.length }}/{{ tableDataSource.filteredData.length }})
             </div>
 
             <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">
@@ -57,7 +58,7 @@
                       [matTooltip]="action.icon.tooltip || ''"
                       *ngFor="let action of tableConfig.selectionCfg!.actions">
                 <mat-icon [style.color]="action.icon.color">
-                  {{action.icon.name}}
+                  {{ action.icon.name }}
                 </mat-icon>
               </button>
             </div>
@@ -84,7 +85,7 @@
                   [matTooltip]="action.icon.tooltip || ''"
                   *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
             <mat-icon [style.color]="action.icon.color">
-              {{action.icon.name}}
+              {{ action.icon.name }}
             </mat-icon>
           </button>
         </td>
@@ -144,9 +145,26 @@
           'border': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.border : undefined
           }">
       </tr>
+
+      <!--expanded-row-->
+      <ng-container matColumnDef="expandedRow">
+        <td mat-cell *matCellDef="let element" [attr.colspan]="_displayColumns.length">
+          <div class="row-detail" [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
+            <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container *ngIf="extendedRowTemplate">
+        <tr mat-row class="expanded-row"  *matRowDef="let row; columns: ['expandedRow']"></tr>
+      </ng-container>
+      <!--expanded-row-->
+
       <ng-container *ngIf="totalRowProvider.isEnabled">
         <tr mat-footer-row *matFooterRowDef="_displayColumns" [style]="totalRowProvider.style"></tr>
       </ng-container>
+
+
     </table>
 
     <!-- Pagination -->

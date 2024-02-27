@@ -33,6 +33,8 @@ import {MatInputModule} from "@angular/material/input";
 import { FilterMinMaxComponent } from './table-with-filter-actions/filter-min-max/filter-min-max.component';
 import { TableWithCustomColumnsComponent } from './table-with-custom-columns/table-with-custom-columns.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";
+import { ExpandingRowComponent } from './table-expanding-row/expanding-row.component';
+import { RowDetailsComponent } from './table-expanding-row/row-details/row-details.component';
 
 @NgModule({
   declarations: [
@@ -59,6 +61,8 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
     FilterStringComponent,
     FilterMinMaxComponent,
     TableWithCustomColumnsComponent,
+    ExpandingRowComponent,
+    RowDetailsComponent
   ],
   imports: [
     BrowserModule,
