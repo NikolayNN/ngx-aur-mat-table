@@ -172,12 +172,14 @@ export interface PaginationConfig {
   enable: boolean;
   sizes?: number[];
   size?: number;
+  style?: string;
 }
 
 export interface StickyConfig {
   header?: boolean;
   total?: boolean;
-  subFooter?:boolean
+  subFooter?: boolean;
+  subFooterPagination?: boolean;
 }
 
 export interface TableView {

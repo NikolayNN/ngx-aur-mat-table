@@ -30,12 +30,16 @@
   align-items: center;
 }
 
-.expanded-row {
+.aur-mat-table .expanded-row {
   height: 0;
 }
 
-.row-detail {
+.aur-mat-table .row-detail {
   overflow: hidden;
   display: flex;
+}
+
+.aur-mat-table .clear-bottom-border {
+  border-bottom: none;
 }
 

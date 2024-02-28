@@ -180,14 +180,26 @@
       </ng-container>
       <!--      sub-footer-row END-->
 
-    </table>
+      <!--sub-footer-pagination-->
+      <ng-container matColumnDef="subFooterPagination">
+        <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length" >
 
+            <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
+                           [pageSize]="paginationProvider.size"
+                           [style]="this.tableConfig?.pageableCfg?.style"
+                           showFirstLastButtons>
+            </mat-paginator>
+
+        </td>
+      </ng-container>
+
+      <ng-container *ngIf="paginationProvider.isEnabled">
+        <tr mat-footer-row *matFooterRowDef="['subFooterPagination']; sticky: this.tableConfig.stickyCfg?.subFooterPagination" [style]="this.tableConfig?.pageableCfg?.style"></tr>
+      </ng-container>
+      <!--      sub-footer-pagination END-->
+    </table>
     <!-- Pagination -->
-    <mat-paginator *ngIf="paginationProvider.isEnabled"
-                   [pageSizeOptions]="paginationProvider.sizes"
-                   [pageSize]="paginationProvider.size"
-                   showFirstLastButtons>
-    </mat-paginator>
+
   </ng-container>
 </div>
 

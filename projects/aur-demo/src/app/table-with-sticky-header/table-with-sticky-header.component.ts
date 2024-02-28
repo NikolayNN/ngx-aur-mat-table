@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component} from '@angular/core';
 import {TableConfig} from "ngx-aur-mat-table";
 import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
@@ -21,10 +21,15 @@ export class TableWithStickyHeaderComponent {
         name: 'customers age',
         key: 'age',
         valueConverter: v => v.age
-      }
+      },
     ],
+    pageableCfg: {
+      enable: true,
+      style: 'background-color: gray'
+    },
     stickyCfg: {
-      header: true
+      header: true,
+      subFooterPagination: true
     }
   }
   tableData: Customer[] = CustomerGenerator.generate(20);
