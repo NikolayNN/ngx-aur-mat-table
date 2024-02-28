@@ -14,3 +14,4 @@ export * from './lib/providers/SelectionProvider';
 export * from './lib/providers/IndexProvider';
 export * from './lib/style-builder/style-builder';
 export * from './lib/filters/NgxAurFilters';
+export * from './lib/directive/ngx-table-sub-footer-row.directive'

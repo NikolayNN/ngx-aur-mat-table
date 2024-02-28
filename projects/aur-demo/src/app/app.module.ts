@@ -35,6 +35,7 @@ import { TableWithCustomColumnsComponent } from './table-with-custom-columns/tab
 import {DragDropModule} from "@angular/cdk/drag-drop";
 import { ExpandingRowComponent } from './table-expanding-row/expanding-row.component';
 import { RowDetailsComponent } from './table-expanding-row/row-details/row-details.component';
+import { TableWithSubFooterComponent } from './table-with-sub-footer/table-with-sub-footer.component';
 
 @NgModule({
   declarations: [
@@ -62,7 +63,8 @@ import { RowDetailsComponent } from './table-expanding-row/row-details/row-detai
     FilterMinMaxComponent,
     TableWithCustomColumnsComponent,
     ExpandingRowComponent,
-    RowDetailsComponent
+    RowDetailsComponent,
+    TableWithSubFooterComponent
   ],
   imports: [
     BrowserModule,

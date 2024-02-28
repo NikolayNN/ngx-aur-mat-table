@@ -12,13 +12,15 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {DataPropertyGetterPipe} from "./data-property-getter-pipe/data-property-getter.pipe";
 import {ColumnViewComponent} from './components/column-value/column-view.component';
 import {CommonModule} from "@angular/common";
+import { NgxTableSubFooterRowDirective } from './directive/ngx-table-sub-footer-row.directive';
 
 
 @NgModule({
   declarations: [
     NgxAurMatTableComponent,
     DataPropertyGetterPipe,
-    ColumnViewComponent
+    ColumnViewComponent,
+    NgxTableSubFooterRowDirective
   ],
   imports: [
     CommonModule,
@@ -34,7 +36,8 @@ import {CommonModule} from "@angular/common";
   ],
   exports: [
     NgxAurMatTableComponent,
-    DataPropertyGetterPipe
+    DataPropertyGetterPipe,
+    NgxTableSubFooterRowDirective
   ]
 })
 export class NgxAurMatTableModule {

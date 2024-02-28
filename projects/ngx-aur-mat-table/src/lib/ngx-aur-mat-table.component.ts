@@ -2,7 +2,7 @@ import {
   AfterViewChecked,
   AfterViewInit,
   ChangeDetectionStrategy,
-  Component,
+  Component, ContentChild,
   ElementRef,
   EventEmitter,
   Input,
@@ -33,6 +33,7 @@ import {NgxAurFilters} from "./filters/NgxAurFilters";
 import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
 import {OffsetUtil} from "./utils/offset.util";
 import {animate, state, style, transition, trigger} from "@angular/animations";
+import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-row.directive";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -78,6 +79,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   tableView: Map<string, ColumnView<string>>[] = [];
+
+  @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
