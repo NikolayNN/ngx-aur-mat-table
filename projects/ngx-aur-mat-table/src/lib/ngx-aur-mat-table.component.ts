@@ -34,6 +34,7 @@ import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
 import {OffsetUtil} from "./utils/offset.util";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-row.directive";
+import {SelectionModel} from "@angular/cdk/collections";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -336,6 +337,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       this.onRowClick.emit(undefined);
       this.highlighted = undefined;
     }
+  }
+
+  public getSelectionModel(): SelectionModel<T> {
+    return this.selectionProvider.selection;
   }
 
   ngOnDestroy() {
