@@ -5,6 +5,10 @@
 <app-filter-min-max (filter)="filterByAge($event)"></app-filter-min-max>
 
 <aur-mat-table #table
-  [tableData]="tableData"
-  [tableConfig]="tableConfig"
+               [tableData]="tableData"
+               [tableConfig]="tableConfig"
+               (onFilter)="filtered = $event"
 ></aur-mat-table>
+
+
+<p>{{filtered?.length ?? 0}}</p>

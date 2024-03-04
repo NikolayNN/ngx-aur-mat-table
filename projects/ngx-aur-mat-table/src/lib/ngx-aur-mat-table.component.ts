@@ -252,6 +252,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
       .setStyle()
       .setTotalRow();
+
+    this.emitFilteredValues();
   }
 
   private initCustomSortFunctionsMap() {

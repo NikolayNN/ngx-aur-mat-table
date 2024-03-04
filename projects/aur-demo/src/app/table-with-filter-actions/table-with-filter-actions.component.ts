@@ -22,6 +22,8 @@ export class TableWithFilterActionsComponent {
   @ViewChild("table") tableFilter: NgxAurMatTableFilterable;
   tableData = PersonGenerator.generate(20);
 
+  filtered: Person[] = [];
+
 
   tableConfig: TableConfig<Person> = {
     columnsCfg: [
