@@ -36,7 +36,7 @@ export class SelectionProvider<T> extends AbstractProvider {
     return this;
   }
 
-  public bindEventEmitters(selected: EventEmitter<T[]>, onSelect: EventEmitter<T[]>, onDeselect: EventEmitter<T[]>): SelectionProvider<T> {
+  public bindEventEmitters(selected: EventEmitter<T[]>, onSelect: EventEmitter<T[]>, onDeselect: EventEmitter<T[]>, selectionModel: EventEmitter<SelectionModel<T>>): SelectionProvider<T> {
     this.selection.changed.subscribe(event => {
       if (event.added) {
         onSelect.emit(event.added);
@@ -46,6 +46,7 @@ export class SelectionProvider<T> extends AbstractProvider {
       }
       selected.emit(this.selection.selected);
     });
+    selectionModel.emit(this.selection);
     return this;
   }
 

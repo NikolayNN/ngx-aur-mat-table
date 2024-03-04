@@ -112,6 +112,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() onDeselect = new EventEmitter<T[]>();
 
   @Output() onSelectedRowsAction = new EventEmitter<ActionEvent<T[]>>();
+
+  @Output() selectionModel = new EventEmitter<SelectionModel<T>>();
   //------------------------
 
 
@@ -242,7 +244,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
     this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource)
       .addCheckboxColumn(this._displayColumns)
-      .bindEventEmitters(this.selected, this.onSelect, this.onDeselect);
+      .bindEventEmitters(this.selected, this.onSelect, this.onDeselect, this.selectionModel);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
 
