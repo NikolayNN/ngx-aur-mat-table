@@ -155,8 +155,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['tableData'] && this.tableData) || (changes['displayColumns'] && this._displayColumns)) {
+      const selected = this.selectionProvider?.selection?.selected ?? [];
       this.tableData = this.tableData || [];
-      this.prepareTableData();
+      this.prepareTableData(selected);
     }
     if (changes['highlight'] && this.highlight) {
       this.handleHighlightChange(this.highlight);
@@ -230,7 +231,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
   }
 
-  private prepareTableData() {
+  private prepareTableData(initSelection: T[] = []) {
     this.initTable();
     this.initCustomSortFunctionsMap();
     this.initPaginator();
@@ -242,7 +243,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .addActionColumn(this._displayColumns)
       .setView(this.tableDataSource.data);
 
-    this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource)
+    this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource, initSelection)
       .addCheckboxColumn(this._displayColumns)
       .bindEventEmitters(this.selected, this.onSelect, this.onDeselect, this.selectionModel);
 

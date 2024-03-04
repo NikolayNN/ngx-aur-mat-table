@@ -13,10 +13,10 @@ export class SelectionProvider<T> extends AbstractProvider {
   config: SelectionConfig;
   tableDataSource: MatTableDataSource<TableRow<T>>;
 
-  constructor(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>) {
+  constructor(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>, initSelection: T[]) {
     super();
     this.config = tableConfig?.selectionCfg || EmptyValue.SELECTION_CONFIG;
-    this.selection = new SelectionModel<T>(this.config.multiple, []);
+    this.selection = new SelectionModel<T>(this.config.multiple, initSelection);
     this.tableDataSource = tableDataSource;
   }
 
@@ -69,9 +69,9 @@ export class SelectionProvider<T> extends AbstractProvider {
     return (tableConfig.selectionCfg && tableConfig.selectionCfg.enable) || false;
   }
 
-  public static create<T>(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>): SelectionProvider<T> {
+  public static create<T>(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>, initSelection: T[]): SelectionProvider<T> {
     if (SelectionProvider.canEnable(tableConfig)) {
-      return new SelectionProvider(tableConfig, tableDataSource);
+      return new SelectionProvider(tableConfig, tableDataSource, initSelection);
     }
     return new SelectionProviderDummy();
   }
@@ -81,7 +81,7 @@ export class SelectionProviderDummy<T> extends SelectionProvider<T> {
   public override readonly isEnabled = true;
 
   constructor() {
-    super(EmptyValue.TABLE_CONFIG, EmptyValue.MAT_TABLE_DATA_SOURCE);
+    super(EmptyValue.TABLE_CONFIG, EmptyValue.MAT_TABLE_DATA_SOURCE, []);
   }
 
   public override addCheckboxColumn(columns: string[]): SelectionProvider<T> {

@@ -31,4 +31,8 @@ export class TableWithSelectionComponent {
     }
   }
   tableData = CustomerGenerator.generate(10);
+
+  onRefresh() {
+    this.tableData = [...this.tableData]
+  }
 }
