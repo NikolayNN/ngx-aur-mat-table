@@ -1,15 +1,15 @@
 {
   "name": "ngx-aur-mat-table",
-  "version": "13.0.0",
+  "version": "13.0.1",
   "peerDependencies": {
-    "@angular/animations": "^12.0.0",
-    "@angular/common": "^12.0.0",
-    "@angular/compiler": "^12.0.0",
-    "@angular/core": "^12.0.0",
-    "@angular/forms": "^12.0.0",
-    "@angular/platform-browser": "^12.0.0",
-    "@angular/platform-browser-dynamic": "^12.0.0",
-    "@angular/material": "^12.0.0"
+    "@angular/animations": "^13.4.0",
+    "@angular/common": "^13.4.0",
+    "@angular/compiler": "^13.4.0",
+    "@angular/core": "^13.4.0",
+    "@angular/forms": "^13.4.0",
+    "@angular/platform-browser": "^13.4.0",
+    "@angular/platform-browser-dynamic": "^13.4.0",
+    "@angular/material": "^13.4.0"
   },
   "dependencies": {
     "tslib": "^2.3.0"
