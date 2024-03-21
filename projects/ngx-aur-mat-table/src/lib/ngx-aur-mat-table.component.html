@@ -49,7 +49,11 @@
             </mat-checkbox>
             <div
               *ngIf="tableConfig.selectionCfg?.showSelectedCount && selectionProvider.selection.hasValue()">
-              ({{ selectionProvider.selection.selected.length }}/{{ tableDataSource.filteredData.length }})
+              (
+              {{ selectionProvider.selection.selected.length }}
+              <span
+                *ngIf="tableConfig.selectionCfg?.showTotalCount !== false">/{{ tableDataSource.filteredData.length }}</span>
+              )
             </div>
 
             <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">
@@ -182,19 +186,21 @@
 
       <!--sub-footer-pagination-->
       <ng-container matColumnDef="subFooterPagination">
-        <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length" >
+        <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
 
-            <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
-                           [pageSize]="paginationProvider.size"
-                           [style]="this.tableConfig?.pageableCfg?.style"
-                           showFirstLastButtons>
-            </mat-paginator>
+          <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
+                         [pageSize]="paginationProvider.size"
+                         [style]="this.tableConfig?.pageableCfg?.style"
+                         showFirstLastButtons>
+          </mat-paginator>
 
         </td>
       </ng-container>
 
       <ng-container *ngIf="paginationProvider.isEnabled">
-        <tr mat-footer-row *matFooterRowDef="['subFooterPagination']; sticky: this.tableConfig.stickyCfg?.subFooterPagination" [style]="this.tableConfig?.pageableCfg?.style"></tr>
+        <tr mat-footer-row
+            *matFooterRowDef="['subFooterPagination']; sticky: this.tableConfig.stickyCfg?.subFooterPagination"
+            [style]="this.tableConfig?.pageableCfg?.style"></tr>
       </ng-container>
       <!--      sub-footer-pagination END-->
     </table>

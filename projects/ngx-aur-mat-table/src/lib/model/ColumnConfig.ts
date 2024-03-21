@@ -164,6 +164,8 @@ export interface SelectionConfig {
   position?: 'start' | 'end';
   multiple?: boolean;
   showSelectedCount?: boolean;
+  // default: true, показывать
+  showTotalCount?:boolean;
   enable: boolean;
   actions?: Action<string>[];
 }
