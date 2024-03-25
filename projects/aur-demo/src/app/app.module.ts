@@ -7,7 +7,7 @@ import {ComplexObjectComponent} from './complex-object/complex-object.component'
 
 import {SimpleTableComponent} from "./simple-table/simple-table.component";
 import {TableWithActionsComponent} from './with-actions/table-with-actions/table-with-actions.component';
-import {MatTabsModule} from "@angular/material/tabs";
+import {MatLegacyTabsModule as MatTabsModule} from "@angular/material/legacy-tabs";
 import {ActionsBeforeComponent} from './with-actions/actions-before/actions-before.component';
 import {TableWithPaginationComponent} from './table-with-pagination/table-with-pagination.component';
 import {TableWithSelectionComponent} from './table-with-selection/table-with-selection.component';
@@ -20,7 +20,7 @@ import {TableEditableComponent} from './table-editable/table-editable.component'
 import {TableHighlightClickedRowComponent} from './table-highlight-clicked-row/table-highlight-clicked-row.component';
 import {TableWithWrappedIconComponent} from './table-with-wrapped-icon/table-with-wrapped-icon.component';
 import {NgxAurMatTableModule} from "../../../ngx-aur-mat-table/src/lib/ngx-aur-mat-table.module";
-import {MatChipsModule} from "@angular/material/chips";
+import {MatLegacyChipsModule as MatChipsModule} from "@angular/material/legacy-chips";
 import {TableCustomHeaderComponent} from './table-custom-header/table-custom-header.component';
 import {
   TableWithPaginationAndCheckboxesComponent
@@ -29,7 +29,7 @@ import {TableWithTotalComponent} from './table-with-total/table-with-total.compo
 import {TableWithFilterActionsComponent} from './table-with-filter-actions/table-with-filter-actions.component';
 import { FilterStringComponent } from './table-with-filter-actions/filter-action-string-contains/filter-string.component';
 import {FormsModule} from "@angular/forms";
-import {MatInputModule} from "@angular/material/input";
+import {MatLegacyInputModule as MatInputModule} from "@angular/material/legacy-input";
 import { FilterMinMaxComponent } from './table-with-filter-actions/filter-min-max/filter-min-max.component';
 import { TableWithCustomColumnsComponent } from './table-with-custom-columns/table-with-custom-columns.component';
 import {DragDropModule} from "@angular/cdk/drag-drop";

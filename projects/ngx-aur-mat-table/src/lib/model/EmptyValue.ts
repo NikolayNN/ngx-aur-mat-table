@@ -1,6 +1,6 @@
 import {ActionConfig, IndexConfig, PaginationConfig, SelectionConfig, TableConfig} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
-import {MatTableDataSource} from "@angular/material/table";
+import {MatLegacyTableDataSource as MatTableDataSource} from "@angular/material/legacy-table";
 
 export class EmptyValue {
 

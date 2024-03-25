@@ -1,5 +1,5 @@
 import {SelectionModel} from '@angular/cdk/collections';
-import {MatTableDataSource} from '@angular/material/table';
+import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
 import {EventEmitter} from '@angular/core';
 import {TableRow} from "../model/TableRow";
 import {SelectionConfig, TableConfig} from "../model/ColumnConfig";

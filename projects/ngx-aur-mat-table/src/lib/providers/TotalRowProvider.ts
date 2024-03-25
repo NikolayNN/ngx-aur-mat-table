@@ -1,6 +1,6 @@
 import {TableConfig} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
-import {MatTableDataSource} from "@angular/material/table";
+import {MatLegacyTableDataSource as MatTableDataSource} from "@angular/material/legacy-table";
 import {EmptyValue} from "../model/EmptyValue";
 import {AbstractProvider} from "./AbstractProvider";
 
