@@ -130,7 +130,6 @@
       }
     }
   },
-  "defaultProject": "ngx-aur-mat-table",
   "cli": {
     "analytics": false
   }
