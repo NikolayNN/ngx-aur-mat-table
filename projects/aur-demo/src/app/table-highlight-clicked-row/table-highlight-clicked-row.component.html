@@ -9,6 +9,6 @@
   [highlight]="highlightedCustomer"
 ></aur-mat-table>
 
-<mat-chip-list>
-  <mat-chip *ngFor="let customer of tableData" (click)="highlightedCustomer = {value: customer}"> {{customer.name}} </mat-chip>
-</mat-chip-list>
+<mat-chip-listbox>
+  <mat-chip-option *ngFor="let customer of tableData" (click)="highlightedCustomer = {value: customer}"> {{customer.name}} </mat-chip-option>
+</mat-chip-listbox>

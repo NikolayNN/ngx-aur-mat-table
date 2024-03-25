@@ -17,8 +17,8 @@ import {
 } from '@angular/core';
 import {ColumnView, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
-import {MatLegacyTableDataSource as MatTableDataSource} from '@angular/material/legacy-table';
-import {MatLegacyPaginator as MatPaginator} from '@angular/material/legacy-paginator';
+import {MatTableDataSource} from '@angular/material/table';
+import {MatPaginator} from '@angular/material/paginator';
 import {SelectionProvider, SelectionProviderDummy} from './providers/SelectionProvider';
 import {ActionEvent, RowActionProvider, RowActionProviderDummy} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
