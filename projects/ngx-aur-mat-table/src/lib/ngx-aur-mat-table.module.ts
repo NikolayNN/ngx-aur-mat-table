@@ -12,7 +12,9 @@ import {MatFormFieldModule} from "@angular/material/form-field";
 import {DataPropertyGetterPipe} from "./data-property-getter-pipe/data-property-getter.pipe";
 import {ColumnViewComponent} from './components/column-value/column-view.component';
 import {CommonModule} from "@angular/common";
-import { NgxTableSubFooterRowDirective } from './directive/ngx-table-sub-footer-row.directive';
+import {NgxTableSubFooterRowDirective} from './directive/ngx-table-sub-footer-row.directive';
+import {AurTableSearchPrefixDirective} from "./directive/aur-table-search-prefix.directive";
+import {AurTableSearchSuffixDirective} from "./directive/aur-table-search-suffix.directive";
 
 
 @NgModule({
@@ -20,7 +22,9 @@ import { NgxTableSubFooterRowDirective } from './directive/ngx-table-sub-footer-
     NgxAurMatTableComponent,
     DataPropertyGetterPipe,
     ColumnViewComponent,
-    NgxTableSubFooterRowDirective
+    NgxTableSubFooterRowDirective,
+    AurTableSearchPrefixDirective,
+    AurTableSearchSuffixDirective
   ],
   imports: [
     CommonModule,
@@ -32,12 +36,14 @@ import { NgxTableSubFooterRowDirective } from './directive/ngx-table-sub-footer-
     MatSortModule,
     MatTooltipModule,
     MatCheckboxModule,
-    MatFormFieldModule
+    MatFormFieldModule,
   ],
   exports: [
     NgxAurMatTableComponent,
     DataPropertyGetterPipe,
-    NgxTableSubFooterRowDirective
+    NgxTableSubFooterRowDirective,
+    AurTableSearchPrefixDirective,
+    AurTableSearchSuffixDirective
   ]
 })
 export class NgxAurMatTableModule {

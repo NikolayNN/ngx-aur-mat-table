@@ -37,6 +37,9 @@ import { ExpandingRowComponent } from './table-expanding-row/expanding-row.compo
 import { RowDetailsComponent } from './table-expanding-row/row-details/row-details.component';
 import { TableWithSubFooterComponent } from './table-with-sub-footer/table-with-sub-footer.component';
 import {TableWithSettingsButtonComponent} from "./table-with-settings-button/table-with-settings-button.component";
+import {
+  TableWithFilterCustomButtonsComponent
+} from "./table-with-filter-custom-buttons/table-with-filter-custom-buttons.component";
 
 @NgModule({
   declarations: [
@@ -67,17 +70,18 @@ import {TableWithSettingsButtonComponent} from "./table-with-settings-button/tab
     RowDetailsComponent,
     TableWithSubFooterComponent
   ],
-    imports: [
-        BrowserModule,
-        NgxAurMatTableModule,
-        BrowserAnimationsModule,
-        MatTabsModule,
-        MatChipsModule,
-        FormsModule,
-        MatInputModule,
-        DragDropModule,
-        TableWithSettingsButtonComponent
-    ],
+  imports: [
+    BrowserModule,
+    NgxAurMatTableModule,
+    BrowserAnimationsModule,
+    MatTabsModule,
+    MatChipsModule,
+    FormsModule,
+    MatInputModule,
+    DragDropModule,
+    TableWithSettingsButtonComponent,
+    TableWithFilterCustomButtonsComponent
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

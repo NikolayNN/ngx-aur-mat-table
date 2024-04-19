@@ -2,13 +2,21 @@
   <ng-container>
     <!-- Filter -->
     <ng-container *ngIf="tableConfig.filterCfg">
-      <mat-form-field appearance="outline">
-        <mat-label>{{ tableConfig.filterCfg?.label }}</mat-label>
-        <input matInput (keyup)="applySearchFilter($event)"
-               placeholder="{{tableConfig.filterCfg?.placeholder}}"
-               style="font-size: 18px;">
-        <mat-icon matPrefix>search</mat-icon>
-      </mat-form-field>
+      <div class="search-container">
+        <ng-container>
+          <ng-content select="[ngxAurTableSearchPrefix]"></ng-content>
+        </ng-container>
+        <mat-form-field appearance="outline">
+          <mat-label>{{ tableConfig.filterCfg?.label }}</mat-label>
+          <input matInput (keyup)="applySearchFilter($event)"
+                 placeholder="{{tableConfig.filterCfg?.placeholder}}"
+                 style="font-size: 18px;">
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+        <ng-container>
+          <ng-content select="[ngxAurTableSearchSuffix]"></ng-content>
+        </ng-container>
+      </div>
     </ng-container>
 
 
