@@ -34,6 +34,7 @@ export interface TableConfig<T> {
   clickCfg?: ClickConfig,
   stickyCfg?: StickyConfig,
   tableView?: TableView,
+  tableHeaderButtonCfg?: TableHeaderButtonConfig
 }
 
 export interface ClickConfig {
@@ -189,4 +190,11 @@ export interface TableView {
   minHeight?: string;
   maxHeight?: string;
   totalRowView?: TotalRowView;
+}
+
+export interface TableHeaderButtonConfig {
+  enable: boolean;
+  icon?: string;
+  color?: string;
+  background?: string;
 }

@@ -1,7 +1,7 @@
 import {
   AfterViewChecked,
   AfterViewInit,
-  ChangeDetectionStrategy,
+  ChangeDetectionStrategy, ChangeDetectorRef,
   Component, ContentChild,
   ElementRef,
   EventEmitter,
@@ -35,6 +35,7 @@ import {OffsetUtil} from "./utils/offset.util";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-row.directive";
 import {SelectionModel} from "@angular/cdk/collections";
+import {HeaderButtonProvider, HeaderButtonProviderDummy} from "./providers/HeaderButtonProvider";
 
 export interface HighlightContainer<T> {
   value: any;
@@ -126,9 +127,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
 
-  /** Mouse hover on table header */
-  @Input() hoverTableHeaderDelay = 100;
-  @Output() hoverTableHeader = new EventEmitter<boolean>();
+  headerButtonProvider = new HeaderButtonProviderDummy();
+  @Output() settingsButtonClick = new EventEmitter<MouseEvent>();
 
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
@@ -153,7 +153,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   @Input() highlight: HighlightContainer<T> | undefined;
 
-  constructor() {
+  constructor(private cdr: ChangeDetectorRef) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -260,6 +260,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .setStyle()
       .setTotalRow();
 
+    this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.tableHeaderButtonCfg)
+
     this.emitFilteredValues();
   }
 
@@ -356,17 +358,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private hoverTimer: any = null;
-
-  onHoverHeader(isHovered: boolean): void {
-    clearTimeout(this.hoverTimer);
-    if (isHovered) {
-      this.hoverTimer = setTimeout(() => {
-        this.hoverTableHeader.emit(isHovered);
-      }, this.hoverTableHeaderDelay);
-    } else {
-      this.hoverTableHeader.emit(false);
-    }
-  }
 
   ngOnDestroy() {
     clearTimeout(this.hoverTimer);

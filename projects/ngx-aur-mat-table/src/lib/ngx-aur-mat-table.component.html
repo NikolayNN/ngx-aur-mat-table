@@ -12,6 +12,15 @@
       </mat-form-field>
     </ng-container>
 
+
+    <mat-icon *ngIf="headerButtonProvider.isEnabled"
+              class="table-settings-button"
+              [style.color]="headerButtonProvider.color"
+              [style.background-color]="headerButtonProvider.background"
+              (click)="settingsButtonClick.emit($event)">
+      {{ headerButtonProvider.icon }}
+    </mat-icon>
+
     <!-- Table -->
     <table #table mat-table matSort
            [multiTemplateDataRows]="extendedRowTemplate !== null"
@@ -138,9 +147,7 @@
 
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header"
-          (mouseenter)="onHoverHeader(true)"
-          (mouseleave)="onHoverHeader(false)">
+      <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header">
       </tr>
       <tr mat-row #rowLink
           *matRowDef="let row; columns: _displayColumns;"

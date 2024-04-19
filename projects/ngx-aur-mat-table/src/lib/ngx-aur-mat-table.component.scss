@@ -3,7 +3,7 @@
   border-collapse: collapse;
 }
 
-.aur-mat-table  th, td {
+.aur-mat-table th, td {
   padding-right: 10px !important;
 }
 
@@ -41,5 +41,20 @@
 
 .aur-mat-table .clear-bottom-border {
   border-bottom: none;
+}
+
+.aur-mat-table .table-settings-button {
+  position: absolute;
+  right: 4px;
+  top: 16px;
+  cursor: pointer;
+  border-radius: 4px;
+  padding-bottom: 2px;
+  padding-top: 2px;
+}
+
+.mat-mdc-header-row th:last-child {
+  padding-right: 25px !important;
+  background-color: #f8f8f8;
 }
 

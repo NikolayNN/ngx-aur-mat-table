@@ -36,6 +36,7 @@ import {DragDropModule} from "@angular/cdk/drag-drop";
 import { ExpandingRowComponent } from './table-expanding-row/expanding-row.component';
 import { RowDetailsComponent } from './table-expanding-row/row-details/row-details.component';
 import { TableWithSubFooterComponent } from './table-with-sub-footer/table-with-sub-footer.component';
+import {TableWithSettingsButtonComponent} from "./table-with-settings-button/table-with-settings-button.component";
 
 @NgModule({
   declarations: [
@@ -66,16 +67,17 @@ import { TableWithSubFooterComponent } from './table-with-sub-footer/table-with-
     RowDetailsComponent,
     TableWithSubFooterComponent
   ],
-  imports: [
-    BrowserModule,
-    NgxAurMatTableModule,
-    BrowserAnimationsModule,
-    MatTabsModule,
-    MatChipsModule,
-    FormsModule,
-    MatInputModule,
-    DragDropModule
-  ],
+    imports: [
+        BrowserModule,
+        NgxAurMatTableModule,
+        BrowserAnimationsModule,
+        MatTabsModule,
+        MatChipsModule,
+        FormsModule,
+        MatInputModule,
+        DragDropModule,
+        TableWithSettingsButtonComponent
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })
