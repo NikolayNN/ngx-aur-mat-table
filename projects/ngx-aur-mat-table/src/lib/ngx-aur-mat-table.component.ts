@@ -116,7 +116,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() selectionModel = new EventEmitter<SelectionModel<T>>();
   //------------------------
 
-
   @Output() onRowClick = new EventEmitter<T>();
 
   /**
@@ -126,6 +125,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
+
+  /** Mouse hover on table header */
+  @Input() hoverTableHeaderDelay = 100;
+  @Output() hoverTableHeader = new EventEmitter<boolean>();
 
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
@@ -352,8 +355,23 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return this.selectionProvider.selection;
   }
 
+  private hoverTimer: any = null;
+
+  onHoverHeader(isHovered: boolean): void {
+    clearTimeout(this.hoverTimer);
+    if (isHovered) {
+      this.hoverTimer = setTimeout(() => {
+        this.hoverTableHeader.emit(isHovered);
+      }, this.hoverTableHeaderDelay);
+    } else {
+      this.hoverTableHeader.emit(false);
+    }
+  }
+
   ngOnDestroy() {
-    // Останавливаем наблюдение при уничтожении компонента
+    clearTimeout(this.hoverTimer);
     this.resizeColumnOffsetsObserver.disconnect();
   }
+
+
 }

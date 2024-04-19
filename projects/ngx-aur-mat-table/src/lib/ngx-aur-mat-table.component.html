@@ -138,7 +138,10 @@
 
       </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header"></tr>
+      <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header"
+          (mouseenter)="onHoverHeader(true)"
+          (mouseleave)="onHoverHeader(false)">
+      </tr>
       <tr mat-row #rowLink
           *matRowDef="let row; columns: _displayColumns;"
           (click)="rowClick(row)"
