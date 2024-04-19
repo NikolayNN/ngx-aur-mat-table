@@ -2,12 +2,14 @@ import {Component} from '@angular/core';
 import {NgxAurMatTableModule, TableConfig} from "ngx-aur-mat-table";
 import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
+import {MatButton} from "@angular/material/button";
 
 @Component({
   selector: 'app-table-with-settings-button',
   standalone: true,
   imports: [
-    NgxAurMatTableModule
+    NgxAurMatTableModule,
+    MatButton
   ],
   templateUrl: './table-with-settings-button.component.html',
   styleUrl: './table-with-settings-button.component.scss'
@@ -31,6 +33,9 @@ export class TableWithSettingsButtonComponent {
       enable: true,
       color: 'white',
       background: 'blue'
+    },
+    filterCfg: {
+      enable: true
     }
   }
 

@@ -1,9 +1,8 @@
 <div class="aur-mat-table">
   <ng-container>
-
     <!-- Filter -->
     <ng-container *ngIf="tableConfig.filterCfg">
-      <mat-form-field>
+      <mat-form-field appearance="outline">
         <mat-label>{{ tableConfig.filterCfg?.label }}</mat-label>
         <input matInput (keyup)="applySearchFilter($event)"
                placeholder="{{tableConfig.filterCfg?.placeholder}}"
@@ -13,209 +12,210 @@
     </ng-container>
 
 
-    <mat-icon *ngIf="headerButtonProvider.isEnabled"
-              class="table-settings-button"
-              [style.color]="headerButtonProvider.color"
-              [style.background-color]="headerButtonProvider.background"
-              (click)="onHeaderButton.emit($event)">
-      {{ headerButtonProvider.icon }}
-    </mat-icon>
+    <div class="table-container">
+      <mat-icon *ngIf="headerButtonProvider.isEnabled"
+                class="table-settings-button"
+                [style.color]="headerButtonProvider.color"
+                [style.background-color]="headerButtonProvider.background"
+                (click)="onHeaderButton.emit($event)">
+        {{ headerButtonProvider.icon }}
+      </mat-icon>
 
-    <!-- Table -->
-    <table #table mat-table matSort
-           [multiTemplateDataRows]="extendedRowTemplate !== null"
-           [dataSource]="tableDataSource"
-           (matSortChange)="sortTable($event)"
-           [style.height]="tableConfig.tableView?.height"
-           [style.max-height]="tableConfig.tableView?.maxHeight"
-           [style.min-height]="tableConfig.tableView?.minHeight">
+      <!-- Table -->
+      <table #table mat-table matSort
+             [multiTemplateDataRows]="extendedRowTemplate !== null"
+             [dataSource]="tableDataSource"
+             (matSortChange)="sortTable($event)"
+             [style.height]="tableConfig.tableView?.height"
+             [style.max-height]="tableConfig.tableView?.maxHeight"
+             [style.min-height]="tableConfig.tableView?.minHeight">
 
-      <!--        index-column-->
-      <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">
+        <!--        index-column-->
+        <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">
 
-        <th mat-header-cell *matHeaderCellDef>
-          <lib-column-view [config]="indexProvider.headerView">
-            {{ indexProvider.name }}
-          </lib-column-view>
-        </th>
-
-        <td mat-cell *matCellDef="let element; let rowIndex = index">
-          {{ rowIndex + indexProvider.offset }}
-        </td>
-
-        <td mat-footer-cell *matFooterCellDef>
-          {{ totalRowProvider.totals.get(indexProvider.COLUMN_NAME) || '' }}
-        </td>
-      </ng-container>
-
-      <!--        selection-column-->
-      <ng-container [matColumnDef]="selectionProvider.COLUMN_NAME" *ngIf="selectionProvider.isEnabled">
-        <th mat-header-cell *matHeaderCellDef>
-          <div class="flex-container">
-            <mat-checkbox (change)="$event ? masterToggle() : null"
-                          [checked]="selectionProvider.selection.hasValue() && isAllSelected()"
-                          [indeterminate]="selectionProvider.selection.hasValue() && !isAllSelected()">
-            </mat-checkbox>
-            <div
-              *ngIf="tableConfig.selectionCfg?.showSelectedCount && selectionProvider.selection.hasValue()">
-              (
-              {{ selectionProvider.selection.selected.length }}
-              <span
-                *ngIf="tableConfig.selectionCfg?.showTotalCount !== false">/{{ tableDataSource.filteredData.length }}</span>
-              )
-            </div>
-
-            <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">
-              <button mat-icon-button
-                      (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
-                      [matTooltip]="action.icon.tooltip || ''"
-                      *ngFor="let action of tableConfig.selectionCfg!.actions">
-                <mat-icon [style.color]="action.icon.color">
-                  {{ action.icon.name }}
-                </mat-icon>
-              </button>
-            </div>
-          </div>
-
-        </th>
-        <td mat-cell *matCellDef="let row">
-          <mat-checkbox (click)="$event.stopPropagation()"
-                        (change)="$event ? selectionProvider.selection.toggle(castSrc(row).rowSrc) : null"
-                        [checked]="selectionProvider.selection.isSelected(castSrc(row).rowSrc)">
-          </mat-checkbox>
-        </td>
-
-        <td mat-footer-cell *matFooterCellDef>
-        </td>
-      </ng-container>
-
-      <!-- action column -->
-      <ng-container *ngIf="rowActionsProvider.isEnabled" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
-        <th mat-header-cell *matHeaderCellDef></th>
-        <td mat-cell *matCellDef="let element">
-          <button mat-icon-button
-                  (click)="emitRowAction(action.action, element.rowSrc, $event)"
-                  [matTooltip]="action.icon.tooltip || ''"
-                  *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
-            <mat-icon [style.color]="action.icon.color">
-              {{ action.icon.name }}
-            </mat-icon>
-          </button>
-        </td>
-
-        <ng-container *ngTemplateOutlet="footerCellTemplate; context: {$implicit: rowActionsProvider.COLUMN_NAME}">
-        </ng-container>
-      </ng-container>
-
-      <!--    value-icon-->
-      <ng-container *ngFor="let columnConfig of tableConfig.columnsCfg" [matColumnDef]="columnConfig.key">
-
-        <!-- if sortable column header -->
-        <ng-container *ngIf="columnConfig.sort && columnConfig.sort.enable; else notSortable">
-          <th mat-header-cell *matHeaderCellDef [mat-sort-header]="columnConfig.key"
-              [arrowPosition]="columnConfig.sort.position === 'right' ? 'before' : 'after'">
-            <ng-container *ngTemplateOutlet="headerValue"></ng-container>
-          </th>
-        </ng-container>
-
-        <!-- else not sortable -->
-        <ng-template #notSortable>
           <th mat-header-cell *matHeaderCellDef>
-            <ng-container *ngTemplateOutlet="headerValue"></ng-container>
+            <lib-column-view [config]="indexProvider.headerView">
+              {{ indexProvider.name }}
+            </lib-column-view>
           </th>
-        </ng-template>
 
-        <!--      header value-->
-        <ng-template #headerValue>
-          <lib-column-view [config]="columnConfig.headerView"
-                           [value]="columnConfig.name">
-          </lib-column-view>
-        </ng-template>
+          <td mat-cell *matCellDef="let element; let rowIndex = index">
+            {{ rowIndex + indexProvider.offset }}
+          </td>
 
-        <!-- column value получать настройки колонок нужно через getView(rowIndex, columnConfig.key) там находятся уже
-        подготовленные значения для использования-->
-        <td mat-cell *matCellDef="let element;">
-          <lib-column-view
-            [config]="tableView[element.id]?.get(columnConfig.key)"
-            [value]="element | dataPropertyGetter: columnConfig.key">
-          </lib-column-view>
-        </td>
+          <td mat-footer-cell *matFooterCellDef>
+            {{ totalRowProvider.totals.get(indexProvider.COLUMN_NAME) || '' }}
+          </td>
+        </ng-container>
 
-        <td mat-footer-cell *matFooterCellDef>
-          {{ totalRowProvider.totals.get(columnConfig.key) || '' }}
-        </td>
+        <!--        selection-column-->
+        <ng-container [matColumnDef]="selectionProvider.COLUMN_NAME" *ngIf="selectionProvider.isEnabled">
+          <th mat-header-cell *matHeaderCellDef>
+            <div class="flex-container">
+              <mat-checkbox (change)="$event ? masterToggle() : null"
+                            [checked]="selectionProvider.selection.hasValue() && isAllSelected()"
+                            [indeterminate]="selectionProvider.selection.hasValue() && !isAllSelected()">
+              </mat-checkbox>
+              <div
+                *ngIf="tableConfig.selectionCfg?.showSelectedCount && selectionProvider.selection.hasValue()">
+                (
+                {{ selectionProvider.selection.selected.length }}
+                <span
+                  *ngIf="tableConfig.selectionCfg?.showTotalCount !== false">/{{ tableDataSource.filteredData.length }}</span>
+                )
+              </div>
 
-      </ng-container>
+              <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">
+                <button mat-icon-button
+                        (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
+                        [matTooltip]="action.icon.tooltip || ''"
+                        *ngFor="let action of tableConfig.selectionCfg!.actions">
+                  <mat-icon [style.color]="action.icon.color">
+                    {{ action.icon.name }}
+                  </mat-icon>
+                </button>
+              </div>
+            </div>
 
-      <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header" class="enbl">
-      </tr>
-      <tr mat-row #rowLink
-          *matRowDef="let row; columns: _displayColumns;"
-          (click)="rowClick(row)"
-          [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': highlighted===row.rowSrc && tableConfig?.clickCfg?.highlightClicked?.color}"
-          [ngStyle]="{
+          </th>
+          <td mat-cell *matCellDef="let row">
+            <mat-checkbox (click)="$event.stopPropagation()"
+                          (change)="$event ? selectionProvider.selection.toggle(castSrc(row).rowSrc) : null"
+                          [checked]="selectionProvider.selection.isSelected(castSrc(row).rowSrc)">
+            </mat-checkbox>
+          </td>
+
+          <td mat-footer-cell *matFooterCellDef>
+          </td>
+        </ng-container>
+
+        <!-- action column -->
+        <ng-container *ngIf="rowActionsProvider.isEnabled" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button
+                    (click)="emitRowAction(action.action, element.rowSrc, $event)"
+                    [matTooltip]="action.icon.tooltip || ''"
+                    *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
+              <mat-icon [style.color]="action.icon.color">
+                {{ action.icon.name }}
+              </mat-icon>
+            </button>
+          </td>
+
+          <ng-container *ngTemplateOutlet="footerCellTemplate; context: {$implicit: rowActionsProvider.COLUMN_NAME}">
+          </ng-container>
+        </ng-container>
+
+        <!--    value-icon-->
+        <ng-container *ngFor="let columnConfig of tableConfig.columnsCfg" [matColumnDef]="columnConfig.key">
+
+          <!-- if sortable column header -->
+          <ng-container *ngIf="columnConfig.sort && columnConfig.sort.enable; else notSortable">
+            <th mat-header-cell *matHeaderCellDef [mat-sort-header]="columnConfig.key"
+                [arrowPosition]="columnConfig.sort.position === 'right' ? 'before' : 'after'">
+              <ng-container *ngTemplateOutlet="headerValue"></ng-container>
+            </th>
+          </ng-container>
+
+          <!-- else not sortable -->
+          <ng-template #notSortable>
+            <th mat-header-cell *matHeaderCellDef>
+              <ng-container *ngTemplateOutlet="headerValue"></ng-container>
+            </th>
+          </ng-template>
+
+          <!--      header value-->
+          <ng-template #headerValue>
+            <lib-column-view [config]="columnConfig.headerView"
+                             [value]="columnConfig.name">
+            </lib-column-view>
+          </ng-template>
+
+          <!-- column value получать настройки колонок нужно через getView(rowIndex, columnConfig.key) там находятся уже
+          подготовленные значения для использования-->
+          <td mat-cell *matCellDef="let element;">
+            <lib-column-view
+              [config]="tableView[element.id]?.get(columnConfig.key)"
+              [value]="element | dataPropertyGetter: columnConfig.key">
+            </lib-column-view>
+          </td>
+
+          <td mat-footer-cell *matFooterCellDef>
+            {{ totalRowProvider.totals.get(columnConfig.key) || '' }}
+          </td>
+
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header">
+        </tr>
+        <tr mat-row #rowLink
+            *matRowDef="let row; columns: _displayColumns;"
+            (click)="rowClick(row)"
+            [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': highlighted===row.rowSrc && tableConfig?.clickCfg?.highlightClicked?.color}"
+            [ngStyle]="{
           'color': highlighted===row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.color : undefined,
           'background-color': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.background : undefined,
           'border': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.border : undefined
           }">
-      </tr>
+        </tr>
 
-      <!--expanded-row-->
-      <ng-container matColumnDef="expandedRow">
-        <td mat-cell *matCellDef="let element" [attr.colspan]="_displayColumns.length">
-          <div class="row-detail"
-               [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
-            <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
-          </div>
-        </td>
-      </ng-container>
+        <!--expanded-row-->
+        <ng-container matColumnDef="expandedRow">
+          <td mat-cell *matCellDef="let element" [attr.colspan]="_displayColumns.length">
+            <div class="row-detail"
+                 [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
+              <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
+            </div>
+          </td>
+        </ng-container>
 
-      <ng-container *ngIf="extendedRowTemplate">
-        <tr mat-row class="expanded-row" *matRowDef="let row; columns: ['expandedRow']"></tr>
-      </ng-container>
-      <!--expanded-row-->
+        <ng-container *ngIf="extendedRowTemplate">
+          <tr mat-row class="expanded-row" *matRowDef="let row; columns: ['expandedRow']"></tr>
+        </ng-container>
+        <!--expanded-row-->
 
-      <ng-container *ngIf="totalRowProvider.isEnabled">
-        <tr mat-footer-row *matFooterRowDef="_displayColumns; sticky: this.tableConfig.stickyCfg?.total"
-            [style]="totalRowProvider.style"></tr>
-      </ng-container>
+        <ng-container *ngIf="totalRowProvider.isEnabled">
+          <tr mat-footer-row *matFooterRowDef="_displayColumns; sticky: this.tableConfig.stickyCfg?.total"
+              [style]="totalRowProvider.style"></tr>
+        </ng-container>
 
-      <!--sub-footer-row-->
-      <ng-container matColumnDef="subFooterRow">
-        <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
-          <ng-container>
-            <ng-content select="[ngxAurTableSubFooterRow]"></ng-content>
-          </ng-container>
-        </td>
-      </ng-container>
+        <!--sub-footer-row-->
+        <ng-container matColumnDef="subFooterRow">
+          <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
+            <ng-container>
+              <ng-content select="[ngxAurTableSubFooterRow]"></ng-content>
+            </ng-container>
+          </td>
+        </ng-container>
 
-      <ng-container *ngIf="subFooterRowTemplate">
-        <tr mat-footer-row *matFooterRowDef="['subFooterRow']; sticky: this.tableConfig.stickyCfg?.subFooter"></tr>
-      </ng-container>
-      <!--      sub-footer-row END-->
+        <ng-container *ngIf="subFooterRowTemplate">
+          <tr mat-footer-row *matFooterRowDef="['subFooterRow']; sticky: this.tableConfig.stickyCfg?.subFooter"></tr>
+        </ng-container>
+        <!--      sub-footer-row END-->
 
-      <!--sub-footer-pagination-->
-      <ng-container matColumnDef="subFooterPagination">
-        <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
+        <!--sub-footer-pagination-->
+        <ng-container matColumnDef="subFooterPagination">
+          <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
 
-          <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
-                         [pageSize]="paginationProvider.size"
-                         [style]="this.tableConfig?.pageableCfg?.style"
-                         showFirstLastButtons>
-          </mat-paginator>
+            <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
+                           [pageSize]="paginationProvider.size"
+                           [style]="this.tableConfig?.pageableCfg?.style"
+                           showFirstLastButtons>
+            </mat-paginator>
 
-        </td>
-      </ng-container>
+          </td>
+        </ng-container>
 
-      <ng-container *ngIf="paginationProvider.isEnabled">
-        <tr mat-footer-row
-            *matFooterRowDef="['subFooterPagination']; sticky: this.tableConfig.stickyCfg?.subFooterPagination"
-            [style]="this.tableConfig?.pageableCfg?.style"></tr>
-      </ng-container>
-      <!--      sub-footer-pagination END-->
-    </table>
+        <ng-container *ngIf="paginationProvider.isEnabled">
+          <tr mat-footer-row
+              *matFooterRowDef="['subFooterPagination']; sticky: this.tableConfig.stickyCfg?.subFooterPagination"
+              [style]="this.tableConfig?.pageableCfg?.style"></tr>
+        </ng-container>
+        <!--      sub-footer-pagination END-->
+      </table>
+    </div>
     <!-- Pagination -->
-
   </ng-container>
 </div>
 

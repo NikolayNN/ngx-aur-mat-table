@@ -3,6 +3,10 @@
   border-collapse: collapse;
 }
 
+.aur-mat-table .table-container {
+  position: relative;
+}
+
 .aur-mat-table th, td {
   padding-right: 10px !important;
 }
