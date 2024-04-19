@@ -6,7 +6,7 @@
         <ng-container>
           <ng-content select="[ngxAurTableSearchPrefix]"></ng-content>
         </ng-container>
-        <mat-form-field appearance="outline">
+        <mat-form-field appearance="outline" subscriptSizing="dynamic">
           <mat-label>{{ tableConfig.filterCfg?.label }}</mat-label>
           <input matInput (keyup)="applySearchFilter($event)"
                  placeholder="{{tableConfig.filterCfg?.placeholder}}"
