@@ -1,8 +1,9 @@
 import {
   AfterViewChecked,
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
-  Component, ContentChild,
+  ChangeDetectionStrategy,
+  Component,
+  ContentChild,
   ElementRef,
   EventEmitter,
   Input,
@@ -11,7 +12,8 @@ import {
   OnInit,
   Output,
   QueryList,
-  SimpleChanges, TemplateRef,
+  SimpleChanges,
+  TemplateRef,
   ViewChild,
   ViewChildren
 } from '@angular/core';
@@ -128,7 +130,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prevColumnOffsets: ColumnOffset[] = [];
 
   headerButtonProvider = new HeaderButtonProviderDummy();
-  @Output() settingsButtonClick = new EventEmitter<MouseEvent>();
+  @Output() onHeaderButton = new EventEmitter<MouseEvent>();
 
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
@@ -153,7 +155,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   @Input() highlight: HighlightContainer<T> | undefined;
 
-  constructor(private cdr: ChangeDetectorRef) {
+  constructor() {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
