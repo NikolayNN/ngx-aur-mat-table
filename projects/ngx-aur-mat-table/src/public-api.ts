@@ -15,3 +15,5 @@ export * from './lib/providers/IndexProvider';
 export * from './lib/style-builder/style-builder';
 export * from './lib/filters/NgxAurFilters';
 export * from './lib/directive/ngx-table-sub-footer-row.directive'
+export * from './lib/directive/ngx-aur-table-search-prefix.directive'
+export * from './lib/directive/ngx-aur-table-search-suffix.directive'

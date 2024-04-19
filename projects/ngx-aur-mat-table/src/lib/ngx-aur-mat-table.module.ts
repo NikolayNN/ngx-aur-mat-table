@@ -13,8 +13,8 @@ import {DataPropertyGetterPipe} from "./data-property-getter-pipe/data-property-
 import {ColumnViewComponent} from './components/column-value/column-view.component';
 import {CommonModule} from "@angular/common";
 import {NgxTableSubFooterRowDirective} from './directive/ngx-table-sub-footer-row.directive';
-import {AurTableSearchPrefixDirective} from "./directive/aur-table-search-prefix.directive";
-import {AurTableSearchSuffixDirective} from "./directive/aur-table-search-suffix.directive";
+import {NgxAurTableSearchPrefixDirective} from "./directive/ngx-aur-table-search-prefix.directive";
+import {NgxAurTableSearchSuffixDirective} from "./directive/ngx-aur-table-search-suffix.directive";
 
 
 @NgModule({
@@ -23,8 +23,8 @@ import {AurTableSearchSuffixDirective} from "./directive/aur-table-search-suffix
     DataPropertyGetterPipe,
     ColumnViewComponent,
     NgxTableSubFooterRowDirective,
-    AurTableSearchPrefixDirective,
-    AurTableSearchSuffixDirective
+    NgxAurTableSearchPrefixDirective,
+    NgxAurTableSearchSuffixDirective
   ],
   imports: [
     CommonModule,
@@ -42,8 +42,8 @@ import {AurTableSearchSuffixDirective} from "./directive/aur-table-search-suffix
     NgxAurMatTableComponent,
     DataPropertyGetterPipe,
     NgxTableSubFooterRowDirective,
-    AurTableSearchPrefixDirective,
-    AurTableSearchSuffixDirective
+    NgxAurTableSearchPrefixDirective,
+    NgxAurTableSearchSuffixDirective
   ]
 })
 export class NgxAurMatTableModule {
