@@ -1,5 +1,5 @@
 import {AbstractProvider} from "./AbstractProvider";
-import {TableHeaderButtonConfig} from "ngx-aur-mat-table";
+import {TableHeaderButtonConfig} from "../model/ColumnConfig";
 
 export class HeaderButtonProvider extends AbstractProvider {
   isEnabled: boolean;
