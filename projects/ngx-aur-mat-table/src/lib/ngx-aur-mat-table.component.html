@@ -47,8 +47,8 @@
             </lib-column-view>
           </th>
 
-          <td mat-cell *matCellDef="let element; let rowIndex = index">
-            {{ rowIndex + indexProvider.offset }}
+          <td mat-cell *matCellDef="let element;">
+            {{ element.id + indexProvider.offset }}
           </td>
 
           <td mat-footer-cell *matFooterCellDef>

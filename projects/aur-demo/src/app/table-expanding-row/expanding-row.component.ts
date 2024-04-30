@@ -32,6 +32,10 @@ export class ExpandingRowComponent {
       },
       cancelable: true
     },
+    indexCfg: {
+      enable: true,
+      offset: 1
+    }
   }
   tableData: Customer[] = CustomerGenerator.generate(10);
 

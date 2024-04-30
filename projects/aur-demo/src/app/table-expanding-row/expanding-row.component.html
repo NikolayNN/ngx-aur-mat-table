@@ -23,8 +23,8 @@
 <aur-mat-table
   [tableData]="tableData"
   [tableConfig]="tableConfig"
-  [extendedRowTemplate]="rowTemplate"
-></aur-mat-table>
+  [extendedRowTemplate]="rowTemplate">
+</aur-mat-table>
 <ng-template #rowTemplate let-row>
   <app-row-details [row]="row"></app-row-details>
 </ng-template>
