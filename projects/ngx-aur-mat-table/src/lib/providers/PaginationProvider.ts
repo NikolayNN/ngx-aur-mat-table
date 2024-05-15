@@ -13,7 +13,7 @@ export class PaginationProvider extends AbstractProvider {
     super();
     this.sizes = config.sizes || [5, 10, 15, 25, 50]
     this.size = config.size || this.sizes[1];
-    this.position = config.position || 'under';
+    this.position = config.position || 'bottom';
   }
 
   public static canEnable<T>(tableConfig: TableConfig<T>): boolean {

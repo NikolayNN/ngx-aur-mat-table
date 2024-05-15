@@ -2,7 +2,7 @@
   display: flex;
   flex-direction: column;
 
-  .bottom-pagination {
+  &.bottom-pagination {
     height: 100%;
   }
 }
@@ -14,7 +14,7 @@
 .aur-mat-table .table-container {
   position: relative;
 
-  .bottom-pagination {
+  &.bottom-pagination {
     flex-grow: 1;
     overflow: auto;
   }
