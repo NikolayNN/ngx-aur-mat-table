@@ -1,10 +1,23 @@
+.aur-mat-table {
+  display: flex;
+  flex-direction: column;
+
+  .bottom-pagination {
+    height: 100%;
+  }
+}
+
 .aur-mat-table table {
-  width: 100%;
   border-collapse: collapse;
 }
 
 .aur-mat-table .table-container {
   position: relative;
+
+  .bottom-pagination {
+    flex-grow: 1;
+    overflow: auto;
+  }
 }
 
 .aur-mat-table th, td {

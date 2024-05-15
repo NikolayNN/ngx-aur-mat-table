@@ -10,7 +10,9 @@ import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 })
 export class TableWithStickyHeaderComponent {
 
-  tableConfig: TableConfig<Customer> = {
+  tableData: Customer[] = CustomerGenerator.generate(20);
+
+  tableConfigPaginatorUnder: TableConfig<Customer> = {
     columnsCfg: [
       {
         name: 'customers name',
@@ -25,13 +27,35 @@ export class TableWithStickyHeaderComponent {
     ],
     pageableCfg: {
       enable: true,
-      style: 'background-color: gray'
+      style: 'background-color: gray',
+      position: 'under'
     },
     stickyCfg: {
       header: true,
-      subFooterPagination: true
     }
   }
-  tableData: Customer[] = CustomerGenerator.generate(20);
+
+  tableConfigPaginatorBottom: TableConfig<Customer> = {
+    columnsCfg: [
+      {
+        name: 'customers name',
+        key: 'name',
+        valueConverter: v => v.name
+      },
+      {
+        name: 'customers age',
+        key: 'age',
+        valueConverter: v => v.age
+      },
+    ],
+    pageableCfg: {
+      enable: true,
+      style: 'background-color: gray',
+      position: 'bottom'
+    },
+    stickyCfg: {
+      header: true,
+    }
+  }
 
 }

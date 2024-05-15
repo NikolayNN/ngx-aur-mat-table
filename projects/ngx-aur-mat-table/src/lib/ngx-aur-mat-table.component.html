@@ -1,4 +1,5 @@
-<div class="aur-mat-table">
+<div class="aur-mat-table"
+     [ngClass]="{'bottom-pagination': paginationProvider.isEnabled && paginationProvider.position === 'bottom'}">
   <ng-container>
     <!-- Filter -->
     <ng-container *ngIf="tableConfig.filterCfg">
@@ -20,7 +21,8 @@
     </ng-container>
 
 
-    <div class="table-container">
+    <div class="table-container"
+         [ngClass]="{'bottom-pagination': paginationProvider.isEnabled && paginationProvider.position === 'bottom'}">
       <mat-icon *ngIf="headerButtonProvider.isEnabled"
                 class="table-settings-button"
                 [style.color]="headerButtonProvider.color"
@@ -201,30 +203,18 @@
           <tr mat-footer-row *matFooterRowDef="['subFooterRow']; sticky: this.tableConfig.stickyCfg?.subFooter"></tr>
         </ng-container>
         <!--      sub-footer-row END-->
-
-        <!--sub-footer-pagination-->
-        <ng-container matColumnDef="subFooterPagination">
-          <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
-
-            <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
-                           [pageSize]="paginationProvider.size"
-                           [style]="this.tableConfig?.pageableCfg?.style"
-                           showFirstLastButtons>
-            </mat-paginator>
-
-          </td>
-        </ng-container>
-
-        <ng-container *ngIf="paginationProvider.isEnabled">
-          <tr mat-footer-row
-              *matFooterRowDef="['subFooterPagination']; sticky: this.tableConfig.stickyCfg?.subFooterPagination"
-              [style]="this.tableConfig?.pageableCfg?.style"></tr>
-        </ng-container>
-        <!--      sub-footer-pagination END-->
       </table>
     </div>
-    <!-- Pagination -->
   </ng-container>
+
+  <!-- Pagination -->
+  @if (this.paginationProvider.isEnabled) {
+    <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
+                   [pageSize]="paginationProvider.size"
+                   [style]="this.tableConfig?.pageableCfg?.style"
+                   showFirstLastButtons>
+    </mat-paginator>
+  }
 </div>
 
 <ng-template #footerCellTemplate let-columnName>

@@ -176,13 +176,13 @@ export interface PaginationConfig {
   sizes?: number[];
   size?: number;
   style?: string;
+  position?: 'under' | 'bottom';
 }
 
 export interface StickyConfig {
   header?: boolean;
   total?: boolean;
   subFooter?: boolean;
-  subFooterPagination?: boolean;
 }
 
 export interface TableView {
