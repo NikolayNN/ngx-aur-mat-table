@@ -211,7 +211,10 @@
   @if (this.paginationProvider.isEnabled) {
     <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
                    [pageSize]="paginationProvider.size"
-                   [style]="this.tableConfig?.pageableCfg?.style"
+                   [style]="tableConfig?.pageableCfg?.style"
+                   [length]="paginatorState?.length"
+                   [pageIndex]="paginatorState?.pageIndex"
+                   (page)="pageChange.emit($event)"
                    showFirstLastButtons>
     </mat-paginator>
   }

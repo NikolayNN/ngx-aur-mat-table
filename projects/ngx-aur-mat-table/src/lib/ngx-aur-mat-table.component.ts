@@ -20,7 +20,7 @@ import {
 import {ColumnView, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
-import {MatPaginator} from '@angular/material/paginator';
+import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {SelectionProvider, SelectionProviderDummy} from './providers/SelectionProvider';
 import {ActionEvent, RowActionProvider, RowActionProviderDummy} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
@@ -38,6 +38,11 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-row.directive";
 import {SelectionModel} from "@angular/cdk/collections";
 import {HeaderButtonProvider, HeaderButtonProviderDummy} from "./providers/HeaderButtonProvider";
+
+export interface PaginatorState {
+  length: number;
+  pageIndex: number;
+}
 
 export interface HighlightContainer<T> {
   value: any;
@@ -98,12 +103,17 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   @Input() extendedRowTemplate: TemplateRef<any> | null = null;
 
+  // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
+  @Input() paginatorState: PaginatorState | undefined;
+
   // @ts-ignore
-  @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
+  @ViewChild(MatPaginator, {read: ElementRef}) matPaginator: MatPaginator;
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
 
   @Output() sort: EventEmitter<Sort> = new EventEmitter();
+
+  @Output() pageChange = new EventEmitter<PageEvent>();
 
   // events if enabled actions
   @Output() onRowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
