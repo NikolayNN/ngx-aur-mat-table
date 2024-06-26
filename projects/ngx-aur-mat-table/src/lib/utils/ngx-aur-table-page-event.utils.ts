@@ -1,4 +1,4 @@
-import {TableConfig} from "ngx-aur-mat-table";
+import {TableConfig} from "../model/ColumnConfig";
 import {PageEvent} from "@angular/material/paginator";
 
 export class NgxAurTablePageEventUtils {
