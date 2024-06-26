@@ -25,7 +25,8 @@ export class TableWithPaginationComponent {
     ],
 
     pageableCfg: {
-      enable: true
+      enable: true,
+      size: 20
     }
   }
   tableData: Customer[] = CustomerGenerator.generate(100);

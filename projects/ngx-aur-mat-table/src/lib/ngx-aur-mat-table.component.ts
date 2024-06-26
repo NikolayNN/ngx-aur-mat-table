@@ -39,9 +39,23 @@ import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-ro
 import {SelectionModel} from "@angular/cdk/collections";
 import {HeaderButtonProvider, HeaderButtonProviderDummy} from "./providers/HeaderButtonProvider";
 
-export interface PaginatorState {
-  length: number;
-  pageIndex: number;
+
+export class PaginatorState {
+
+  constructor(private _length: number, private _pageIndex: number) {
+  }
+
+  get length(): number {
+    return this._length;
+  }
+
+  get pageIndex(): number {
+    return this._pageIndex;
+  }
+
+  public static empty(): PaginatorState {
+    return new PaginatorState(0, 0);
+  }
 }
 
 export interface HighlightContainer<T> {
@@ -107,7 +121,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Input() paginatorState: PaginatorState | undefined;
 
   // @ts-ignore
-  @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: true}) matPaginator: MatPaginator;
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
 

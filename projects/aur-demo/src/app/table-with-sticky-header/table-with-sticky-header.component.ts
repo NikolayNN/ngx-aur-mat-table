@@ -27,6 +27,7 @@ export class TableWithStickyHeaderComponent {
     ],
     pageableCfg: {
       enable: true,
+      size: 20,
       style: 'background-color: gray',
       position: 'under'
     },
@@ -50,6 +51,7 @@ export class TableWithStickyHeaderComponent {
     ],
     pageableCfg: {
       enable: true,
+      size: 20,
       style: 'background-color: gray',
       position: 'bottom'
     },

@@ -23,9 +23,15 @@
     </ng-template>
   </mat-tab>
 
-  <mat-tab label="С пагинацией">
+  <mat-tab label="С пагинацией FULL">
     <ng-template matTabContent>
       <app-table-with-pagination></app-table-with-pagination>
+    </ng-template>
+  </mat-tab>
+
+  <mat-tab label="С пагинацией BATCH">
+    <ng-template matTabContent>
+      <app-table-with-server-pagination></app-table-with-server-pagination>
     </ng-template>
   </mat-tab>
 

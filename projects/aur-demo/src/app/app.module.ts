@@ -40,6 +40,9 @@ import {TableWithSettingsButtonComponent} from "./table-with-settings-button/tab
 import {
   TableWithFilterCustomButtonsComponent
 } from "./table-with-filter-custom-buttons/table-with-filter-custom-buttons.component";
+import {
+  TableWithServerPaginationComponent
+} from "./table-with-server-pagination-component/table-with-server-pagination.component";
 
 @NgModule({
   declarations: [
@@ -68,7 +71,8 @@ import {
     TableWithCustomColumnsComponent,
     ExpandingRowComponent,
     RowDetailsComponent,
-    TableWithSubFooterComponent
+    TableWithSubFooterComponent,
+    TableWithServerPaginationComponent
   ],
   imports: [
     BrowserModule,

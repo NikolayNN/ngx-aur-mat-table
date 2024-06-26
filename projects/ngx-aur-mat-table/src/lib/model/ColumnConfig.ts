@@ -173,8 +173,8 @@ export interface SelectionConfig {
 
 export interface PaginationConfig {
   enable: boolean;
+  size: number;
   sizes?: number[];
-  size?: number;
   style?: string;
   position?: 'under' | 'bottom';
 }
