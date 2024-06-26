@@ -121,7 +121,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Input() paginatorState: PaginatorState | undefined;
 
   // @ts-ignore
-  @ViewChild(MatPaginator, {static: true}) matPaginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
 
@@ -273,7 +273,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData(initSelection: T[] = []) {
     this.initTable();
     this.initCustomSortFunctionsMap();
-    this.initPaginator();
+    if (!this.paginatorState) {
+      // если пагинатор не серверный то его я здесь инициализирую иначе при обновлении данных пагинатор ломается и отображаются все элементы
+      this.initPaginator();
+    }
     this.initSortingDataAccessor();
     this.indexProvider = IndexProvider.create(this.tableConfig)
       .addIndexColumn(this._displayColumns);
