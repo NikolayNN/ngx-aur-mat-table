@@ -1,7 +1,7 @@
 import {TableConfig} from "ngx-aur-mat-table";
 import {PageEvent} from "@angular/material/paginator";
 
-export class PageEventUtils {
+export class NgxAurTablePageEventUtils {
   public static createEmpty(tableConfig: TableConfig<any>): PageEvent {
     return {
       pageSize: tableConfig.pageableCfg!.size,

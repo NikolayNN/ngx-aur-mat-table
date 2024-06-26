@@ -3,7 +3,7 @@ import {NgxAurMatTableModule, PaginatorState, TableConfig} from "ngx-aur-mat-tab
 import {Customer} from "../shared/model/customer";
 import {CustomerService} from "./customer.service";
 import {PageEvent} from "@angular/material/paginator";
-import {PageEventUtils} from "../../../../ngx-aur-mat-table/src/lib/utils/page-event.utils";
+import {NgxAurTablePageEventUtils} from "../../../../ngx-aur-mat-table/src/lib/utils/ngx-aur-table-page-event.utils";
 
 @Component({
   selector: 'app-table-with-server-pagination',
@@ -44,7 +44,7 @@ export class TableWithServerPaginationComponent implements OnInit {
 
   loadPage(pageEvent?: PageEvent) {
     if (!pageEvent) {
-      pageEvent = PageEventUtils.createEmpty(this.tableConfig);
+      pageEvent = NgxAurTablePageEventUtils.createEmpty(this.tableConfig);
     }
 
     this.customerService.page(pageEvent.pageIndex, pageEvent.pageSize).subscribe(page => {
