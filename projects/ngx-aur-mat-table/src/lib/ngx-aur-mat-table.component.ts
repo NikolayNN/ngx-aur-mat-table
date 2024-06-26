@@ -107,7 +107,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Input() paginatorState: PaginatorState | undefined;
 
   // @ts-ignore
-  @ViewChild(MatPaginator, {read: ElementRef}) matPaginator: MatPaginator;
+  @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
 
@@ -174,6 +174,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
     if (changes['highlight'] && this.highlight) {
       this.handleHighlightChange(this.highlight);
+    }
+  }
+
+  public resetPaginatorPageIndex() {
+    if (this.matPaginator) {
+      this.matPaginator.firstPage();
     }
   }
 
