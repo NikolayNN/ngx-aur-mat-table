@@ -68,11 +68,9 @@
               </mat-checkbox>
               <div
                 *ngIf="tableConfig.selectionCfg?.showSelectedCount && selectionProvider.selection.hasValue()">
-                (
                 {{ selectionProvider.selection.selected.length }}
                 <span
-                  *ngIf="tableConfig.selectionCfg?.showTotalCount !== false">/{{ tableDataSource.filteredData.length }}</span>
-                )
+                  *ngIf="tableConfig.selectionCfg?.showTotalCount !== false">/{{ paginatorState?.length ? paginatorState?.length : tableDataSource.filteredData.length }}</span>
               </div>
 
               <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">

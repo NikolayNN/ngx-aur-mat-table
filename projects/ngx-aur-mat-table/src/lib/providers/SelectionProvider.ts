@@ -55,17 +55,14 @@ export class SelectionProvider<T> extends AbstractProvider {
 
   public masterToggle(): void {
     if (this.isAllSelected()) {
-      this.selection.clear();
+      this.selection.deselect(...this.tableDataSource.filteredData.map(d => d.rowSrc))
     } else {
-      this.tableDataSource.filteredData.forEach(row => this.selection.select(row.rowSrc));
+      this.selection.select(...this.tableDataSource.filteredData.map(d => d.rowSrc))
     }
   }
 
   isAllSelected(): boolean {
-    const filteredData = this.tableDataSource.filteredData;
-    const numSelected = this.selection.selected.length;
-    const numRows = filteredData.length;
-    return numSelected === numRows;
+    return this.tableDataSource.filteredData.every(r => this.selection.isSelected(r.rowSrc));
   }
 
   private static canEnable<T>(tableConfig: TableConfig<T>): boolean {
