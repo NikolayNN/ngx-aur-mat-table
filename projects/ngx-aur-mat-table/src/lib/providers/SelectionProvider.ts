@@ -10,13 +10,16 @@ export class SelectionProvider<T> extends AbstractProvider {
   public readonly isEnabled = true;
   public static readonly COLUMN_NAME = 'tbl_selects';
   selection: SelectionModel<T>;
-  config: SelectionConfig;
+  config: SelectionConfig<T>;
   tableDataSource: MatTableDataSource<TableRow<T>>;
 
   constructor(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>, initSelection: T[]) {
     super();
     this.config = tableConfig?.selectionCfg || EmptyValue.SELECTION_CONFIG;
     this.selection = new SelectionModel<T>(this.config.multiple, initSelection);
+    if (this.config.compareWith) {
+      this.selection.compareWith = this.config.compareWith;
+    }
     this.tableDataSource = tableDataSource;
   }
 

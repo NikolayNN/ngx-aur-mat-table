@@ -4,7 +4,7 @@ import {MatTableDataSource} from "@angular/material/table";
 
 export class EmptyValue {
 
-  public static readonly SELECTION_CONFIG: SelectionConfig = {
+  public static readonly SELECTION_CONFIG: SelectionConfig<any> = {
     enable: false,
   }
 

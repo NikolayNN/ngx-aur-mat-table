@@ -7,15 +7,16 @@ export class CustomerGenerator {
   public static generate(count: number): Customer[] {
     const result = [];
     for (let i = 0; i < count; i++) {
-      result.push(this.random())
+      result.push(this.random(i))
     }
     return result;
   }
 
-  private static random() {
+  private static random(i: number) {
     const nameIndex = Math.floor(Math.random() * CustomerGenerator.names.length);
 
     return {
+      id: i,
       name: CustomerGenerator.names[nameIndex],
       age: CustomerGenerator.randomNumber(20, 50),
     };

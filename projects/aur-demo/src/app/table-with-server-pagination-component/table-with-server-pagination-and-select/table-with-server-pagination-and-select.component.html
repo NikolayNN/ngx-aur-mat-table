@@ -1,0 +1,7 @@
+<p>Table with server pagination and select to correct work you should set compareWith function</p>
+<aur-mat-table
+  [tableData]="tableData || []"
+  [tableConfig]="tableConfig"
+  [paginatorState]="paginatorState"
+  (pageChange)="loadPage($event)">
+</aur-mat-table>

@@ -10,7 +10,12 @@ export class CustomerService {
   page(page: number, pageSize: number): Observable<Page<Customer>> {
     const startIndex = (page) * pageSize;
     const endIndex = Math.min(startIndex + pageSize, this.customers.length);
-    const content = this.customers.slice(startIndex, endIndex);
+    //создаю копию чтобы изменилась ссылка для имитации того что пришли новые данные с сервера
+    const content = this.customers.slice(startIndex, endIndex).map(c => ({
+      id: c.id,
+      name: c.name,
+      age: c.age
+    }));
     const totalElements = this.customers.length;
     const totalPages = Math.ceil(totalElements / pageSize);
     const pageObject = new Page<Customer>(
@@ -23,6 +28,6 @@ export class CustomerService {
       page === totalPages,
       content.length === 0
     );
-    return of(pageObject).pipe(delay(1000));
+    return of(pageObject).pipe(delay(500));
   }
 }

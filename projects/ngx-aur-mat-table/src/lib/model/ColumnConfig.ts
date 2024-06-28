@@ -25,7 +25,7 @@ export interface TableConfig<T> {
   /**
    * Настройка для отображения чекбоксов
    */
-  selectionCfg?: SelectionConfig,
+  selectionCfg?: SelectionConfig<T>,
 
   /**
    * Настройка пагинации таблицы
@@ -161,10 +161,11 @@ export interface Action<T> {
   icon: IconView<T>;
 }
 
-export interface SelectionConfig {
+export interface SelectionConfig<T> {
   position?: 'start' | 'end';
   multiple?: boolean;
   showSelectedCount?: boolean;
+  compareWith?: (o1: T, o2: T) => boolean
   // default: true, показывать
   showTotalCount?:boolean;
   enable: boolean;
