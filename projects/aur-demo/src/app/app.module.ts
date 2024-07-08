@@ -47,6 +47,7 @@ import {
   TableWithServerPaginationAndSelectComponent
 } from "./table-with-server-pagination-component/table-with-server-pagination-and-select/table-with-server-pagination-and-select.component";
 import {TableWithTopColumnComponent} from "./table-with-top-column/table-with-top-column.component";
+import {TableHideShowBodyComponent} from "./table-hide-show-body/table-hide-show-body.component";
 
 @NgModule({
   declarations: [
@@ -80,18 +81,19 @@ import {TableWithTopColumnComponent} from "./table-with-top-column/table-with-to
     TableWithServerPaginationAndSelectComponent,
     TableWithTopColumnComponent
   ],
-  imports: [
-    BrowserModule,
-    NgxAurMatTableModule,
-    BrowserAnimationsModule,
-    MatTabsModule,
-    MatChipsModule,
-    FormsModule,
-    MatInputModule,
-    DragDropModule,
-    TableWithSettingsButtonComponent,
-    TableWithFilterCustomButtonsComponent
-  ],
+    imports: [
+        BrowserModule,
+        NgxAurMatTableModule,
+        BrowserAnimationsModule,
+        MatTabsModule,
+        MatChipsModule,
+        FormsModule,
+        MatInputModule,
+        DragDropModule,
+        TableWithSettingsButtonComponent,
+        TableWithFilterCustomButtonsComponent,
+        TableHideShowBodyComponent
+    ],
   providers: [],
   bootstrap: [AppComponent]
 })

@@ -38,7 +38,8 @@
              (matSortChange)="sortTable($event)"
              [style.height]="tableConfig.tableView?.height"
              [style.max-height]="tableConfig.tableView?.maxHeight"
-             [style.min-height]="tableConfig.tableView?.minHeight">
+             [style.min-height]="tableConfig.tableView?.minHeight"
+             [ngClass]="{'hide-table-body': isTableBodyHide}">
 
         <!--        index-column-->
         <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">

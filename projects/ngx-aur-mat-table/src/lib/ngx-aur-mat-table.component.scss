@@ -85,3 +85,7 @@
   border-bottom: none;
 }
 
+.hide-table-body tr:not(.mat-mdc-header-row) {
+  display: none !important;
+}
+

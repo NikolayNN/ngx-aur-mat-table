@@ -132,6 +132,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
   @Input() paginatorState: PaginatorState | undefined;
 
+  @Input() isTableBodyHide = false;
+
   // @ts-ignore
   @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
   // @ts-ignore
@@ -162,6 +164,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
    */
   @Output() onFilter = new EventEmitter<T[]>();
 
+  /** @deprecated use extraHeaderCellTopTemplate or extraHeaderCellBottomTemplate */
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
 

@@ -1,0 +1,9 @@
+<button mat-button color="primary" (click)="isTableBodyHide = !isTableBodyHide">
+  {{ isTableBodyHide ? 'show table body' : 'hide table body' }}
+</button>
+
+<aur-mat-table
+  [isTableBodyHide]="isTableBodyHide"
+  [tableData]="tableData"
+  [tableConfig]="tableConfig">
+</aur-mat-table>
