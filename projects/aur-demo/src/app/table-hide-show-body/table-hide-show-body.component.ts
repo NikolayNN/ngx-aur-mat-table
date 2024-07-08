@@ -30,7 +30,11 @@ export class TableHideShowBodyComponent {
         key: 'age',
         valueConverter: v => v.age
       }
-    ]
+    ],
+    pageableCfg: {
+      enable: true,
+      size: 10
+    }
   }
   tableData: Customer[] = CustomerGenerator.generate(10);
 

@@ -236,7 +236,8 @@
 
   <!-- Pagination -->
   @if (this.paginationProvider.isEnabled) {
-    <mat-paginator [pageSizeOptions]="paginationProvider.sizes"
+    <mat-paginator [ngClass]="{'hidePaginator': isTableBodyHide}"
+                   [pageSizeOptions]="paginationProvider.sizes"
                    [pageSize]="paginationProvider.size"
                    [style]="tableConfig?.pageableCfg?.style"
                    [length]="paginatorState?.length"
