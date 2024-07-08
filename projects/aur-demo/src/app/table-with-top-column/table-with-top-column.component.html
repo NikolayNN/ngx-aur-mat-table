@@ -1,0 +1,18 @@
+<aur-mat-table [tableData]="tableData"
+               [tableConfig]="tableConfig"
+               [extraHeaderCellTopTemplate]="extraHeaderCellTopTemplate"
+               [extraHeaderCellBottomTemplate]="extraHeaderCellBottomTemplate">
+</aur-mat-table>
+
+<ng-template #extraHeaderCellTopTemplate let-key="key">
+  <div (click)="alert('Click on ' + key)" class="extra-top-header">
+    Extra top header for '{{ key }}'
+  </div>
+</ng-template>
+
+<ng-template #extraHeaderCellBottomTemplate let-key="key">
+  <div (click)="alert('Click on ' + key)" class="extra-bottom-header">
+    Extra bottom header for '{{ key }}'
+  </div>
+</ng-template>
+

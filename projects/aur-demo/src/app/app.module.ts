@@ -46,6 +46,7 @@ import {
 import {
   TableWithServerPaginationAndSelectComponent
 } from "./table-with-server-pagination-component/table-with-server-pagination-and-select/table-with-server-pagination-and-select.component";
+import {TableWithTopColumnComponent} from "./table-with-top-column/table-with-top-column.component";
 
 @NgModule({
   declarations: [
@@ -76,7 +77,8 @@ import {
     RowDetailsComponent,
     TableWithSubFooterComponent,
     TableWithServerPaginationComponent,
-    TableWithServerPaginationAndSelectComponent
+    TableWithServerPaginationAndSelectComponent,
+    TableWithTopColumnComponent
   ],
   imports: [
     BrowserModule,

@@ -90,8 +90,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   expandedStateEnum = ExpandState;
 
+  readonly EXTRA_HEADER_CELL_TOP_SUFFIX = '_extra_header_cell_top';
+  readonly EXTRA_HEADER_CELL_BOTTOM_SUFFIX = '_extra_header_cell_bottom';
+
   public tableDataSource = new MatTableDataSource<TableRow<T>>([]);
   _displayColumns: string[] = [];
+  _displayExtraHeaderTopCell: string[] = [];
+  _displayExtraHeaderBottomCell: string[] = [];
+
   _customDisplayColumnsEnabled = false;
 
   @Input() set displayColumns(columns: string[]) {
@@ -104,6 +110,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   tableView: Map<string, ColumnView<string>>[] = [];
 
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
+
+  // @ts-ignore
+  @Input() extraHeaderCellTopTemplate: TemplateRef<any> | null;
+
+  // @ts-ignore
+  @Input() extraHeaderCellBottomTemplate: TemplateRef<any> | null;
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
@@ -298,6 +310,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.tableHeaderButtonCfg)
 
     this.emitFilteredValues();
+
+    this._displayExtraHeaderTopCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_TOP_SUFFIX)
+    this._displayExtraHeaderBottomCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_BOTTOM_SUFFIX)
   }
 
   private initCustomSortFunctionsMap() {

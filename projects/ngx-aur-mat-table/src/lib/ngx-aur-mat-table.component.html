@@ -155,8 +155,36 @@
 
         </ng-container>
 
+        <!--        extra header top cell-->
+        <ng-container *ngFor="let extraTopCell  of _displayExtraHeaderTopCell" [matColumnDef]="extraTopCell">
+          <th mat-header-cell *matHeaderCellDef>
+            <ng-container *ngTemplateOutlet="extraHeaderCellTopTemplate; context: {key: extraTopCell.replace(EXTRA_HEADER_CELL_TOP_SUFFIX, '')}"></ng-container>
+          </th>
+        </ng-container>
+
+        <!--        extra header bottom cell-->
+        <ng-container *ngFor="let extraBottomCell  of _displayExtraHeaderBottomCell" [matColumnDef]="extraBottomCell">
+          <th mat-header-cell *matHeaderCellDef>
+            <ng-container *ngTemplateOutlet="extraHeaderCellBottomTemplate; context: {key: extraBottomCell.replace(EXTRA_HEADER_CELL_BOTTOM_SUFFIX, '')}"></ng-container>
+          </th>
+        </ng-container>
+
+        <!--        extra header top row-->
+        <ng-container *ngIf="extraHeaderCellTopTemplate">
+          <tr mat-header-row *matHeaderRowDef="_displayExtraHeaderTopCell;  sticky: this.tableConfig.stickyCfg?.header" class="extra-header-top-row">
+          </tr>
+        </ng-container>
+
+        <!--        header  row-->
         <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header">
         </tr>
+
+        <!--        extra header bottom row -->
+        <ng-container *ngIf="extraHeaderCellBottomTemplate">
+          <tr mat-header-row *matHeaderRowDef="_displayExtraHeaderBottomCell;  sticky: this.tableConfig.stickyCfg?.header">
+          </tr>
+        </ng-container>
+
         <tr mat-row #rowLink
             *matRowDef="let row; columns: _displayColumns;"
             (click)="rowClick(row)"
