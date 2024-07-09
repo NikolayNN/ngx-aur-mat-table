@@ -270,4 +270,53 @@ export namespace NgxAurFilters {
     }
   }
 
+  /**
+   * Composite filter class that combines multiple filters using logical AND.
+   * @template T The type of data to be filtered.
+   */
+  export class CompositeAndFilter<T> extends Base<T> {
+    private filters: Base<T>[];
+
+    constructor(filters: Base<T>[]) {
+      super();
+      this.filters = filters;
+    }
+
+    /**
+     * Creates a filter function that combines the filter functions of all
+     * filters in the composite using logical AND.
+     *
+     * @returns A filter function that takes a single parameter:
+     *    - `data`: An individual data item from the MatTable data source.
+     *      The type of `data` is defined by the generic type parameter 'T'.
+     *
+     * The function returns `true` if all filters in the composite return `true`
+     * for the `data` item, otherwise `false`.
+     */
+    public override filterFn(): (data: TableRow<T>) => boolean {
+      return (data) => {
+        return this.filters.every(filter => filter.filterFn()(data));
+      };
+    }
+
+    /**
+     * Determines whether the current composite filter is equivalent to another filter.
+     * This method is used to compare the current applied composite filter with a new filter.
+     *
+     * @param other The filter to compare with the current filter.
+     * @returns `true` if the current filter and the `other` filter are equivalent, otherwise `false`.
+     */
+    public override equals(other: Base<T>): boolean {
+      if (!(other instanceof CompositeAndFilter)) {
+        return false;
+      }
+
+      if (this.filters.length !== other.filters.length) {
+        return false;
+      }
+
+      return this.filters.every((filter, index) => filter.equals(other.filters[index]));
+    }
+  }
+
 }
