@@ -126,7 +126,7 @@ export namespace NgxAurFilters {
     }
 
     override get min(): number {
-      return this._min ?? Number.MIN_VALUE;
+      return this._min ?? -Number.MAX_VALUE;
     }
 
     override get max(): number {
