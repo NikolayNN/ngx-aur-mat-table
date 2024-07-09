@@ -274,13 +274,20 @@ export namespace NgxAurFilters {
    * Composite filter class that combines multiple filters using logical AND.
    * @template T The type of data to be filtered.
    */
-  export class CompositeAndFilter<T> extends Base<T> {
+  export abstract class CompositeAndFilter<T> extends Base<T> {
     private filters: Base<T>[];
 
-    constructor(filters: Base<T>[]) {
+    protected constructor() {
       super();
-      this.filters = filters;
+      this.filters = [];
+      this.initFilters();
     }
+
+    /**
+     * Abstract method to initialize filters.
+     * Subclasses must implement this method to define the initial set of filters.
+     */
+    protected abstract initFilters(): void;
 
     /**
      * Creates a filter function that combines the filter functions of all
