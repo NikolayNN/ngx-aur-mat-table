@@ -277,16 +277,10 @@ export namespace NgxAurFilters {
   export abstract class CompositeAndFilter<T> extends Base<T> {
     private filters: Base<T>[];
 
-    protected constructor() {
+    protected constructor(filters: Base<T>[]) {
       super();
-      this.filters = this.createFilters() || [];
+      this.filters = filters || [];
     }
-
-    /**
-     * Abstract method to initialize filters.
-     * Subclasses must implement this method to define the initial set of filters.
-     */
-    protected abstract createFilters(): Base<T>[];
 
     /**
      * Creates a filter function that combines the filter functions of all
