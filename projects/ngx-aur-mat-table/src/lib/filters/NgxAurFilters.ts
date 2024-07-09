@@ -279,15 +279,14 @@ export namespace NgxAurFilters {
 
     protected constructor() {
       super();
-      this.filters = [];
-      this.initFilters();
+      this.filters = this.createFilters() || [];
     }
 
     /**
      * Abstract method to initialize filters.
      * Subclasses must implement this method to define the initial set of filters.
      */
-    protected abstract initFilters(): void;
+    protected abstract createFilters(): Base<T>[];
 
     /**
      * Creates a filter function that combines the filter functions of all
