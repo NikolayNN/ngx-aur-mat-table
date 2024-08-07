@@ -4,15 +4,15 @@
                [extraHeaderCellBottomTemplate]="extraHeaderCellBottomTemplate">
 </aur-mat-table>
 
-<ng-template #extraHeaderCellTopTemplate let-key="key">
+<ng-template #extraHeaderCellTopTemplate let-key="key" let-index="index">
   <div (click)="alert('Click on ' + key)" class="extra-top-header">
-    Extra top header for '{{ key }}'
+    Extra top header key: '{{ key }}' index={{index}}
   </div>
 </ng-template>
 
-<ng-template #extraHeaderCellBottomTemplate let-key="key">
+<ng-template #extraHeaderCellBottomTemplate let-key="key" let-index="index">
   <div (click)="alert('Click on ' + key)" class="extra-bottom-header">
-    Extra bottom header for '{{ key }}'
+    Extra bottom header key: '{{ key }}' index={{index}}
   </div>
 </ng-template>
 

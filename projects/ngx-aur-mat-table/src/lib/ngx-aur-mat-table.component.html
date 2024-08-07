@@ -157,16 +157,17 @@
         </ng-container>
 
         <!--        extra header top cell-->
-        <ng-container *ngFor="let extraTopCell  of _displayExtraHeaderTopCell" [matColumnDef]="extraTopCell">
+        <ng-container *ngFor="let extraTopCell of _displayExtraHeaderTopCell; let index = index" [matColumnDef]="extraTopCell">
           <th mat-header-cell *matHeaderCellDef>
-            <ng-container *ngTemplateOutlet="extraHeaderCellTopTemplate; context: {key: extraTopCell.replace(EXTRA_HEADER_CELL_TOP_SUFFIX, '')}"></ng-container>
+            <ng-container *ngTemplateOutlet="extraHeaderCellTopTemplate; context: {key: extraTopCell.replace(EXTRA_HEADER_CELL_TOP_SUFFIX, ''), index: index}"></ng-container>
           </th>
         </ng-container>
 
+
         <!--        extra header bottom cell-->
-        <ng-container *ngFor="let extraBottomCell  of _displayExtraHeaderBottomCell" [matColumnDef]="extraBottomCell">
+        <ng-container *ngFor="let extraBottomCell  of _displayExtraHeaderBottomCell; let index = index" [matColumnDef]="extraBottomCell">
           <th mat-header-cell *matHeaderCellDef>
-            <ng-container *ngTemplateOutlet="extraHeaderCellBottomTemplate; context: {key: extraBottomCell.replace(EXTRA_HEADER_CELL_BOTTOM_SUFFIX, '')}"></ng-container>
+            <ng-container *ngTemplateOutlet="extraHeaderCellBottomTemplate; context: {key: extraBottomCell.replace(EXTRA_HEADER_CELL_BOTTOM_SUFFIX, ''), index: index}"></ng-container>
           </th>
         </ng-container>
 
