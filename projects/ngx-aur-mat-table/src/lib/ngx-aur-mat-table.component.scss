@@ -50,6 +50,11 @@
 
 .aur-mat-table .expanded-row {
   height: 0;
+
+  .expanded-cell {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
 }
 
 .aur-mat-table .row-detail {

@@ -200,7 +200,7 @@
 
         <!--expanded-row-->
         <ng-container matColumnDef="expandedRow">
-          <td mat-cell *matCellDef="let element" [attr.colspan]="_displayColumns.length" style="padding-right: 0!important;">
+          <td mat-cell class="expanded-cell" *matCellDef="let element" [attr.colspan]="_displayColumns.length" style="padding-right: 0!important;">
             <div class="row-detail"
                  [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
               <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
