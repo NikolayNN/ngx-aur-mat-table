@@ -87,7 +87,7 @@
             </div>
 
           </th>
-          <td mat-cell *matCellDef="let row">
+          <td mat-cell *matCellDef="let row" (click)="$event.stopPropagation(); selectionProvider.selection.toggle(castSrc(row).rowSrc)" >
             <mat-checkbox (click)="$event.stopPropagation()"
                           (change)="$event ? selectionProvider.selection.toggle(castSrc(row).rowSrc) : null"
                           [checked]="selectionProvider.selection.isSelected(castSrc(row).rowSrc)">
@@ -101,7 +101,7 @@
         <!-- action column -->
         <ng-container *ngIf="rowActionsProvider.isEnabled" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
           <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let element">
+          <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()" style="cursor: default">
             <button mat-icon-button
                     (click)="emitRowAction(action.action, element.rowSrc, $event)"
                     [matTooltip]="action.icon.tooltip || ''"
