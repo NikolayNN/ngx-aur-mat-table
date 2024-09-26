@@ -87,7 +87,8 @@
             </div>
 
           </th>
-          <td mat-cell *matCellDef="let row" (click)="$event.stopPropagation(); selectionProvider.selection.toggle(castSrc(row).rowSrc)" >
+          <td mat-cell *matCellDef="let row"
+              (click)="$event.stopPropagation(); selectionProvider.selection.toggle(castSrc(row).rowSrc)">
             <mat-checkbox (click)="$event.stopPropagation()"
                           (change)="$event ? selectionProvider.selection.toggle(castSrc(row).rowSrc) : null"
                           [checked]="selectionProvider.selection.isSelected(castSrc(row).rowSrc)">
@@ -157,23 +158,28 @@
         </ng-container>
 
         <!--        extra header top cell-->
-        <ng-container *ngFor="let extraTopCell of _displayExtraHeaderTopCell; let index = index" [matColumnDef]="extraTopCell">
+        <ng-container *ngFor="let extraTopCell of _displayExtraHeaderTopCell; let index = index"
+                      [matColumnDef]="extraTopCell">
           <th mat-header-cell *matHeaderCellDef>
-            <ng-container *ngTemplateOutlet="extraHeaderCellTopTemplate; context: {key: extraTopCell.replace(EXTRA_HEADER_CELL_TOP_SUFFIX, ''), index: index}"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="extraHeaderCellTopTemplate; context: {key: extraTopCell.replace(EXTRA_HEADER_CELL_TOP_SUFFIX, ''), index: index}"></ng-container>
           </th>
         </ng-container>
 
 
         <!--        extra header bottom cell-->
-        <ng-container *ngFor="let extraBottomCell  of _displayExtraHeaderBottomCell; let index = index" [matColumnDef]="extraBottomCell">
+        <ng-container *ngFor="let extraBottomCell  of _displayExtraHeaderBottomCell; let index = index"
+                      [matColumnDef]="extraBottomCell">
           <th mat-header-cell *matHeaderCellDef>
-            <ng-container *ngTemplateOutlet="extraHeaderCellBottomTemplate; context: {key: extraBottomCell.replace(EXTRA_HEADER_CELL_BOTTOM_SUFFIX, ''), index: index}"></ng-container>
+            <ng-container
+              *ngTemplateOutlet="extraHeaderCellBottomTemplate; context: {key: extraBottomCell.replace(EXTRA_HEADER_CELL_BOTTOM_SUFFIX, ''), index: index}"></ng-container>
           </th>
         </ng-container>
 
         <!--        extra header top row-->
         <ng-container *ngIf="extraHeaderCellTopTemplate">
-          <tr mat-header-row *matHeaderRowDef="_displayExtraHeaderTopCell;  sticky: this.tableConfig.stickyCfg?.header" class="extra-header-top-row">
+          <tr mat-header-row *matHeaderRowDef="_displayExtraHeaderTopCell;  sticky: this.tableConfig.stickyCfg?.header"
+              class="extra-header-top-row">
           </tr>
         </ng-container>
 
@@ -183,7 +189,8 @@
 
         <!--        extra header bottom row -->
         <ng-container *ngIf="extraHeaderCellBottomTemplate">
-          <tr mat-header-row *matHeaderRowDef="_displayExtraHeaderBottomCell;  sticky: this.tableConfig.stickyCfg?.header">
+          <tr mat-header-row
+              *matHeaderRowDef="_displayExtraHeaderBottomCell;  sticky: this.tableConfig.stickyCfg?.header">
           </tr>
         </ng-container>
 
@@ -200,10 +207,14 @@
 
         <!--expanded-row-->
         <ng-container matColumnDef="expandedRow">
-          <td mat-cell class="expanded-cell" *matCellDef="let element" [attr.colspan]="_displayColumns.length" style="padding-right: 0!important;">
+          <td mat-cell class="expanded-cell" *matCellDef="let element" [attr.colspan]="_displayColumns.length"
+              style="padding-right: 0!important;">
             <div class="row-detail"
                  [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
-              <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
+              <!-- lazy-load of details -->
+              <ng-container *ngIf="element.rowSrc === highlighted">
+                <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
+              </ng-container>
             </div>
           </td>
         </ng-container>
