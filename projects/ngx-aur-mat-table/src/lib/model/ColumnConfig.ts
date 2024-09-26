@@ -92,6 +92,11 @@ export interface IconView<T> {
   position?: 'right' | 'left';
 
   wrapper?: IconWrapper<T>;
+
+  // принимает значения 'show' | 'none'
+  // 'show' или не указан -  показать иконку
+  //
+  display?: T;
 }
 
 export interface IconWrapper<T> {
@@ -167,7 +172,7 @@ export interface SelectionConfig<T> {
   showSelectedCount?: boolean;
   compareWith?: (o1: T, o2: T) => boolean
   // default: true, показывать
-  showTotalCount?:boolean;
+  showTotalCount?: boolean;
   enable: boolean;
   actions?: Action<string>[];
 }

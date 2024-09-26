@@ -47,6 +47,7 @@ export class TableWithIconsComponent {
                 return 'orange';
               }
             },
+            display: v => v.rowSrc.name.length % 2 == 0? 'none': 'show'
           },
           text: {
             tooltip: () => "подсказка для текста",

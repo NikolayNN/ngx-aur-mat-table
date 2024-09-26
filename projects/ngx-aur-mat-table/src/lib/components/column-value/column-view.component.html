@@ -2,7 +2,7 @@
   <div  [ngClass]="{'circle': config?.icon?.wrapper}"
         [style.background-color]="config?.icon?.wrapper?.color"
   >
-    <mat-icon *ngIf="config?.icon"
+    <mat-icon *ngIf="config?.icon && config?.icon?.display !== 'none'"
               [matTooltip]="config?.icon?.tooltip?.toString() || ''"
               [style.color]="config?.icon?.color"
     >
