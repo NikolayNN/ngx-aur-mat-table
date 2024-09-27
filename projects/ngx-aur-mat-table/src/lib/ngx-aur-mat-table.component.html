@@ -75,16 +75,14 @@
               </div>
 
               <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">
-                <ng-container *ngFor="let action of tableConfig.selectionCfg!.actions">
-                  <button mat-icon-button
-                          (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
-                          [matTooltip]="action.icon.tooltip || ''"
-                          *ngIf="action.display !== 'none'">
-                    <mat-icon [style.color]="action.icon.color">
-                      {{ action.icon.name }}
-                    </mat-icon>
-                  </button>
-                </ng-container>
+                <button mat-icon-button
+                        (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
+                        [matTooltip]="action.icon.tooltip || ''"
+                        *ngFor="let action of tableConfig.selectionCfg!.actions">
+                  <mat-icon [style.color]="action.icon.color">
+                    {{ action.icon.name }}
+                  </mat-icon>
+                </button>
               </div>
             </div>
 
@@ -105,14 +103,16 @@
         <ng-container *ngIf="rowActionsProvider.isEnabled" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()" style="cursor: default">
-            <button mat-icon-button
-                    (click)="emitRowAction(action.action, element.rowSrc, $event)"
-                    [matTooltip]="action.icon.tooltip || ''"
-                    *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
-              <mat-icon [style.color]="action.icon.color">
-                {{ action.icon.name }}
-              </mat-icon>
-            </button>
+            <ng-container *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
+              <button mat-icon-button
+                      (click)="emitRowAction(action.action, element.rowSrc, $event)"
+                      [matTooltip]="action.icon.tooltip || ''"
+                      *ngIf="action.display !== 'none'">
+                <mat-icon [style.color]="action.icon.color">
+                  {{ action.icon.name }}
+                </mat-icon>
+              </button>
+            </ng-container>
           </td>
 
           <ng-container *ngTemplateOutlet="footerCellTemplate; context: {$implicit: rowActionsProvider.COLUMN_NAME}">
