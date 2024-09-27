@@ -164,6 +164,7 @@ export interface ActionConfig<T> {
 export interface Action<T> {
   action: T;
   icon: IconView<T>;
+  display?: T;
 }
 
 export interface SelectionConfig<T> {

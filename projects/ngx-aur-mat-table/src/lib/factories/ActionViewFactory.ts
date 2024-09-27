@@ -25,7 +25,8 @@ export class ActionViewFactory {
   private static prepareActionsForRow<T>(row: TableRow<T>, actionConfig: ActionConfig<T>): Action<string>[] {
     return actionConfig.actions.map(action => ({
       action: action.action(row.rowSrc),
-      icon: this.prepareIconConfig(action.icon, row.rowSrc)
+      icon: this.prepareIconConfig(action.icon, row.rowSrc),
+      display: action.display? action.display(row.rowSrc): undefined
     }));
   }
 

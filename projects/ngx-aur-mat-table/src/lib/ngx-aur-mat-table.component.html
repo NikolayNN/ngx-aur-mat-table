@@ -75,14 +75,16 @@
               </div>
 
               <div *ngIf="selectionProvider.selection.hasValue() && tableConfig?.selectionCfg?.actions">
-                <button mat-icon-button
-                        (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
-                        [matTooltip]="action.icon.tooltip || ''"
-                        *ngFor="let action of tableConfig.selectionCfg!.actions">
-                  <mat-icon [style.color]="action.icon.color">
-                    {{ action.icon.name }}
-                  </mat-icon>
-                </button>
+                <ng-container *ngFor="let action of tableConfig.selectionCfg!.actions">
+                  <button mat-icon-button
+                          (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
+                          [matTooltip]="action.icon.tooltip || ''"
+                          *ngIf="action.display !== 'none'">
+                    <mat-icon [style.color]="action.icon.color">
+                      {{ action.icon.name }}
+                    </mat-icon>
+                  </button>
+                </ng-container>
               </div>
             </div>
 
