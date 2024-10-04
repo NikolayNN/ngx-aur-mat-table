@@ -214,6 +214,6 @@ export interface TableHeaderButtonConfig {
 }
 
 export interface DragConfig {
-  enable: true;
+  enable: boolean;
   manager: AurDragDropManager;
 }
