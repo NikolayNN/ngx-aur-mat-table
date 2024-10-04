@@ -1,6 +1,12 @@
 import {TableRow} from "./TableRow";
+import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 
 export interface TableConfig<T> {
+
+  /**
+   * имя таблицы используется в drag & drop
+   */
+  name?: string,
 
   /**
    * Настройка колонок
@@ -34,7 +40,8 @@ export interface TableConfig<T> {
   clickCfg?: ClickConfig,
   stickyCfg?: StickyConfig,
   tableView?: TableView,
-  tableHeaderButtonCfg?: TableHeaderButtonConfig
+  tableHeaderButtonCfg?: TableHeaderButtonConfig,
+  dragCfg?: DragConfig
 }
 
 export interface ClickConfig {
@@ -204,4 +211,9 @@ export interface TableHeaderButtonConfig {
   icon?: string;
   color?: string;
   background?: string;
+}
+
+export interface DragConfig {
+  enable: true;
+  manager: AurDragDropManager;
 }

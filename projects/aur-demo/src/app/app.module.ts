@@ -48,6 +48,8 @@ import {
 } from "./table-with-server-pagination-component/table-with-server-pagination-and-select/table-with-server-pagination-and-select.component";
 import {TableWithTopColumnComponent} from "./table-with-top-column/table-with-top-column.component";
 import {TableHideShowBodyComponent} from "./table-hide-show-body/table-hide-show-body.component";
+import {TableDragComponent} from "./table-drag/table-drag.component";
+import {TablesDragDropComponent} from "./table-drag/tables-drag-drop/tables-drag-drop.component";
 
 @NgModule({
   declarations: [
@@ -79,7 +81,9 @@ import {TableHideShowBodyComponent} from "./table-hide-show-body/table-hide-show
     TableWithSubFooterComponent,
     TableWithServerPaginationComponent,
     TableWithServerPaginationAndSelectComponent,
-    TableWithTopColumnComponent
+    TableWithTopColumnComponent,
+    TablesDragDropComponent,
+    TableDragComponent,
   ],
     imports: [
         BrowserModule,
@@ -92,7 +96,7 @@ import {TableHideShowBodyComponent} from "./table-hide-show-body/table-hide-show
         DragDropModule,
         TableWithSettingsButtonComponent,
         TableWithFilterCustomButtonsComponent,
-        TableHideShowBodyComponent
+        TableHideShowBodyComponent,
     ],
   providers: [],
   bootstrap: [AppComponent]

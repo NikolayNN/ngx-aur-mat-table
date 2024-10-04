@@ -38,6 +38,8 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-row.directive";
 import {SelectionModel} from "@angular/cdk/collections";
 import {HeaderButtonProvider, HeaderButtonProviderDummy} from "./providers/HeaderButtonProvider";
+import {DragProvider, DragProviderDummy} from "./providers/DragProvider";
+import {AurDragDropComponent} from "./drag-drop/aur-drag-drop-component";
 
 
 export class PaginatorState {
@@ -86,7 +88,7 @@ enum ExpandState {
     ]),
   ],
 })
-export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy, NgxAurMatTablePublic<T> {
+export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy, NgxAurMatTablePublic<T>, AurDragDropComponent<TableRow<T>> {
 
   expandedStateEnum = ExpandState;
 
@@ -99,6 +101,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   _displayExtraHeaderBottomCell: string[] = [];
 
   _customDisplayColumnsEnabled = false;
+
+  _tableName = 'unknown-table-name';
 
   @Input() set displayColumns(columns: string[]) {
     if (columns) {
@@ -173,6 +177,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
+
+  dragProvider: DragProvider = new DragProviderDummy();
 
   selectionProvider: SelectionProvider<T> = new SelectionProviderDummy();
 
@@ -293,6 +299,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       this.initPaginator();
     }
     this.initSortingDataAccessor();
+
+    this.dragProvider = DragProvider.create(this.tableConfig)
+      .addColumn(this._displayColumns);
+
     this.indexProvider = IndexProvider.create(this.tableConfig)
       .addIndexColumn(this._displayColumns);
 
@@ -325,6 +335,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private initTable() {
+    this._tableName = this.tableConfig.name ?? 'unknown-table-name';
     this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
     if (!this._customDisplayColumnsEnabled) {
@@ -417,5 +428,21 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.resizeColumnOffsetsObserver.disconnect();
   }
 
+  onDragStart($event: DragEvent, row: TableRow<T>) {
+    this.dragProvider.manager.startDrag(this._tableName, row);
+  }
 
+  onDragOver($event: DragEvent) {
+    this.dragProvider.manager.canDrop(this._tableName, $event);
+  }
+
+  onDrop($event: DragEvent, row: TableRow<T>) {
+    this.tableData = this.dragProvider.manager.onDrop(this.tableDataSource.data, this._tableName, row).map(row => row.rowSrc);
+    this.refreshTable();
+  }
+
+  onDragEnd($event: DragEvent, row: TableRow<T>) {
+    this.tableData = this.dragProvider.manager.endDrag(this.tableDataSource.data).map(row => row.rowSrc);
+    this.refreshTable();
+  }
 }

@@ -41,6 +41,21 @@
              [style.min-height]="tableConfig.tableView?.minHeight"
              [ngClass]="{'hide-table-body': isTableBodyHide}">
 
+
+        <!--        drag-column-->
+        <ng-container *ngIf="dragProvider.isEnabled" [matColumnDef]="dragProvider.COLUMN_NAME">
+
+          <th mat-header-cell *matHeaderCellDef>
+          </th>
+
+          <td mat-cell *matCellDef="let element;">
+            <mat-icon class="drag-icon" draggable="true" (dragstart)="onDragStart($event, element)" (dragend)="onDragEnd($event, element)">drag_indicator</mat-icon>
+          </td>
+
+          <td mat-footer-cell *matFooterCellDef>
+          </td>
+        </ng-container>
+
         <!--        index-column-->
         <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">
 
@@ -199,6 +214,8 @@
         </ng-container>
 
         <tr mat-row #rowLink
+            (dragover)="onDragOver($event)"
+            (drop)="onDrop($event, row)"
             *matRowDef="let row; columns: _displayColumns;"
             (click)="rowClick(row)"
             [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': highlighted===row.rowSrc && tableConfig?.clickCfg?.highlightClicked?.color}"

@@ -91,6 +91,10 @@
   border-bottom: none;
 }
 
+.aur-mat-table .drag-icon {
+  cursor: grab;
+}
+
 .hide-table-body tr:not(.mat-mdc-header-row) {
   display: none !important;
 }

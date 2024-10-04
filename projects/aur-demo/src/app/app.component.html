@@ -1,4 +1,9 @@
-<mat-tab-group>
+<mat-tab-group id="drag-boundary">
+  <mat-tab label="Drag">
+    <ng-template matTabContent>
+   <app-tables-drag-drop></app-tables-drag-drop>
+    </ng-template>
+  </mat-tab>
   <mat-tab label="Минимальная">
     <ng-template matTabContent>
       <app-simple-table></app-simple-table>
