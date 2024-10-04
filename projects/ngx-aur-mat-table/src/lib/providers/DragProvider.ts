@@ -1,6 +1,6 @@
 import {AbstractProvider} from "./AbstractProvider";
-import {DragConfig, TableConfig, TableRow} from "ngx-aur-mat-table";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
+import { DragConfig, TableConfig } from "../model/ColumnConfig";
 
 export class DragProvider extends AbstractProvider {
   public readonly isEnabled: boolean = true;
