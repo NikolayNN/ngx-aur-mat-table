@@ -41,7 +41,7 @@ export interface TableConfig<T> {
   stickyCfg?: StickyConfig,
   tableView?: TableView,
   tableHeaderButtonCfg?: TableHeaderButtonConfig,
-  dragCfg?: DragConfig
+  dragCfg?: DragDropConfig
 }
 
 export interface ClickConfig {
@@ -213,7 +213,7 @@ export interface TableHeaderButtonConfig {
   background?: string;
 }
 
-export interface DragConfig {
+export interface DragDropConfig {
   enable: boolean;
   manager: AurDragDropManager;
 }

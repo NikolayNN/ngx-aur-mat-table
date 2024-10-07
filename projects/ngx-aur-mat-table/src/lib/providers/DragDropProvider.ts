@@ -1,19 +1,19 @@
 import {AbstractProvider} from "./AbstractProvider";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
-import { DragConfig, TableConfig } from "../model/ColumnConfig";
+import { DragDropConfig, TableConfig } from "../model/ColumnConfig";
 
-export class DragProvider extends AbstractProvider {
+export class DragDropProvider extends AbstractProvider {
   public readonly isEnabled: boolean = true;
   public readonly COLUMN_NAME = 'tbl_drag_col';
   public readonly manager: AurDragDropManager;
 
-  constructor(private dragCfg?: DragConfig) {
+  constructor(private dragCfg?: DragDropConfig) {
     super();
     // здесь заполнить конфиг значениями по умолчанию если такие появятся
     this.manager = dragCfg?.manager ?? AurDragDropManager.empty();
   }
 
-  public addColumn(columns: string[]): DragProvider {
+  public addColumn(columns: string[]): DragDropProvider {
     if (this.notHasKey(this.COLUMN_NAME, columns)) {
       columns.unshift(this.COLUMN_NAME);
     }
@@ -26,9 +26,9 @@ export class DragProvider extends AbstractProvider {
    * @param tableConfig The configuration of the table.
    * @returns An instance of IndexProvider or IndexProviderDummy.
    */
-  public static create<T>(tableConfig: TableConfig<T>): DragProvider {
-    if (DragProvider.canCreate(tableConfig)) {
-      return new DragProvider(<DragConfig>tableConfig.dragCfg);
+  public static create<T>(tableConfig: TableConfig<T>): DragDropProvider {
+    if (DragDropProvider.canCreate(tableConfig)) {
+      return new DragDropProvider(<DragDropConfig>tableConfig.dragCfg);
     }
     return new DragProviderDummy();
   }
@@ -39,7 +39,7 @@ export class DragProvider extends AbstractProvider {
 }
 
 
-export class DragProviderDummy extends DragProvider {
+export class DragProviderDummy extends DragDropProvider {
   public override readonly isEnabled = false;
 
   public override addColumn(columns: string[]): DragProviderDummy {

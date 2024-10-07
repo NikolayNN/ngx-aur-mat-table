@@ -38,7 +38,7 @@ import {animate, state, style, transition, trigger} from "@angular/animations";
 import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-row.directive";
 import {SelectionModel} from "@angular/cdk/collections";
 import {HeaderButtonProvider, HeaderButtonProviderDummy} from "./providers/HeaderButtonProvider";
-import {DragProvider, DragProviderDummy} from "./providers/DragProvider";
+import {DragDropProvider, DragProviderDummy} from "./providers/DragDropProvider";
 import {AurDragDropComponent} from "./drag-drop/aur-drag-drop-component";
 
 
@@ -178,7 +178,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
 
-  dragProvider: DragProvider = new DragProviderDummy();
+  dragDropProvider: DragDropProvider = new DragProviderDummy();
 
   selectionProvider: SelectionProvider<T> = new SelectionProviderDummy();
 
@@ -300,7 +300,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
     this.initSortingDataAccessor();
 
-    this.dragProvider = DragProvider.create(this.tableConfig)
+    this.dragDropProvider = DragDropProvider.create(this.tableConfig)
       .addColumn(this._displayColumns);
 
     this.indexProvider = IndexProvider.create(this.tableConfig)
@@ -429,20 +429,20 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   onDragStart($event: DragEvent, row: TableRow<T>) {
-    this.dragProvider.manager.startDrag(this._tableName, row);
+    this.dragDropProvider.manager.startDrag(this._tableName, row);
   }
 
   onDragOver($event: DragEvent) {
-    this.dragProvider.manager.canDrop(this._tableName, $event);
+    this.dragDropProvider.manager.canDrop(this._tableName, $event);
   }
 
   onDrop($event: DragEvent, row: TableRow<T>) {
-    this.tableData = this.dragProvider.manager.onDrop(this.tableDataSource.data, this._tableName, row).map(row => row.rowSrc);
+    this.tableData = this.dragDropProvider.manager.onDrop(this.tableDataSource.data, this._tableName, row).map(row => row.rowSrc);
     this.refreshTable();
   }
 
   onDragEnd($event: DragEvent, row: TableRow<T>) {
-    this.tableData = this.dragProvider.manager.endDrag(this.tableDataSource.data).map(row => row.rowSrc);
+    this.tableData = this.dragDropProvider.manager.endDrag(this.tableDataSource.data).map(row => row.rowSrc);
     this.refreshTable();
   }
 }
