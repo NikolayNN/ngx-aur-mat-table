@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {IconView} from "ngx-aur-mat-table";
+import { IconView } from '../../model/ColumnConfig';
+
 
 @Component({
   selector: 'lib-icon-view',
