@@ -93,6 +93,10 @@ export class AurDragDropManager {
     return mappedData;
   }
 
+  get draggableTableNames(): string[] {
+    return this.mappings?.map(mapping => mapping.sourceName) || [];
+  }
+
   public static empty(): AurDragDropManager {
     return new AurDragDropManager([]);
   }
