@@ -1,0 +1,8 @@
+<div [ngClass]="{'circle': view?.wrapper}"
+     [style.background-color]="view?.wrapper?.color">
+  <mat-icon *ngIf="view && view?.display !== 'none'"
+            [matTooltip]="view?.tooltip?.toString() || ''"
+            [style.color]="view?.color">
+    {{ view?.name }}
+  </mat-icon>
+</div>

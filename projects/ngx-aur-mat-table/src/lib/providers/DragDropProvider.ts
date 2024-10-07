@@ -1,18 +1,25 @@
 import {AbstractProvider} from "./AbstractProvider";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
-import {DragDropConfig, TableConfig} from "../model/ColumnConfig";
+import {DragDropConfig, IconView, TableConfig} from "../model/ColumnConfig";
 
 export class DragDropProvider extends AbstractProvider {
+
+  protected static readonly DEFAULT_ICON_VIEW: IconView<string> = {
+    name: 'drag_handle'
+  }
+
   public readonly isEnabled: boolean = true;
   public readonly COLUMN_NAME = 'tbl_drag_col';
   public readonly manager: AurDragDropManager;
   public readonly draggable: boolean = false;
+  public readonly dragIconView: IconView<string> = DragDropProvider.DEFAULT_ICON_VIEW
 
   constructor(private tableName: string, private dragCfg?: DragDropConfig) {
     super();
     // здесь заполнить конфиг значениями по умолчанию если такие появятся
     this.manager = dragCfg?.manager ?? AurDragDropManager.empty();
-    this.draggable = (new Set(this.manager.draggableTableNames)).has(tableName)
+    this.draggable = (new Set(this.manager.draggableTableNames)).has(tableName);
+    this.dragIconView = dragCfg?.dragIcon ?? DragDropProvider.DEFAULT_ICON_VIEW;
   }
 
   public addColumn(columns: string[]): DragDropProvider {
