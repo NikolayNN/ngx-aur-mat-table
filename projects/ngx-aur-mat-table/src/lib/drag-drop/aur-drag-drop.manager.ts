@@ -1,3 +1,5 @@
+import {ComponentRef, ViewContainerRef} from "@angular/core";
+
 /**
  * Interface representing the mapping configuration for drag-and-drop functionality
  * between components. It defines the source component (from where data is grabbed)
@@ -39,7 +41,23 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
    * @param ctx - The drop context containing information about the source and target.
    * @returns An array of data elements of type TARGET.
    */
-  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => TARGET[]
+  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => TARGET[],
+
+  readonly preview?: new () => AurDragPreviewComponent<SOURCE>;
+}
+
+/**
+ * Общий интерфейс для компонентов, которые используются в качестве превью
+ * для перетаскивания данных. Это обеспечивает стандартный способ передачи
+ * данных в такие компоненты.
+ *
+ * @template DATA - Тип данных, которые будут переданы в компонент для превью.
+ */
+export interface AurDragPreviewComponent<DATA> {
+  /**
+   * Данные, которые будут отображаться в компоненте превью.
+   */
+  data: DATA;
 }
 
 interface DragStartContext {
@@ -69,11 +87,13 @@ export class AurDragDropManager {
 
   private dragStartCtx: DragStartContext | undefined;
   private dragEndCtx: DragStartContext | undefined;
+  private currentPreviewComponentRef:  ComponentRef<AurDragPreviewComponent<any>> | undefined;
 
   //can drop [key from table, value to table name]
   private canDropStorage = new Map<string, Set<string>>();
 
-  constructor(private mappings: AurDragDropMapping<any, any>[]) {
+  constructor(private viewContainerRef: ViewContainerRef,
+              private mappings: AurDragDropMapping<any, any>[]) {
     this.mappings.forEach(m => {
       this.canDropStorage.set(m.sourceName, new Set());
     });
@@ -82,11 +102,13 @@ export class AurDragDropManager {
     })
   }
 
-  startDrag(targetName: string, data: any) {
-    this.dragStartCtx = {name: targetName, data: data}
+  startDrag(sourceName: string, data: any, event: DragEvent) {
+    this.dragStartCtx = {name: sourceName, data: data}
+    this.showDragPreview(sourceName, event, data)
   }
 
   endDrag(sourceDataset: any[]): any[] {
+    this.removeDragPreview()
     return this.endDragInternal({
       targetData: this.dragEndCtx!.data,
       targetName: this.dragEndCtx!.name,
@@ -134,8 +156,40 @@ export class AurDragDropManager {
     return this.mappings?.map(mapping => mapping.sourceName) || [];
   }
 
+  getPreviewComponent(name: string): (new () => AurDragPreviewComponent<any>) | undefined {
+    return this.mappings.find(value => value.sourceName === name)?.preview || undefined;
+  }
+
   public static empty(): AurDragDropManager {
-    return new AurDragDropManager([]);
+    // @ts-ignore
+    return new AurDragDropManager(undefined, []);
+  }
+
+  private showDragPreview(name: string, event: DragEvent, data: any) {
+    let previewConstructor = this.getPreviewComponent(name);
+    if (previewConstructor) {
+      // Динамически создаем компонент превью
+      this.currentPreviewComponentRef = this.viewContainerRef.createComponent(previewConstructor);
+      this.currentPreviewComponentRef.instance.data = data;
+
+      const nativePreview = this.currentPreviewComponentRef.location.nativeElement;
+
+      // Применение необходимых стилей к элементу превью
+      nativePreview.style.position = 'absolute';
+      nativePreview.style.top = '0';
+      nativePreview.style.left = '-9999px'; // Скрыть элемент за пределами экрана
+      document.body.appendChild(nativePreview); // Временно добавляем в DOM для отображения
+
+      event.dataTransfer?.setDragImage(nativePreview, 0, 0);
+    }
+  }
+
+  private removeDragPreview() {
+    if (this.currentPreviewComponentRef) {
+      document.body.removeChild(this.currentPreviewComponentRef.location.nativeElement);
+      this.currentPreviewComponentRef.destroy();
+      this.currentPreviewComponentRef = undefined;
+    }
   }
 }
 

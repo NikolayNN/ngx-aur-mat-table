@@ -1,8 +1,9 @@
 import {AbstractProvider} from "./AbstractProvider";
-import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
+import {AurDragDropManager, AurDragPreviewComponent} from "../drag-drop/aur-drag-drop.manager";
 import {DragDropConfig, IconView, TableConfig} from "../model/ColumnConfig";
+import {ViewContainerRef} from "@angular/core";
 
-export class DragDropProvider extends AbstractProvider {
+export class DragDropProvider<T> extends AbstractProvider {
 
   protected static readonly DEFAULT_ICON_VIEW: IconView<string> = {
     name: 'drag_handle'
@@ -12,17 +13,23 @@ export class DragDropProvider extends AbstractProvider {
   public readonly COLUMN_NAME = 'tbl_drag_col';
   public readonly manager: AurDragDropManager;
   public readonly draggable: boolean = false;
-  public readonly dragIconView: IconView<string> = DragDropProvider.DEFAULT_ICON_VIEW
+  public readonly dragIconView: IconView<string> = DragDropProvider.DEFAULT_ICON_VIEW;
+  public readonly previewConstructor: (new () => AurDragPreviewComponent<any>) | undefined;
+  public readonly multiple: boolean = false;
 
-  constructor(private tableName: string, private dragCfg?: DragDropConfig) {
+  constructor(private readonly viewContainerRef: ViewContainerRef,
+              private tableName: string,
+              dragCfg?: DragDropConfig) {
     super();
     // здесь заполнить конфиг значениями по умолчанию если такие появятся
     this.manager = dragCfg?.manager ?? AurDragDropManager.empty();
+    this.multiple = dragCfg?.multiple ?? false;
     this.draggable = (new Set(this.manager.draggableTableNames)).has(tableName);
     this.dragIconView = dragCfg?.dragIcon ?? DragDropProvider.DEFAULT_ICON_VIEW;
+    this.previewConstructor = this.manager.getPreviewComponent(this.tableName);
   }
 
-  public addColumn(columns: string[]): DragDropProvider {
+  public addColumn(columns: string[]): DragDropProvider<T> {
     if (this.notHasKey(this.COLUMN_NAME, columns) && this.draggable) {
       columns.unshift(this.COLUMN_NAME);
     }
@@ -35,9 +42,10 @@ export class DragDropProvider extends AbstractProvider {
    * @param tableConfig The configuration of the table.
    * @returns An instance of IndexProvider or IndexProviderDummy.
    */
-  public static create<T>(tableConfig: TableConfig<T>): DragDropProvider {
+  public static create<T>(viewContainerRef: ViewContainerRef, tableConfig: TableConfig<T>): DragDropProvider<T> {
     if (DragDropProvider.canCreate(tableConfig)) {
-      return new DragDropProvider(tableConfig.name ?? 'unknown-table', <DragDropConfig>tableConfig.dragCfg);
+      // @ts-ignore
+      return new DragDropProvider(viewContainerRef, tableConfig.name ?? 'unknown-table', <DragDropConfig>tableConfig.dragCfg);
     }
     return new DragProviderDummy();
   }
@@ -48,11 +56,12 @@ export class DragDropProvider extends AbstractProvider {
 }
 
 
-export class DragProviderDummy extends DragDropProvider {
+export class DragProviderDummy extends DragDropProvider<any> {
   public override readonly isEnabled = false;
 
   constructor() {
-    super('dummy-unknown-name');
+    // @ts-ignore
+    super(undefined, 'dummy-unknown-name');
   }
 
   public override addColumn(columns: string[]): DragProviderDummy {

@@ -216,5 +216,6 @@ export interface TableHeaderButtonConfig {
 export interface DragDropConfig {
   enable: boolean;
   manager: AurDragDropManager;
+  multiple?: boolean;
   dragIcon?: IconView<string>;
 }

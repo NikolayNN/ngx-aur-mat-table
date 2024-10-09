@@ -50,6 +50,10 @@ import {TableWithTopColumnComponent} from "./table-with-top-column/table-with-to
 import {TableHideShowBodyComponent} from "./table-hide-show-body/table-hide-show-body.component";
 import {TableDragComponent} from "./table-drag/table-drag.component";
 import {TablesDragDropComponent} from "./table-drag/tables-drag-drop/tables-drag-drop.component";
+import {
+  CustomerDragPreviewComponent
+} from "./table-drag/tables-drag-drop/customer-drag-preview/customer-drag-preview.component";
+import {MatIcon} from "@angular/material/icon";
 
 @NgModule({
   declarations: [
@@ -84,20 +88,22 @@ import {TablesDragDropComponent} from "./table-drag/tables-drag-drop/tables-drag
     TableWithTopColumnComponent,
     TablesDragDropComponent,
     TableDragComponent,
+    CustomerDragPreviewComponent
   ],
-    imports: [
-        BrowserModule,
-        NgxAurMatTableModule,
-        BrowserAnimationsModule,
-        MatTabsModule,
-        MatChipsModule,
-        FormsModule,
-        MatInputModule,
-        DragDropModule,
-        TableWithSettingsButtonComponent,
-        TableWithFilterCustomButtonsComponent,
-        TableHideShowBodyComponent,
-    ],
+  imports: [
+    BrowserModule,
+    NgxAurMatTableModule,
+    BrowserAnimationsModule,
+    MatTabsModule,
+    MatChipsModule,
+    FormsModule,
+    MatInputModule,
+    DragDropModule,
+    TableWithSettingsButtonComponent,
+    TableWithFilterCustomButtonsComponent,
+    TableHideShowBodyComponent,
+    MatIcon,
+  ],
   providers: [],
   bootstrap: [AppComponent]
 })

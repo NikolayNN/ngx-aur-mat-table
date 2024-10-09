@@ -15,7 +15,8 @@ import {
   SimpleChanges,
   TemplateRef,
   ViewChild,
-  ViewChildren
+  ViewChildren,
+  ViewContainerRef
 } from '@angular/core';
 import {ColumnView, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
@@ -178,7 +179,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
 
-  dragDropProvider: DragDropProvider = new DragProviderDummy();
+  dragDropProvider: DragDropProvider<T> = new DragProviderDummy();
 
   selectionProvider: SelectionProvider<T> = new SelectionProviderDummy();
 
@@ -200,7 +201,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   @Input() highlight: HighlightContainer<T> | undefined;
 
-  constructor() {
+  constructor(private viewContainerRef: ViewContainerRef) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -300,7 +301,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
     this.initSortingDataAccessor();
 
-    this.dragDropProvider = DragDropProvider.create(this.tableConfig)
+    this.dragDropProvider = DragDropProvider.create(this.viewContainerRef, this.tableConfig)
       .addColumn(this._displayColumns);
 
     this.indexProvider = IndexProvider.create(this.tableConfig)
@@ -429,7 +430,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   onDragStart($event: DragEvent, row: TableRow<T>) {
-    this.dragDropProvider.manager.startDrag(this._tableName, row);
+    this.dragDropProvider.manager.startDrag(this._tableName, row, $event);
   }
 
   onDragOver($event: DragEvent) {
