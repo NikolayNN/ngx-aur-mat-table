@@ -1,8 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {TableConfig} from "ngx-aur-mat-table";
-import {Customer} from "../shared/model/customer";
-import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
-import {AurDragDropManager} from "../../../../ngx-aur-mat-table/src/lib/drag-drop/aur-drag-drop.manager";
+import {Customer} from "../../../shared/model/customer";
+import {CustomerGenerator} from "../../../shared/generator/CustomerGenerator";
+import {AurDragDropManager} from "../../../../../../ngx-aur-mat-table/src/lib/drag-drop/aur-drag-drop.manager";
 
 @Component({
   selector: 'app-table-drag',
