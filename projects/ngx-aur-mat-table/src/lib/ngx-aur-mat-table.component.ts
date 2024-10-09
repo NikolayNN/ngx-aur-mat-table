@@ -301,9 +301,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
     this.initSortingDataAccessor();
 
-    this.dragDropProvider = DragDropProvider.create(this.viewContainerRef, this.tableConfig)
-      .addColumn(this._displayColumns);
-
     this.indexProvider = IndexProvider.create(this.tableConfig)
       .addIndexColumn(this._displayColumns);
 
@@ -322,6 +319,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .setTotalRow();
 
     this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.tableHeaderButtonCfg)
+
+    this.dragDropProvider = DragDropProvider.create(this.viewContainerRef, this.tableConfig)
+      .addColumn(this._displayColumns);
 
     this.emitFilteredValues();
 

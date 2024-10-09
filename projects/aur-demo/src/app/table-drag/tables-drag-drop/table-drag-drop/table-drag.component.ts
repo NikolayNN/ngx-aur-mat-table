@@ -40,6 +40,11 @@ export class TableDragComponent implements OnInit {
           color: 'blue',
         }
       },
+      selectionCfg: {
+        enable: true,
+        position: 'start',
+        multiple: true
+      }
     }
   }
 }
