@@ -65,6 +65,12 @@ export class SelectionProvider<T> extends AbstractProvider {
     return this.tableDataSource.filteredData.every(r => this.selection.isSelected(r.rowSrc));
   }
 
+  getSelectedRows(): TableRow<T>[] {
+    return this.tableDataSource.filteredData.filter(row =>
+      this.selection.isSelected(row.rowSrc)
+    );
+  }
+
   private static canEnable<T>(tableConfig: TableConfig<T>): boolean {
     return (tableConfig.selectionCfg && tableConfig.selectionCfg.enable) || false;
   }

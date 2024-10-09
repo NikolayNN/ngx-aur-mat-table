@@ -57,17 +57,22 @@ export interface AurDragPreviewComponent<DATA> {
   /**
    * Данные, которые будут отображаться в компоненте превью.
    */
-  data: DATA;
+  data: DATA[];
 }
 
 interface DragStartContext {
   readonly name: string,
-  readonly data: any
+  readonly data: unknown[]
+}
+
+interface DragEndContext {
+  readonly name: string,
+  readonly data: unknown
 }
 
 export interface grabContext<SOURCE, TARGET> {
   readonly sourceName: string,
-  readonly sourceData: SOURCE,
+  readonly sourceData: SOURCE[],
   readonly sourceDataset: SOURCE[],
 
   readonly targetName: string,
@@ -76,7 +81,7 @@ export interface grabContext<SOURCE, TARGET> {
 
 export interface DropContext<SOURCE, TARGET> {
   readonly sourceName: string,
-  readonly sourceData: SOURCE,
+  readonly sourceData: SOURCE[],
 
   readonly targetDataset: TARGET[],
   readonly targetName: string,
@@ -86,7 +91,7 @@ export interface DropContext<SOURCE, TARGET> {
 export class AurDragDropManager {
 
   private dragStartCtx: DragStartContext | undefined;
-  private dragEndCtx: DragStartContext | undefined;
+  private dragEndCtx: DragEndContext | undefined;
   private currentPreviewComponentRef:  ComponentRef<AurDragPreviewComponent<any>> | undefined;
 
   //can drop [key from table, value to table name]
@@ -102,12 +107,12 @@ export class AurDragDropManager {
     })
   }
 
-  startDrag(sourceName: string, data: any, event: DragEvent) {
+  startDrag(sourceName: string, data: unknown[], event: DragEvent) {
     this.dragStartCtx = {name: sourceName, data: data}
     this.showDragPreview(sourceName, event, data)
   }
 
-  endDrag(sourceDataset: any[]): any[] {
+  endDrag(sourceDataset: unknown[]): unknown[] {
     this.removeDragPreview()
     return this.endDragInternal({
       targetData: this.dragEndCtx!.data,
@@ -118,7 +123,7 @@ export class AurDragDropManager {
     })
   }
 
-  endDragInternal(grabCtx: grabContext<any, any>): any[] {
+  endDragInternal(grabCtx: grabContext<any, any>): unknown[] {
     let mapping = this.mappings.find(m => m.sourceName === grabCtx.sourceName && m.targetName === grabCtx.targetName);
     let mappedData = mapping!.grabFn(grabCtx);
     this.dragStartCtx = undefined;
@@ -132,7 +137,7 @@ export class AurDragDropManager {
     }
   }
 
-  onDrop(targetDataset: any[], targetName: string, targetData: any): any[] {
+  onDrop(targetDataset: unknown[], targetName: string, targetData: any): unknown[] {
     return this.onDropInternal({
       sourceName: this.dragStartCtx!.name,
       sourceData: this.dragStartCtx!.data,
@@ -142,7 +147,7 @@ export class AurDragDropManager {
     })
   }
 
-  onDropInternal(dropCtx: DropContext<any, any>): any[] {
+  onDropInternal(dropCtx: DropContext<any, any>): unknown[] {
     let mapping = this.mappings.find(m => m.sourceName === dropCtx.sourceName && m.targetName === dropCtx.targetName);
     let mappedData = mapping!.dropFn(dropCtx);
     this.dragEndCtx = {

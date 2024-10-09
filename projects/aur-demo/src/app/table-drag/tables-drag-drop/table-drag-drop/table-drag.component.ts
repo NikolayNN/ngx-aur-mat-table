@@ -34,6 +34,7 @@ export class TableDragComponent implements OnInit {
       ],
       dragCfg: {
         enable: true,
+        multiple: true,
         manager: this.dragDropManager,
         dragIcon: {
           name: 'drag_handler',

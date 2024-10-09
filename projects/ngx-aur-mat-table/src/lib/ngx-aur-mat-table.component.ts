@@ -430,7 +430,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   onDragStart($event: DragEvent, row: TableRow<T>) {
-    this.dragDropProvider.manager.startDrag(this._tableName, row, $event);
+    if (this.selectionProvider.isEnabled && this.dragDropProvider.multiple && this.selectionProvider.selection.selected.length > 1) {
+      let selectedRows = this.selectionProvider.getSelectedRows();
+      if (selectedRows.find(r => r.id === row.id)) {
+        this.dragDropProvider.manager.startDrag(this._tableName, selectedRows, $event);
+        return;
+      }
+    }
+    this.dragDropProvider.manager.startDrag(this._tableName, [row], $event);
   }
 
   onDragOver($event: DragEvent) {
@@ -438,12 +445,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   onDrop($event: DragEvent, row: TableRow<T>) {
-    this.tableData = this.dragDropProvider.manager.onDrop(this.tableDataSource.data, this._tableName, row).map(row => row.rowSrc);
+    this.tableData = this.dragDropProvider.manager.onDrop(this.tableDataSource.data, this._tableName, row).map(row => (<TableRow<T>>row).rowSrc);
     this.refreshTable();
   }
 
   onDragEnd($event: DragEvent, row: TableRow<T>) {
-    this.tableData = this.dragDropProvider.manager.endDrag(this.tableDataSource.data).map(row => row.rowSrc);
+    this.tableData = this.dragDropProvider.manager.endDrag(this.tableDataSource.data).map(row => (<TableRow<T>>row).rowSrc);
     this.refreshTable();
   }
 }

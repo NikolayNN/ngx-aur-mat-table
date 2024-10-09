@@ -9,7 +9,7 @@ import {Customer} from "../../../shared/model/customer";
 })
 export class CustomerDragPreviewComponent implements AurDragPreviewComponent<TableRow<Customer>>, OnInit, OnDestroy {
   // @ts-ignore
-  @Input() data: TableRow<Customer>;
+  @Input() data: TableRow<Customer>[];
 
   ngOnInit(): void {
     console.log('INIT', this.data);

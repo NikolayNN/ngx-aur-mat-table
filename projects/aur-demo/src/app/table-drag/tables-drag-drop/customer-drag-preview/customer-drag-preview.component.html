@@ -1,4 +1,11 @@
-<div class="container">
-  <mat-icon>face</mat-icon>
-  <span>{{ data.rowSrc.name }}</span>
-</div>
+@if(data.length === 1) {
+  <div class="container">
+    <mat-icon>face</mat-icon>
+    <span>{{ data[0].rowSrc.name }}</span>
+  </div>
+} @else {
+  <div class="container">
+    <span>Элементов: {{ data.length }} </span>
+  </div>
+}
+

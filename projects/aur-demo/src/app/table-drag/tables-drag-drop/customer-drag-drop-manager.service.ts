@@ -32,7 +32,8 @@ export class CustomerDragDropManagerService {
         return ctx.targetDataset.concat(ctx.sourceData); // Объединяем набор данных TARGET с sourceData
       },
       grabFn: ctx => {
-        return ctx.sourceDataset.filter(row => row.id !== ctx.sourceData.id); // Фильтруем sourceDataset, исключая sourceData
+        const removeRowIds = new Set(ctx.sourceData.map(s => s.id))
+        return ctx.sourceDataset.filter(row => !removeRowIds.has(row.id)); // Фильтруем sourceDataset, исключая sourceData
       },
       preview: CustomerDragPreviewComponent
     }
