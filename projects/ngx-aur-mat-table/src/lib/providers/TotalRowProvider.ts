@@ -14,7 +14,7 @@ export class TotalRowProvider<T> extends AbstractProvider {
   }
 
   setStyle(): TotalRowProvider<T> {
-    this.style = this.tableConfig.tableView?.totalRowView?.style;
+    this.style = this.tableConfig.totalRowCfg?.totalRowView?.style;
     return this;
   }
 
@@ -32,7 +32,8 @@ export class TotalRowProvider<T> extends AbstractProvider {
   }
 
   public static create<T>(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>): TotalRowProvider<T> {
-    if (TotalRowProvider.canEnable(tableConfig)) {
+    const enabled = tableConfig.totalRowCfg?.enable ?? true;
+    if (enabled && TotalRowProvider.canEnable(tableConfig)) {
       return new TotalRowProvider(tableConfig, tableDataSource);
     }
     return new TotalRowProviderDummy();

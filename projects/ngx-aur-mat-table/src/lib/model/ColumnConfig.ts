@@ -41,7 +41,9 @@ export interface TableConfig<T> {
   stickyCfg?: StickyConfig,
   tableView?: TableView,
   tableHeaderButtonCfg?: TableHeaderButtonConfig,
-  dragCfg?: DragDropConfig
+  dragCfg?: DragDropConfig,
+  totalRowCfg?: TotalRowConfig
+
 }
 
 export interface ClickConfig {
@@ -203,7 +205,6 @@ export interface TableView {
   height?: string;
   minHeight?: string;
   maxHeight?: string;
-  totalRowView?: TotalRowView;
 }
 
 export interface TableHeaderButtonConfig {
@@ -218,4 +219,9 @@ export interface DragDropConfig {
   manager: AurDragDropManager;
   multiple?: boolean;
   dragIcon?: IconView<string>;
+}
+
+export interface TotalRowConfig {
+  enable: boolean,
+  totalRowView?: TotalRowView
 }

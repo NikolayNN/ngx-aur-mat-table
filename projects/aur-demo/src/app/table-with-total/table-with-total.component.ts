@@ -27,7 +27,8 @@ export class TableWithTotalComponent {
         totalConverter: v => v.map(v => v.rowSrc.age).reduce((sum, age) => sum + age, 0)
       }
     ],
-    tableView: {
+    totalRowCfg: {
+      enable: true,
       totalRowView: {
         style: StyleBuilder.Row.builder()
           .color('blue')
