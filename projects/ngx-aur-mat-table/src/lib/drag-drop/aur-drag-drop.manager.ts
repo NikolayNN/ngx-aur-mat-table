@@ -60,14 +60,25 @@ export interface AurDragPreviewComponent<DATA> {
   data: DATA[];
 }
 
-interface DragStartContext {
+export interface AurDragStartContext {
   readonly name: string,
   readonly data: unknown[]
 }
 
-interface DragEndContext {
+export interface AurDragEndContext {
   readonly name: string,
   readonly data: unknown
+}
+
+export interface AurEndDragEvent {
+  /**
+   * дроп был на разрешенном элементе
+   */
+  readonly isValidDrop: boolean,
+  readonly startDragContext: AurDragStartContext,
+  readonly endDragContext?: AurDragEndContext,
+  readonly beforeDataSet: unknown[],
+  readonly afterDataSet?: unknown[],
 }
 
 export interface grabContext<SOURCE, TARGET> {
@@ -90,9 +101,9 @@ export interface DropContext<SOURCE, TARGET> {
 
 export class AurDragDropManager {
 
-  private dragStartCtx: DragStartContext | undefined;
-  private dragEndCtx: DragEndContext | undefined;
-  private currentPreviewComponentRef:  ComponentRef<AurDragPreviewComponent<any>> | undefined;
+  private dragStartCtx: AurDragStartContext | undefined;
+  private dragEndCtx: AurDragEndContext | undefined;
+  private currentPreviewComponentRef: ComponentRef<AurDragPreviewComponent<any>> | undefined;
 
   //can drop [key from table, value to table name]
   private canDropStorage = new Map<string, Set<string>>();
@@ -112,18 +123,33 @@ export class AurDragDropManager {
     this.showDragPreview(sourceName, event, data)
   }
 
-  endDrag(sourceDataset: unknown[]): unknown[] {
+  endDrag(sourceDataset: unknown[]): AurEndDragEvent {
     this.removeDragPreview()
-    return this.endDragInternal({
-      targetData: this.dragEndCtx!.data,
-      targetName: this.dragEndCtx!.name,
-      sourceData: this.dragStartCtx!.data,
-      sourceName: this.dragStartCtx!.name,
-      sourceDataset: sourceDataset
-    })
+    if (this.dragEndCtx?.name && this.checkCanDrop(this.dragEndCtx!.name)) {
+      const afterDataSet = this.calcAfterDataSource({
+        targetData: this.dragEndCtx!.data,
+        targetName: this.dragEndCtx!.name,
+        sourceData: this.dragStartCtx!.data,
+        sourceName: this.dragStartCtx!.name,
+        sourceDataset: sourceDataset
+      })
+      return {
+        isValidDrop: true,
+        startDragContext: this.dragStartCtx!,
+        endDragContext: this.dragEndCtx!,
+        beforeDataSet: sourceDataset,
+        afterDataSet: afterDataSet,
+      }
+    } else {
+      return {
+        isValidDrop: false,
+        startDragContext: this.dragStartCtx!,
+        beforeDataSet: sourceDataset,
+      }
+    }
   }
 
-  endDragInternal(grabCtx: grabContext<any, any>): unknown[] {
+  calcAfterDataSource(grabCtx: grabContext<any, any>): unknown[] {
     let mapping = this.mappings.find(m => m.sourceName === grabCtx.sourceName && m.targetName === grabCtx.targetName);
     let mappedData = mapping!.grabFn(grabCtx);
     this.dragStartCtx = undefined;
@@ -131,12 +157,16 @@ export class AurDragDropManager {
     return mappedData;
   }
 
-  canDrop(tableName: string, $event: DragEvent): boolean {
-    const canDrop = this.canDropStorage.get(this.dragStartCtx!.name)?.has(tableName) ?? false;
+  canDrop(targetName: string, $event: DragEvent): boolean {
+    const canDrop = this.checkCanDrop(targetName);
     if (canDrop) {
       $event.preventDefault();
     }
     return canDrop;
+  }
+
+  private checkCanDrop(targetName: string): boolean {
+    return this.canDropStorage.get(this.dragStartCtx!.name)?.has(targetName) ?? false;
   }
 
   onDrop(targetDataset: unknown[], targetName: string, targetData: any): unknown[] {
