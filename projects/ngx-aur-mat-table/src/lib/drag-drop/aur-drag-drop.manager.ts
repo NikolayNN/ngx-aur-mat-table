@@ -131,10 +131,12 @@ export class AurDragDropManager {
     return mappedData;
   }
 
-  canDrop(tableName: string, $event: DragEvent) {
-    if (this.canDropStorage.get(this.dragStartCtx!.name)?.has(tableName) ?? false) {
+  canDrop(tableName: string, $event: DragEvent): boolean {
+    const canDrop = this.canDropStorage.get(this.dragStartCtx!.name)?.has(tableName) ?? false;
+    if (canDrop) {
       $event.preventDefault();
     }
+    return canDrop;
   }
 
   onDrop(targetDataset: unknown[], targetName: string, targetData: any): unknown[] {
