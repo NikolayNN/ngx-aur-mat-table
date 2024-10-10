@@ -2,7 +2,7 @@
      [ngClass]="{'bottom-pagination': paginationProvider.isEnabled && paginationProvider.position === 'bottom'}">
   <ng-container>
     <!-- Filter -->
-    <ng-container *ngIf="tableConfig.filterCfg">
+    <ng-container *ngIf="tableConfig.filterCfg?.enable ?? false">
       <div class="search-container">
         <ng-container>
           <ng-content select="[ngxAurTableSearchPrefix]"></ng-content>

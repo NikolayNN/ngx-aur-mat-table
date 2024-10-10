@@ -92,7 +92,7 @@ export class TableBigComponent {
       pointer: true
     },
     filterCfg: {
-      enable: true
+      enable: false
     },
     selectionCfg: {
       enable: true,
