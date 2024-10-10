@@ -15,7 +15,7 @@ export class TableDragComponent implements OnInit {
   @Input() dragDropManager = AurDragDropManager.empty();
   // @ts-ignore
   tableConfig: TableConfig<Customer>;
-  tableData: Customer[] = CustomerGenerator.generate(10);
+  tableData: Customer[] = CustomerGenerator.generate(5);
 
   ngOnInit() {
     this.tableConfig = {

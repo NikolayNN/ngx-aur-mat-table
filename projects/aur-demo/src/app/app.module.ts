@@ -54,6 +54,7 @@ import {
   CustomerDragPreviewComponent
 } from "./table-drag/tables-drag-drop/customer-drag-preview/customer-drag-preview.component";
 import {MatIcon} from "@angular/material/icon";
+import {MatDivider} from "@angular/material/divider";
 
 @NgModule({
   declarations: [
@@ -103,6 +104,7 @@ import {MatIcon} from "@angular/material/icon";
     TableWithFilterCustomButtonsComponent,
     TableHideShowBodyComponent,
     MatIcon,
+    MatDivider,
   ],
   providers: [],
   bootstrap: [AppComponent]

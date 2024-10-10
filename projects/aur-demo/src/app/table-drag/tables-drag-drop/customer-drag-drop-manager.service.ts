@@ -13,7 +13,6 @@ export class CustomerDragDropManagerService {
   constructor() {
   }
 
-
   get manager(): AurDragDropManager {
     return this._manager;
   }
@@ -25,18 +24,31 @@ export class CustomerDragDropManagerService {
   }
 
   private createDragDropMappings(): AurDragDropMapping<any, any>[] {
-    const mapping: AurDragDropMapping<TableRow<Customer>, TableRow<Customer>> = {
-      sourceName: 'first',
-      targetName: 'second',
-      dropFn: ctx => {
-        return ctx.targetDataset.concat(ctx.sourceData); // Объединяем набор данных TARGET с sourceData
-      },
-      grabFn: ctx => {
-        const removeRowIds = new Set(ctx.sourceData.map(s => s.id))
-        return ctx.sourceDataset.filter(row => !removeRowIds.has(row.id)); // Фильтруем sourceDataset, исключая sourceData
-      },
-      preview: CustomerDragPreviewComponent
-    }
-    return [mapping];
+    return [
+      {
+        sourceName: 'first',
+        targetName: 'second',
+        dropFn: ctx => {
+          return ctx.targetDataset.concat(ctx.sourceData); // Объединяем набор данных TARGET с sourceData
+        },
+        grabFn: ctx => {
+          const removeRowIds = new Set(ctx.sourceData.map(s => s.id))
+          return ctx.sourceDataset.filter(row => !removeRowIds.has(row.id)); // Фильтруем sourceDataset, исключая sourceData
+        },
+        preview: CustomerDragPreviewComponent
+      } as AurDragDropMapping<TableRow<Customer>, TableRow<Customer>>,
+      {
+        sourceName: 'first',
+        targetName: 'third',
+        dropFn: ctx => {
+          return ctx.targetDataset.concat(ctx.sourceData); // Объединяем набор данных TARGET с sourceData
+        },
+        grabFn: ctx => {
+          const removeRowIds = new Set(ctx.sourceData.map(s => s.id))
+          return ctx.sourceDataset.filter(row => !removeRowIds.has(row.id)); // Фильтруем sourceDataset, исключая sourceData
+        },
+        preview: CustomerDragPreviewComponent
+      } as AurDragDropMapping<TableRow<Customer>, TableRow<Customer>>
+    ]
   }
 }

@@ -100,11 +100,11 @@ export class AurDragDropManager {
   constructor(private viewContainerRef: ViewContainerRef,
               private mappings: AurDragDropMapping<any, any>[]) {
     this.mappings.forEach(m => {
-      this.canDropStorage.set(m.sourceName, new Set());
-    });
-    this.mappings.forEach(m => {
+      if (!this.canDropStorage.has(m.sourceName)) {
+        this.canDropStorage.set(m.sourceName, new Set());
+      }
       this.canDropStorage.get(m.sourceName)!.add(m.targetName);
-    })
+    });
   }
 
   startDrag(sourceName: string, data: unknown[], event: DragEvent) {
