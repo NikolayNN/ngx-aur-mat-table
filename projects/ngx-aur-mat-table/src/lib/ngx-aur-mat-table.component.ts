@@ -2,7 +2,6 @@ import {
   AfterViewChecked,
   AfterViewInit,
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ContentChild,
   ElementRef,
@@ -202,8 +201,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // @ts-ignore
   @Input() highlight: HighlightContainer<T> | undefined;
 
-  constructor(private viewContainerRef: ViewContainerRef,
-              private cdr: ChangeDetectorRef) {
+  constructor(private viewContainerRef: ViewContainerRef) {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -460,7 +458,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       aurEndDragEvent.afterDataSet?.subscribe(rows => {
         this.tableData = rows.map(row => (<TableRow<T>>row).rowSrc)
         this.refreshTable();
-        this.cdr.detectChanges();
       })
     }
   }
