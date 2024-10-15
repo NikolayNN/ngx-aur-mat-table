@@ -1,4 +1,5 @@
 import {ComponentRef, ViewContainerRef} from "@angular/core";
+import {first, Observable, take} from "rxjs";
 
 /**
  * Interface representing the mapping configuration for drag-and-drop functionality
@@ -31,7 +32,7 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
    * @param ctx - The grab context containing information about the source and target.
    * @returns An array of data elements of type SOURCE.
    */
-  readonly grabFn: (ctx: grabContext<SOURCE, TARGET>) => SOURCE[]
+  readonly grabFn: (ctx: grabContext<SOURCE, TARGET>) => Observable<SOURCE[]>
 
   /**
    * Function called to handle the drop action in the target component.
@@ -41,7 +42,7 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
    * @param ctx - The drop context containing information about the source and target.
    * @returns An array of data elements of type TARGET.
    */
-  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => TARGET[],
+  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<TARGET[]>,
 
   readonly preview?: new () => AurDragPreviewComponent<SOURCE>;
 }
@@ -78,7 +79,7 @@ export interface AurEndDragEvent {
   readonly startDragContext: AurDragStartContext,
   readonly endDragContext?: AurDragEndContext,
   readonly beforeDataSet: unknown[],
-  readonly afterDataSet?: unknown[],
+  readonly afterDataSet?: Observable<unknown[]>,
 }
 
 export interface grabContext<SOURCE, TARGET> {
@@ -149,9 +150,9 @@ export class AurDragDropManager {
     }
   }
 
-  calcAfterDataSource(grabCtx: grabContext<any, any>): unknown[] {
+  calcAfterDataSource(grabCtx: grabContext<any, any>): Observable<unknown[]> {
     let mapping = this.mappings.find(m => m.sourceName === grabCtx.sourceName && m.targetName === grabCtx.targetName);
-    let mappedData = mapping!.grabFn(grabCtx);
+    let mappedData = mapping!.grabFn(grabCtx).pipe(first());
     this.dragStartCtx = undefined;
     this.dragEndCtx = undefined;
     return mappedData;
@@ -169,7 +170,7 @@ export class AurDragDropManager {
     return this.canDropStorage.get(this.dragStartCtx!.name)?.has(targetName) ?? false;
   }
 
-  onDrop(targetDataset: unknown[], targetName: string, targetData: any): unknown[] {
+  onDrop(targetDataset: unknown[], targetName: string, targetData: any): Observable<unknown[]> {
     return this.onDropInternal({
       sourceName: this.dragStartCtx!.name,
       sourceData: this.dragStartCtx!.data,
@@ -179,9 +180,9 @@ export class AurDragDropManager {
     })
   }
 
-  onDropInternal(dropCtx: DropContext<any, any>): unknown[] {
+  onDropInternal(dropCtx: DropContext<any, any>): Observable<unknown[]> {
     let mapping = this.mappings.find(m => m.sourceName === dropCtx.sourceName && m.targetName === dropCtx.targetName);
-    let mappedData = mapping!.dropFn(dropCtx);
+    let mappedData = mapping!.dropFn(dropCtx).pipe(first());
     this.dragEndCtx = {
       name: dropCtx.targetName,
       data: dropCtx.targetData

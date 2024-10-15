@@ -2,6 +2,7 @@ import {Injectable, ViewContainerRef} from "@angular/core";
 import {AurDragDropManager, AurDragDropMapping, TableRow} from "ngx-aur-mat-table";
 import {Customer} from "../../shared/model/customer";
 import {CustomerDragPreviewComponent} from "./customer-drag-preview/customer-drag-preview.component";
+import {of} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -29,11 +30,11 @@ export class CustomerDragDropManagerService {
         sourceName: 'first',
         targetName: 'second',
         dropFn: ctx => {
-          return ctx.targetDataset.concat(ctx.sourceData); // Объединяем набор данных TARGET с sourceData
+          return of(ctx.targetDataset.concat(ctx.sourceData)); // Объединяем набор данных TARGET с sourceData
         },
         grabFn: ctx => {
           const removeRowIds = new Set(ctx.sourceData.map(s => s.id))
-          return ctx.sourceDataset.filter(row => !removeRowIds.has(row.id)); // Фильтруем sourceDataset, исключая sourceData
+          return of(ctx.sourceDataset.filter(row => !removeRowIds.has(row.id))); // Фильтруем sourceDataset, исключая sourceData
         },
         preview: CustomerDragPreviewComponent
       } as AurDragDropMapping<TableRow<Customer>, TableRow<Customer>>,
@@ -41,11 +42,11 @@ export class CustomerDragDropManagerService {
         sourceName: 'first',
         targetName: 'third',
         dropFn: ctx => {
-          return ctx.targetDataset.concat(ctx.sourceData); // Объединяем набор данных TARGET с sourceData
+          return of(ctx.targetDataset.concat(ctx.sourceData)); // Объединяем набор данных TARGET с sourceData
         },
         grabFn: ctx => {
           const removeRowIds = new Set(ctx.sourceData.map(s => s.id))
-          return ctx.sourceDataset.filter(row => !removeRowIds.has(row.id)); // Фильтруем sourceDataset, исключая sourceData
+          return of(ctx.sourceDataset.filter(row => !removeRowIds.has(row.id))); // Фильтруем sourceDataset, исключая sourceData
         },
         preview: CustomerDragPreviewComponent
       } as AurDragDropMapping<TableRow<Customer>, TableRow<Customer>>
