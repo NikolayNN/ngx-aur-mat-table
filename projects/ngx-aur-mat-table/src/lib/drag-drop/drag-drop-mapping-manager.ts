@@ -11,15 +11,20 @@ export class DragDropMappingManager {
 
   public get(sourceName: string, targetName: string): AurDragDropMapping<any, any> {
     const mapping = this.mappingsStorage.get(this.buildKey(sourceName, targetName));
-    if(!mapping){
+    if (!mapping) {
       throw new Error(`Mapping for ${sourceName} -> ${targetName} was not found`)
     }
     return mapping;
   }
 
   private fillStorage(mappings: AurDragDropMapping<any, any>[]) {
-    mappings.forEach(mapping =>
-      this.mappingsStorage.set(this.buildKeyForMapping(mapping), mapping));
+    mappings.forEach(mapping => {
+      const key = this.buildKeyForMapping(mapping);
+      if (this.mappingsStorage.has(key)) {
+        console.log(`WARN: duplicate drag drop mapping: ${key}`);
+      }
+      this.mappingsStorage.set(key, mapping)
+    });
   }
 
   private buildKeyForMapping(mapping: AurDragDropMapping<any, any>): string {

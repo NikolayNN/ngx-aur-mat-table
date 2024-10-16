@@ -1,6 +1,6 @@
 import {ComponentRef, ViewContainerRef} from "@angular/core";
 
-import { AurDragPreviewMappings} from "./model/aur-drag-drop-mapping";
+import {AurDragPreviewMappings} from "./model/aur-drag-drop-mapping";
 import {AurDragPreviewComponent} from "./model/aur-drag-preview-component";
 
 export class DragPreviewManager {
@@ -15,8 +15,11 @@ export class DragPreviewManager {
 
   private fillStorage(mappings: AurDragPreviewMappings<any>[]) {
     mappings.forEach(m => {
-        this.previewStorage.set(m.sourceName, m.preview!);
-      });
+      if (this.previewStorage.has(m.sourceName)) {
+        console.log(`WARN: Duplicate drag preview mapping for source ${m.sourceName}`)
+      }
+      this.previewStorage.set(m.sourceName, m.preview!);
+    });
   }
 
   public showPreview(sourceName: string, event: DragEvent, draggedData: unknown[]) {

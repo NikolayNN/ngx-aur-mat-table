@@ -5,8 +5,8 @@ import {DragPreviewManager} from "./drag-preview-manager";
 import {DragDropMappingManager} from "./drag-drop-mapping-manager";
 import {
   AurDragDropMapping,
-  AurDropResult,
   AurDragPreviewMappings,
+  AurDropResult,
   DropContext,
   GrabContext
 } from "./model/aur-drag-drop-mapping";
@@ -107,7 +107,7 @@ export class AurDragDropManager {
   public drop(targetDataset: unknown[], targetName: string, targetData: any): Observable<AurDropResult<any>> {
     const mapping = this.getMapping(this.startDragEvent!.sourceName, targetName);
     const dropContext = this.buildDropContext(targetName, targetData, targetDataset)
-    const dropResult = mapping!.dropFn(dropContext).pipe(first());
+    const dropResult = mapping.dropFn(dropContext).pipe(first());
     this.dropEvent = {targetName, targetData, dropResult}
     return dropResult;
   }
@@ -136,16 +136,10 @@ export class AurDragDropManager {
           const grabContext = this.buildGrabContext(sourceDataset);
 
           return this.calcDatasetAfterGrab(grabContext).pipe(
-            map(updatedDataset => ({
-              isValid: true,
-              updatedDataset
-            }))
+            map(updatedDataset => ({isValid: true, updatedDataset}))
           );
         } else {
-          return of({
-            isValid: false,
-            updatedDataset: []
-          });
+          return of({isValid: false, updatedDataset: []});
         }
       }),
       finalize(() => {
