@@ -3,7 +3,13 @@ import {CanDropManager} from "./can-drop-manager";
 import {ViewContainerRef} from "@angular/core";
 import {DragPreviewManager} from "./drag-preview-manager";
 import {DragDropMappingManager} from "./drag-drop-mapping-manager";
-import {AurDragDropMapping, AurDropResult, DropContext, GrabContext} from "./model/aur-drag-drop-mapping";
+import {
+  AurDragDropMapping,
+  AurDropResult,
+  AurDragPreviewMappings,
+  DropContext,
+  GrabContext
+} from "./model/aur-drag-drop-mapping";
 
 
 interface StartDragEvent {
@@ -48,13 +54,14 @@ export class AurDragDropManager {
   private dropEvent?: DropEvent;
 
   public static empty(): AurDragDropManager {
-    return new AurDragDropManager(undefined!, []);
+    return new AurDragDropManager(undefined!, [], []);
   }
 
   constructor(viewContainerRef: ViewContainerRef,
-              private mappings: AurDragDropMapping<any, any>[]) {
+              private mappings: AurDragDropMapping<any, any>[],
+              private previewMappings: AurDragPreviewMappings<any>[]) {
     this.canDropManager = new CanDropManager(mappings);
-    this.previewManager = new DragPreviewManager(viewContainerRef, mappings);
+    this.previewManager = new DragPreviewManager(viewContainerRef, this.previewMappings);
     this.mappingManager = new DragDropMappingManager(mappings);
   }
 
@@ -74,9 +81,9 @@ export class AurDragDropManager {
    * @throws Ошибка, если предыдущее перетаскивание еще не завершено
    */
   public startDrag(sourceName: string, draggedData: unknown[], event: DragEvent): void {
-    if (this.startDragEvent) {
-      throw new Error('Start new drag before complete current')
-    }
+    // if (this.startDragEvent) {
+    //   throw new Error('Start new drag before complete current')
+    // }
     this.startDragEvent = {sourceName, draggedData};
     this.previewManager.showPreview(sourceName, event, draggedData)
   }

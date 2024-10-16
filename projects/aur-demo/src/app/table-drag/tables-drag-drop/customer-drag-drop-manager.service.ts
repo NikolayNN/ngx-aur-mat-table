@@ -2,10 +2,8 @@ import {Injectable, ViewContainerRef} from "@angular/core";
 import {Customer} from "../../shared/model/customer";
 import {CustomerDragPreviewComponent} from "./customer-drag-preview/customer-drag-preview.component";
 import {delay, of} from "rxjs";
-import {
-  AurDragDropManager,
-} from "../../../../../ngx-aur-mat-table/src/lib/drag-drop/aur-drag-drop.manager";
-import {TableRow} from "ngx-aur-mat-table";
+import {AurDragDropManager,} from "../../../../../ngx-aur-mat-table/src/lib/drag-drop/aur-drag-drop.manager";
+import {AurDragPreviewMappings, TableRow} from "ngx-aur-mat-table";
 import {AurDragDropMapping} from "../../../../../ngx-aur-mat-table/src/lib/drag-drop/model/aur-drag-drop-mapping";
 
 @Injectable({
@@ -13,7 +11,7 @@ import {AurDragDropMapping} from "../../../../../ngx-aur-mat-table/src/lib/drag-
 })
 export class CustomerDragDropManagerService {
 
-  private _manager= AurDragDropManager.empty();
+  private _manager = AurDragDropManager.empty();
 
   constructor() {
   }
@@ -25,7 +23,8 @@ export class CustomerDragDropManagerService {
 // вызывается в общем контейнере для всех drag & drop компонентов
   public init(ref: ViewContainerRef) {
     const dragDropMappings = this.createDragDropMappings();
-    this._manager = new AurDragDropManager(ref, dragDropMappings);
+    const dragPreviewMappings = this.createDragPreviewMappings();
+    this._manager = new AurDragDropManager(ref, dragDropMappings, dragPreviewMappings);
   }
 
   private createDragDropMappings(): AurDragDropMapping<any, any>[] {
@@ -43,5 +42,15 @@ export class CustomerDragDropManagerService {
         preview: CustomerDragPreviewComponent
       } as AurDragDropMapping<TableRow<Customer>, TableRow<Customer>>
     ]
+  }
+
+  private createDragPreviewMappings(): AurDragPreviewMappings<any>[] {
+    return [
+      {
+        sourceName: 'first',
+        preview: CustomerDragPreviewComponent
+      }
+    ]
+
   }
 }

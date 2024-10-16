@@ -1,6 +1,11 @@
 import {Observable} from "rxjs";
 import {AurDragPreviewComponent} from "./aur-drag-preview-component";
 
+export interface AurDragPreviewMappings<SOURCE> {
+  sourceName: string,
+  readonly preview?: new () => AurDragPreviewComponent<SOURCE>;
+}
+
 /**
  * Interface representing the mapping configuration for drag-and-drop functionality
  * between components. It defines the source component (from where data is grabbed)
@@ -43,8 +48,6 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
    * @returns An array of data elements of type TARGET.
    */
   readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<AurDropResult<TARGET>>,
-
-  readonly preview?: new () => AurDragPreviewComponent<SOURCE>;
 }
 
 export interface AurDropResult<TARGET> {

@@ -1,6 +1,6 @@
 import {ComponentRef, ViewContainerRef} from "@angular/core";
 
-import {AurDragDropMapping} from "./model/aur-drag-drop-mapping";
+import { AurDragPreviewMappings} from "./model/aur-drag-drop-mapping";
 import {AurDragPreviewComponent} from "./model/aur-drag-preview-component";
 
 export class DragPreviewManager {
@@ -9,18 +9,18 @@ export class DragPreviewManager {
   private currentPreviewComponentRef: ComponentRef<AurDragPreviewComponent<any>> | undefined;
 
   constructor(private viewContainerRef: ViewContainerRef,
-              mappings: AurDragDropMapping<any, any>[]) {
+              mappings: AurDragPreviewMappings<any>[]) {
     this.fillStorage(mappings);
   }
 
-  private fillStorage(mappings: AurDragDropMapping<any, any>[]) {
-    mappings.filter(m => m.preview)
-      .forEach(m => {
+  private fillStorage(mappings: AurDragPreviewMappings<any>[]) {
+    mappings.forEach(m => {
         this.previewStorage.set(m.sourceName, m.preview!);
-    });
+      });
   }
 
   public showPreview(sourceName: string, event: DragEvent, draggedData: unknown[]) {
+    this.previewStorage.forEach((k, v) => console.log('key', k, 'value', v))
     let previewConstructor = this.previewStorage.get(sourceName);
     if (previewConstructor) {
       // Динамически создаем компонент превью
