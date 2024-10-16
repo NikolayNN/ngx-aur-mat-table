@@ -1,7 +1,7 @@
 import {AbstractProvider} from "./AbstractProvider";
-import {AurDragDropManager, AurDragPreviewComponent} from "../drag-drop/aur-drag-drop.manager";
 import {DragDropConfig, IconView, TableConfig} from "../model/ColumnConfig";
 import {ViewContainerRef} from "@angular/core";
+import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 
 export class DragDropProvider<T> extends AbstractProvider {
 
@@ -14,7 +14,6 @@ export class DragDropProvider<T> extends AbstractProvider {
   public readonly manager: AurDragDropManager;
   public readonly draggable: boolean = false;
   public readonly dragIconView: IconView<string> = DragDropProvider.DEFAULT_ICON_VIEW;
-  public readonly previewConstructor: (new () => AurDragPreviewComponent<any>) | undefined;
   public readonly multiple: boolean = false;
 
   constructor(private readonly viewContainerRef: ViewContainerRef,
@@ -24,9 +23,8 @@ export class DragDropProvider<T> extends AbstractProvider {
     // здесь заполнить конфиг значениями по умолчанию если такие появятся
     this.manager = dragCfg?.manager ?? AurDragDropManager.empty();
     this.multiple = dragCfg?.multiple ?? false;
-    this.draggable = (new Set(this.manager.draggableTableNames)).has(tableName);
+    this.draggable = (new Set(this.manager.draggableSourceNames)).has(tableName);
     this.dragIconView = dragCfg?.dragIcon ?? DragDropProvider.DEFAULT_ICON_VIEW;
-    this.previewConstructor = this.manager.getPreviewComponent(this.tableName);
   }
 
   public addColumn(columns: string[]): DragDropProvider<T> {

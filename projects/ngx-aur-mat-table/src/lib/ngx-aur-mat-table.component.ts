@@ -1,13 +1,13 @@
 import {
   AfterViewChecked,
   AfterViewInit,
-  ChangeDetectionStrategy, ChangeDetectorRef,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   ContentChild,
   ElementRef,
   EventEmitter,
   Input,
-  NgZone,
   OnChanges,
   OnDestroy,
   OnInit,
@@ -443,26 +443,28 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   onDragOver($event: DragEvent) {
-    this.dragDropProvider.manager.canDrop(this._tableName, $event);
+    this.dragDropProvider.manager.canDropPreventDefault(this._tableName, $event);
   }
 
   onDrop($event: DragEvent, row: TableRow<T>) {
-    this.dragDropProvider.manager.onDrop(this.tableDataSource.data, this._tableName, row)
-      .subscribe(rows => {
-        this.tableData = rows.map(row => (<TableRow<T>>row).rowSrc)
-        this.refreshTable();
-        this.cdr.detectChanges();
+    this.dragDropProvider.manager.drop(this.tableDataSource.data, this._tableName, row)
+      .subscribe(dropResult => {
+        if (dropResult.isValid) {
+          this.tableData = dropResult.updatedDataset.map(row => (<TableRow<T>>row).rowSrc)
+          this.refreshTable();
+          this.cdr.detectChanges();
+        }
       })
   }
 
   onDragEnd($event: DragEvent, row: TableRow<T>) {
-    let aurEndDragEvent = this.dragDropProvider.manager.endDrag(this.tableDataSource.data);
-    if (aurEndDragEvent.isValidDrop) {
-      aurEndDragEvent.afterDataSet?.subscribe(rows => {
-        this.tableData = rows.map(row => (<TableRow<T>>row).rowSrc);
-        this.refreshTable();
-        this.cdr.detectChanges();
+    this.dragDropProvider.manager.endDrag(this.tableDataSource.data)
+      .subscribe(dropResult => {
+        if (dropResult.isValid) {
+          this.tableData = dropResult.updatedDataset.map(row => (<TableRow<T>>row).rowSrc);
+          this.refreshTable();
+          this.cdr.detectChanges();
+        }
       })
-    }
   }
 }

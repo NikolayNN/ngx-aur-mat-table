@@ -1,6 +1,11 @@
 import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {AurDragPreviewComponent, TableRow} from "ngx-aur-mat-table";
+
 import {Customer} from "../../../shared/model/customer";
+import {TableRow} from "ngx-aur-mat-table";
+import {
+  AurDragPreviewComponent
+} from "../../../../../../ngx-aur-mat-table/src/lib/drag-drop/model/aur-drag-preview-component";
+
 
 @Component({
   selector: 'app-customer-drag-preview',

@@ -1,0 +1,49 @@
+import {ComponentRef, ViewContainerRef} from "@angular/core";
+
+import {AurDragDropMapping} from "./model/aur-drag-drop-mapping";
+import {AurDragPreviewComponent} from "./model/aur-drag-preview-component";
+
+export class DragPreviewManager {
+
+  private readonly previewStorage = new Map<string, new () => AurDragPreviewComponent<any>>();
+  private currentPreviewComponentRef: ComponentRef<AurDragPreviewComponent<any>> | undefined;
+
+  constructor(private viewContainerRef: ViewContainerRef,
+              mappings: AurDragDropMapping<any, any>[]) {
+    this.fillStorage(mappings);
+  }
+
+  private fillStorage(mappings: AurDragDropMapping<any, any>[]) {
+    mappings.filter(m => m.preview)
+      .forEach(m => {
+        this.previewStorage.set(m.sourceName, m.preview!);
+    });
+  }
+
+  public showPreview(sourceName: string, event: DragEvent, draggedData: unknown[]) {
+    let previewConstructor = this.previewStorage.get(sourceName);
+    if (previewConstructor) {
+      // Динамически создаем компонент превью
+      this.currentPreviewComponentRef = this.viewContainerRef.createComponent(previewConstructor);
+      this.currentPreviewComponentRef.instance.data = draggedData;
+
+      const nativePreview = this.currentPreviewComponentRef.location.nativeElement;
+
+      // Применение необходимых стилей к элементу превью
+      nativePreview.style.position = 'absolute';
+      nativePreview.style.top = '0';
+      nativePreview.style.left = '-9999px'; // Скрыть элемент за пределами экрана
+      document.body.appendChild(nativePreview); // Временно добавляем в DOM для отображения
+
+      event.dataTransfer?.setDragImage(nativePreview, 0, 0);
+    }
+  }
+
+  public removePreview() {
+    if (this.currentPreviewComponentRef) {
+      document.body.removeChild(this.currentPreviewComponentRef.location.nativeElement);
+      this.currentPreviewComponentRef.destroy();
+      this.currentPreviewComponentRef = undefined;
+    }
+  }
+}

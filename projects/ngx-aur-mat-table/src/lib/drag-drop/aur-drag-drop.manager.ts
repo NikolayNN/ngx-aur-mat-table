@@ -1,233 +1,170 @@
-import {ComponentRef, ViewContainerRef} from "@angular/core";
-import {first, Observable, take} from "rxjs";
+import {finalize, first, map, Observable, of, switchMap,} from "rxjs";
+import {CanDropManager} from "./can-drop-manager";
+import {ViewContainerRef} from "@angular/core";
+import {DragPreviewManager} from "./drag-preview-manager";
+import {DragDropMappingManager} from "./drag-drop-mapping-manager";
+import {AurDragDropMapping, AurDropResult, DropContext, GrabContext} from "./model/aur-drag-drop-mapping";
 
-/**
- * Interface representing the mapping configuration for drag-and-drop functionality
- * between components. It defines the source component (from where data is grabbed)
- * and the target component (where data is dropped), as well as the functions that handle
- * the grabbing and dropping of data.
- *
- * @template SOURCE - The type of data used by the source component.
- * @template TARGET - The type of data used by the target component.
- */
-export interface AurDragDropMapping<SOURCE, TARGET> {
 
-  /**
-   * The name of the source component from which data can be grabbed.
-   * This represents the component that allows a user to initiate a grab action.
-   */
-  readonly sourceName: string,
+interface StartDragEvent {
+  sourceName: string,
+  draggedData: unknown[],
+}
 
-  /**
-   * The name of the target component where the data can be dropped.
-   * This represents the component that accepts the drop action.
-   */
-  readonly targetName: string,
-
-  /**
-   * Function called to handle grabbing data from the source component.
-   * It is invoked after a drop has occurred, and it describes what should
-   * happen to the data in the source table.
-   *
-   * @param ctx - The grab context containing information about the source and target.
-   * @returns An array of data elements of type SOURCE.
-   */
-  readonly grabFn: (ctx: grabContext<SOURCE, TARGET>) => Observable<SOURCE[]>
-
-  /**
-   * Function called to handle the drop action in the target component.
-   * It is invoked when the drop event occurs, and it describes how to process
-   * the data into the target component.
-   *
-   * @param ctx - The drop context containing information about the source and target.
-   * @returns An array of data elements of type TARGET.
-   */
-  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<TARGET[]>,
-
-  readonly preview?: new () => AurDragPreviewComponent<SOURCE>;
+interface DropEvent {
+  targetName: string,
+  targetData: unknown,
+  dropResult: Observable<AurDropResult<any>>
 }
 
 /**
- * Общий интерфейс для компонентов, которые используются в качестве превью
- * для перетаскивания данных. Это обеспечивает стандартный способ передачи
- * данных в такие компоненты.
- *
- * @template DATA - Тип данных, которые будут переданы в компонент для превью.
+ * Класс AurDragDropManager управляет процессом drag-and-drop, включая начало, выполнение и завершение перетаскивания.
+ * Он также управляет предварительным просмотром, проверкой возможности выполнения drop и обновлением данных после drop.
  */
-export interface AurDragPreviewComponent<DATA> {
-  /**
-   * Данные, которые будут отображаться в компоненте превью.
-   */
-  data: DATA[];
-}
-
-export interface AurDragStartContext {
-  readonly name: string,
-  readonly data: unknown[]
-}
-
-export interface AurDragEndContext {
-  readonly name: string,
-  readonly data: unknown
-}
-
-export interface AurEndDragEvent {
-  /**
-   * дроп был на разрешенном элементе
-   */
-  readonly isValidDrop: boolean,
-  readonly startDragContext: AurDragStartContext,
-  readonly endDragContext?: AurDragEndContext,
-  readonly beforeDataSet: unknown[],
-  readonly afterDataSet?: Observable<unknown[]>,
-}
-
-export interface grabContext<SOURCE, TARGET> {
-  readonly sourceName: string,
-  readonly sourceData: SOURCE[],
-  readonly sourceDataset: SOURCE[],
-
-  readonly targetName: string,
-  readonly targetData: TARGET,
-}
-
-export interface DropContext<SOURCE, TARGET> {
-  readonly sourceName: string,
-  readonly sourceData: SOURCE[],
-
-  readonly targetDataset: TARGET[],
-  readonly targetName: string,
-  readonly targetData: TARGET,
-}
-
 export class AurDragDropManager {
+  /**
+   * Менеджер для проверки возможности выполнения drop операции
+   */
+  private readonly canDropManager: CanDropManager;
 
-  private dragStartCtx: AurDragStartContext | undefined;
-  private dragEndCtx: AurDragEndContext | undefined;
-  private currentPreviewComponentRef: ComponentRef<AurDragPreviewComponent<any>> | undefined;
+  /**
+   * Менеджер для управления предварительным просмотром перетаскиваемого элемента
+   */
+  private readonly previewManager: DragPreviewManager;
 
-  //can drop [key from table, value to table name]
-  private canDropStorage = new Map<string, Set<string>>();
+  /**
+   * Менеджер для управления маппингами между источником и целью перетаскивания
+   */
+  private readonly mappingManager: DragDropMappingManager;
 
-  constructor(private viewContainerRef: ViewContainerRef,
+  /**
+   * Событие начала перетаскивания, содержит информацию об источнике и данных, которые перетаскиваются
+   */
+  private startDragEvent?: StartDragEvent;
+
+  /**
+   * Событие drop, undefined если drop был на неразрешенном элементе
+   */
+  private dropEvent?: DropEvent;
+
+  public static empty(): AurDragDropManager {
+    return new AurDragDropManager(undefined!, []);
+  }
+
+  constructor(viewContainerRef: ViewContainerRef,
               private mappings: AurDragDropMapping<any, any>[]) {
-    this.mappings.forEach(m => {
-      if (!this.canDropStorage.has(m.sourceName)) {
-        this.canDropStorage.set(m.sourceName, new Set());
-      }
-      this.canDropStorage.get(m.sourceName)!.add(m.targetName);
-    });
+    this.canDropManager = new CanDropManager(mappings);
+    this.previewManager = new DragPreviewManager(viewContainerRef, mappings);
+    this.mappingManager = new DragDropMappingManager(mappings);
   }
 
-  startDrag(sourceName: string, data: unknown[], event: DragEvent) {
-    this.dragStartCtx = {name: sourceName, data: data}
-    this.showDragPreview(sourceName, event, data)
-  }
-
-  endDrag(sourceDataset: unknown[]): AurEndDragEvent {
-    this.removeDragPreview()
-    if (this.dragEndCtx?.name && this.checkCanDrop(this.dragEndCtx!.name)) {
-      const afterDataSet = this.calcAfterDataSource({
-        targetData: this.dragEndCtx!.data,
-        targetName: this.dragEndCtx!.name,
-        sourceData: this.dragStartCtx!.data,
-        sourceName: this.dragStartCtx!.name,
-        sourceDataset: sourceDataset
-      })
-      return {
-        isValidDrop: true,
-        startDragContext: this.dragStartCtx!,
-        endDragContext: this.dragEndCtx!,
-        beforeDataSet: sourceDataset,
-        afterDataSet: afterDataSet,
-      }
-    } else {
-      return {
-        isValidDrop: false,
-        startDragContext: this.dragStartCtx!,
-        beforeDataSet: sourceDataset,
-      }
-    }
-  }
-
-  calcAfterDataSource(grabCtx: grabContext<any, any>): Observable<unknown[]> {
-    let mapping = this.mappings.find(m => m.sourceName === grabCtx.sourceName && m.targetName === grabCtx.targetName);
-    let mappedData = mapping!.grabFn(grabCtx).pipe(first());
-    this.dragStartCtx = undefined;
-    this.dragEndCtx = undefined;
-    return mappedData;
-  }
-
-  canDrop(targetName: string, $event: DragEvent): boolean {
-    const canDrop = this.checkCanDrop(targetName);
-    if (canDrop) {
-      $event.preventDefault();
-    }
-    return canDrop;
-  }
-
-  private checkCanDrop(targetName: string): boolean {
-    return this.canDropStorage.get(this.dragStartCtx!.name)?.has(targetName) ?? false;
-  }
-
-  onDrop(targetDataset: unknown[], targetName: string, targetData: any): Observable<unknown[]> {
-    return this.onDropInternal({
-      sourceName: this.dragStartCtx!.name,
-      sourceData: this.dragStartCtx!.data,
-      targetName: targetName,
-      targetData: targetData,
-      targetDataset: targetDataset
-    })
-  }
-
-  onDropInternal(dropCtx: DropContext<any, any>): Observable<unknown[]> {
-    let mapping = this.mappings.find(m => m.sourceName === dropCtx.sourceName && m.targetName === dropCtx.targetName);
-    let mappedData = mapping!.dropFn(dropCtx).pipe(first());
-    this.dragEndCtx = {
-      name: dropCtx.targetName,
-      data: dropCtx.targetData
-    }
-    return mappedData;
-  }
-
-  get draggableTableNames(): string[] {
+  /**
+   * Возвращает список всех возможных источников для перетаскивания
+   * @returns Массив имен источников
+   */
+  get draggableSourceNames(): string[] {
     return this.mappings?.map(mapping => mapping.sourceName) || [];
   }
 
-  getPreviewComponent(name: string): (new () => AurDragPreviewComponent<any>) | undefined {
-    return this.mappings.find(value => value.sourceName === name)?.preview || undefined;
+  /**
+   * Метод для начала перетаскивания, сохраняет начальный контекст, а также отображает Preview перетаскиваемого элемента
+   * @param sourceName Имя источника, с которого начинается перетаскивание
+   * @param draggedData Данные, которые перетаскиваются
+   * @param event Событие перетаскивания
+   * @throws Ошибка, если предыдущее перетаскивание еще не завершено
+   */
+  public startDrag(sourceName: string, draggedData: unknown[], event: DragEvent): void {
+    if (this.startDragEvent) {
+      throw new Error('Start new drag before complete current')
+    }
+    this.startDragEvent = {sourceName, draggedData};
+    this.previewManager.showPreview(sourceName, event, draggedData)
   }
 
-  public static empty(): AurDragDropManager {
-    // @ts-ignore
-    return new AurDragDropManager(undefined, []);
+  /**
+   * Метод для обработки события preventDefault для разрешения / запрещения drop на элементе
+   * @param targetName Имя цели, на которую происходит перетаскивание
+   * @param $event Событие перетаскивания
+   */
+  public canDropPreventDefault(targetName: string, $event: DragEvent): void {
+    this.canDropManager.dropPreventDefault(this.startDragEvent?.sourceName, targetName, $event);
   }
 
-  private showDragPreview(name: string, event: DragEvent, data: any) {
-    let previewConstructor = this.getPreviewComponent(name);
-    if (previewConstructor) {
-      // Динамически создаем компонент превью
-      this.currentPreviewComponentRef = this.viewContainerRef.createComponent(previewConstructor);
-      this.currentPreviewComponentRef.instance.data = data;
+  /**
+   * Метод для выполнения drop на указанную цель
+   * @param targetDataset Данные целевой таблицы
+   * @param targetName Имя цели, на которую выполняется drop
+   * @param targetData Данные цели в которые выполняется drop
+   * @returns Observable с результатом drop операции
+   */
+  public drop(targetDataset: unknown[], targetName: string, targetData: any): Observable<AurDropResult<any>> {
+    const mapping = this.getMapping(this.startDragEvent!.sourceName, targetName);
+    const dropContext = this.buildDropContext(targetName, targetData, targetDataset)
+    const dropResult = mapping!.dropFn(dropContext).pipe(first());
+    this.dropEvent = {targetName, targetData, dropResult}
+    return dropResult;
+  }
 
-      const nativePreview = this.currentPreviewComponentRef.location.nativeElement;
-
-      // Применение необходимых стилей к элементу превью
-      nativePreview.style.position = 'absolute';
-      nativePreview.style.top = '0';
-      nativePreview.style.left = '-9999px'; // Скрыть элемент за пределами экрана
-      document.body.appendChild(nativePreview); // Временно добавляем в DOM для отображения
-
-      event.dataTransfer?.setDragImage(nativePreview, 0, 0);
+  private buildDropContext(targetName: string, targetData: any, targetDataSet: unknown[]): DropContext<any, any> {
+    return {
+      targetName,
+      targetData,
+      targetDataset: targetDataSet,
+      sourceName: this.startDragEvent!.sourceName,
+      sourceData: this.startDragEvent!.draggedData,
     }
   }
 
-  private removeDragPreview() {
-    if (this.currentPreviewComponentRef) {
-      document.body.removeChild(this.currentPreviewComponentRef.location.nativeElement);
-      this.currentPreviewComponentRef.destroy();
-      this.currentPreviewComponentRef = undefined;
+  public endDrag(sourceDataset: unknown[]): Observable<AurDropResult<any>> {
+    this.previewManager.removePreview();
+
+    if (!this.dropEvent) {
+      const dropResult = of({isValid: false, updatedDataset: []});
+      this.dropEvent = {targetName: '---?unknow-target?----', targetData: null, dropResult}
+      return dropResult;
     }
+    return this.dropEvent!.dropResult.pipe(
+      switchMap(dropEvent => {
+        if (dropEvent.isValid) {
+          const grabContext = this.buildGrabContext(sourceDataset);
+
+          return this.calcDatasetAfterGrab(grabContext).pipe(
+            map(updatedDataset => ({
+              isValid: true,
+              updatedDataset
+            }))
+          );
+        } else {
+          return of({
+            isValid: false,
+            updatedDataset: []
+          });
+        }
+      }),
+      finalize(() => {
+        this.dropEvent = undefined;
+        this.startDragEvent = undefined;
+      })
+    );
+  }
+
+  private buildGrabContext(sourceDataset: unknown[]): GrabContext<any, any> {
+    return {
+      targetName: this.dropEvent!.targetName,
+      targetData: this.dropEvent!.targetData,
+      sourceName: this.startDragEvent!.sourceName,
+      sourceData: this.startDragEvent!.draggedData,
+      sourceDataset: sourceDataset
+    }
+  }
+
+  private calcDatasetAfterGrab(grabCtx: GrabContext<any, any>): Observable<unknown[]> {
+    const mapping = this.getMapping(this.startDragEvent!.sourceName, this.dropEvent!.targetName);
+    return mapping!.grabFn(grabCtx).pipe(first());
+  }
+
+  private getMapping(sourceName: string, targetName: string): AurDragDropMapping<any, any> {
+    return this.mappingManager.get(sourceName, targetName);
   }
 }
 
