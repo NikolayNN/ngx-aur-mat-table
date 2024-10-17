@@ -447,24 +447,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   onDrop($event: DragEvent, row: TableRow<T>) {
-    this.dragDropProvider.manager.drop(this.tableDataSource.data, this._tableName, row)
-      .subscribe(dropResult => {
-        if (dropResult.isValid) {
-          this.tableData = dropResult.updatedDataset.map(row => (<TableRow<T>>row).rowSrc)
-          this.refreshTable();
-          this.cdr.detectChanges();
-        }
-      })
+    this.dragDropProvider.manager.drop(this.tableDataSource.data, this._tableName, row);
   }
 
   onDragEnd($event: DragEvent, row: TableRow<T>) {
-    this.dragDropProvider.manager.endDrag(this.tableDataSource.data)
-      .subscribe(dropResult => {
-        if (dropResult.isValid) {
-          this.tableData = dropResult.updatedDataset.map(row => (<TableRow<T>>row).rowSrc);
-          this.refreshTable();
-          this.cdr.detectChanges();
-        }
-      })
+    this.dragDropProvider.manager.endDrag(this.tableDataSource.data);
   }
 }

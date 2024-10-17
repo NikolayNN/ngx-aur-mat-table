@@ -1,6 +1,17 @@
-<app-table-drag tableName="first" [dragDropManager]="dragDropManagerService.manager"></app-table-drag>
-<mat-divider></mat-divider>
-<app-table-drag tableName="second" [dragDropManager]="dragDropManagerService.manager"></app-table-drag>
-<mat-divider></mat-divider>
-<app-table-drag tableName="third" [dragDropManager]="dragDropManagerService.manager"></app-table-drag>
+<app-table-drag tableName="first"
+                [tableData]="tableDataFirst"
+                [dragDropManager]="dragDropManagerService.manager">
+</app-table-drag>
+
+
+<app-table-drag tableName="second"
+                [tableData]="tableDataSecond"
+                [dragDropManager]="dragDropManagerService.manager">
+</app-table-drag>
+
+
+<app-table-drag tableName="third"
+                [tableData]="tableDataThird"
+                [dragDropManager]="dragDropManagerService.manager">
+</app-table-drag>
 

@@ -37,7 +37,7 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
    * @param ctx - The grab context containing information about the source and target.
    * @returns An array of data elements of type SOURCE.
    */
-  readonly grabFn: (ctx: GrabContext<SOURCE, TARGET>) => Observable<SOURCE[]>
+  readonly grabFn: (ctx: GrabContext<SOURCE, TARGET>) => void
 
   /**
    * Function called to handle the drop action in the target component.
@@ -47,12 +47,11 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
    * @param ctx - The drop context containing information about the source and target.
    * @returns An array of data elements of type TARGET.
    */
-  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<AurDropResult<TARGET>>,
+  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<AurDropResult>,
 }
 
-export interface AurDropResult<TARGET> {
+export interface AurDropResult {
   isValid: boolean;
-  updatedDataset: TARGET[]
 }
 
 export interface GrabContext<SOURCE, TARGET> {
