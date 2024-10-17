@@ -82,9 +82,6 @@ export class AurDragDropManager {
    * @throws Error if a drag is already in progress.
    */
   public startDrag(sourceName: string, draggedData: unknown[], event: DragEvent): void {
-    if (this.startDragEvent) {
-      throw new Error('Start new drag before complete current')
-    }
     this.startDragEvent = {sourceName, draggedData};
     this.previewManager.showPreview(sourceName, event, draggedData)
   }
