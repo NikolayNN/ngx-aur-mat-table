@@ -49,17 +49,15 @@ export class CustomerDragDropManagerService {
       {
         sourceName: 'first',
         targetName: 'second',
-        dropFn: ctx => {
-          return of({isValid: true})
+        afterDropFn: ctx => {
+          return of({})
             .pipe(
               delay(2000),
               tap(() => {
-                this._addToSecondTableEvent.next(ctx.sourceData.map(row => row.rowSrc));
+                  this._deleteFromFirstTableEvent.next(ctx.sourceData);
+                  this._addToSecondTableEvent.next(ctx.sourceData.map(row => row.rowSrc));
               })
             );
-        },
-        grabFn: ctx => {
-          this._deleteFromFirstTableEvent.next(ctx.sourceData);
         },
         preview: CustomerDragPreviewComponent
       } as AurDragDropMapping<TableRow<Customer>, TableRow<Customer>>

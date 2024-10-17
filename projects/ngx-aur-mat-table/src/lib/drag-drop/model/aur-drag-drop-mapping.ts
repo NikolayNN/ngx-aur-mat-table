@@ -30,16 +30,6 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
   readonly targetName: string,
 
   /**
-   * Function called to handle grabbing data from the source component.
-   * It is invoked after a drop has occurred, and it describes what should
-   * happen to the data in the source table.
-   *
-   * @param ctx - The grab context containing information about the source and target.
-   * @returns An array of data elements of type SOURCE.
-   */
-  readonly grabFn: (ctx: GrabContext<SOURCE, TARGET>) => void
-
-  /**
    * Function called to handle the drop action in the target component.
    * It is invoked when the drop event occurs, and it describes how to process
    * the data into the target component.
@@ -47,27 +37,16 @@ export interface AurDragDropMapping<SOURCE, TARGET> {
    * @param ctx - The drop context containing information about the source and target.
    * @returns An array of data elements of type TARGET.
    */
-  readonly dropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<AurDropResult>,
+  readonly afterDropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<AurDropResult>,
 }
 
 export interface AurDropResult {
-  isValid: boolean;
-}
-
-export interface GrabContext<SOURCE, TARGET> {
-  readonly sourceName: string,
-  readonly sourceData: SOURCE[],
-  readonly sourceDataset: SOURCE[],
-
-  readonly targetName: string,
-  readonly targetData: TARGET,
 }
 
 export interface DropContext<SOURCE, TARGET> {
   readonly sourceName: string,
   readonly sourceData: SOURCE[],
 
-  readonly targetDataset: TARGET[],
   readonly targetName: string,
   readonly targetData: TARGET,
 }
