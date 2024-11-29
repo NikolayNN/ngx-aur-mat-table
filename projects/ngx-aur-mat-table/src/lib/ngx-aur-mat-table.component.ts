@@ -297,6 +297,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private prepareTableData(initSelection: T[] = []) {
     this.initTable();
     this.initCustomSortFunctionsMap();
+    this.removeWrongKeysFromDisplayColumns();
     if (!this.paginatorState) {
       // если пагинатор не серверный то его я здесь инициализирую иначе при обновлении данных пагинатор ломается и отображаются все элементы
       this.initPaginator();
@@ -329,6 +330,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
     this._displayExtraHeaderTopCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_TOP_SUFFIX)
     this._displayExtraHeaderBottomCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_BOTTOM_SUFFIX)
+  }
+
+  private removeWrongKeysFromDisplayColumns() {
+    const whiteKeys = new Set(this.tableConfig.columnsCfg.map(cfg => cfg.key));
+    this.displayColumns = this._displayColumns.filter(actual => whiteKeys.has(actual) || actual.startsWith('tbl_'));
   }
 
   private initCustomSortFunctionsMap() {
