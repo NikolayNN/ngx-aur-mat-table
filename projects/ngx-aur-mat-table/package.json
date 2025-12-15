@@ -1,6 +1,7 @@
 {
   "name": "ngx-aur-mat-table",
   "version": "18.0.0",
+
   "peerDependencies": {
     "@angular/animations": "^18.2.14",
     "@angular/common": "^18.2.14",
