@@ -46,12 +46,15 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
-            "outputPath": "dist/aur-demo",
+            "outputPath": {
+              "base": "dist/aur-demo"
+            },
             "index": "projects/aur-demo/src/index.html",
-            "main": "projects/aur-demo/src/main.ts",
-            "polyfills": "",
+            "polyfills": [
+              "projects/aur-demo/src/polyfills.ts"
+            ],
             "tsConfig": "projects/aur-demo/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -59,9 +62,11 @@
               "projects/aur-demo/src/assets"
             ],
             "styles": [
+              "@angular/material/prebuilt-themes/indigo-pink.css",
               "projects/aur-demo/src/styles.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "browser": "projects/aur-demo/src/main.ts"
           },
           "configurations": {
             "production": {
@@ -80,9 +85,7 @@
               "outputHashing": "all"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
@@ -111,10 +114,7 @@
         "test": {
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
+            "polyfills": "projects/aur-demo/src/polyfills.ts",
             "tsConfig": "projects/aur-demo/tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
             "assets": [

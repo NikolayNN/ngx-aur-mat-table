@@ -4,9 +4,10 @@ import {Customer} from "../../shared/model/customer";
 import {CustomerGenerator} from "../../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-actions',
-  templateUrl: './table-with-actions.component.html',
-  styleUrls: ['./table-with-actions.component.scss']
+    selector: 'app-table-with-actions',
+    templateUrl: './table-with-actions.component.html',
+    styleUrls: ['./table-with-actions.component.scss'],
+    standalone: false
 })
 export class TableWithActionsComponent {
 

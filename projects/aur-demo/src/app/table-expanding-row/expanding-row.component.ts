@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-expanding-row',
-  templateUrl: './expanding-row.component.html',
-  styleUrls: ['./expanding-row.component.scss']
+    selector: 'app-expanding-row',
+    templateUrl: './expanding-row.component.html',
+    styleUrls: ['./expanding-row.component.scss'],
+    standalone: false
 })
 export class ExpandingRowComponent {
 

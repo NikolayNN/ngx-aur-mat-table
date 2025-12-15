@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-sticky-header',
-  templateUrl: './table-with-sticky-header.component.html',
-  styleUrls: ['./table-with-sticky-header.component.scss']
+    selector: 'app-table-with-sticky-header',
+    templateUrl: './table-with-sticky-header.component.html',
+    styleUrls: ['./table-with-sticky-header.component.scss'],
+    standalone: false
 })
 export class TableWithStickyHeaderComponent {
 

@@ -78,17 +78,18 @@ enum ExpandState {
 }
 
 @Component({
-  selector: 'aur-mat-table',
-  templateUrl: './ngx-aur-mat-table.component.html',
-  styleUrls: ['./ngx-aur-mat-table.component.scss'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
-  animations: [
-    trigger('detailExpand', [
-      state(ExpandState.COLLAPSED, style({height: '0px', minHeight: '0'})),
-      state(ExpandState.EXPANDED, style({height: '*'})),
-      transition(`${ExpandState.EXPANDED} <=> ${ExpandState.COLLAPSED}`, animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
-    ]),
-  ],
+    selector: 'aur-mat-table',
+    templateUrl: './ngx-aur-mat-table.component.html',
+    styleUrls: ['./ngx-aur-mat-table.component.scss'],
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    animations: [
+        trigger('detailExpand', [
+            state(ExpandState.COLLAPSED, style({ height: '0px', minHeight: '0' })),
+            state(ExpandState.EXPANDED, style({ height: '*' })),
+            transition(`${ExpandState.EXPANDED} <=> ${ExpandState.COLLAPSED}`, animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+        ]),
+    ],
+    standalone: false
 })
 export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy, NgxAurMatTablePublic<T>, AurDragDropComponent<TableRow<T>> {
 

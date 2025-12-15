@@ -4,9 +4,10 @@ import { CustomerGenerator } from "../shared/generator/CustomerGenerator";
 import { Customer } from "../shared/model/customer";
 
 @Component({
-  selector: 'app-table-custom-header',
-  templateUrl: './table-custom-header.component.html',
-  styleUrls: ['./table-custom-header.component.scss']
+    selector: 'app-table-custom-header',
+    templateUrl: './table-custom-header.component.html',
+    styleUrls: ['./table-custom-header.component.scss'],
+    standalone: false
 })
 export class TableCustomHeaderComponent {
 

@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-highlight-clicked-row',
-  templateUrl: './table-highlight-clicked-row.component.html',
-  styleUrls: ['./table-highlight-clicked-row.component.scss']
+    selector: 'app-table-highlight-clicked-row',
+    templateUrl: './table-highlight-clicked-row.component.html',
+    styleUrls: ['./table-highlight-clicked-row.component.scss'],
+    standalone: false
 })
 export class TableHighlightClickedRowComponent {
 

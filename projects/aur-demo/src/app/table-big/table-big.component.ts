@@ -5,9 +5,10 @@ import {Customer} from "../shared/model/customer";
 import {Person} from "../shared/model/person";
 
 @Component({
-  selector: 'app-table-big',
-  templateUrl: './table-big.component.html',
-  styleUrls: ['./table-big.component.scss']
+    selector: 'app-table-big',
+    templateUrl: './table-big.component.html',
+    styleUrls: ['./table-big.component.scss'],
+    standalone: false
 })
 export class TableBigComponent {
   tableData = PersonGenerator.generate(20);

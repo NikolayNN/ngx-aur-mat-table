@@ -5,9 +5,10 @@ import {CustomerGenerator} from "../../../shared/generator/CustomerGenerator";
 import {AurDragDropManager} from "../../../../../../ngx-aur-mat-table/src/lib/drag-drop/aur-drag-drop.manager";
 
 @Component({
-  selector: 'app-table-drag',
-  templateUrl: './table-drag.component.html',
-  styleUrl: './table-drag.component.scss'
+    selector: 'app-table-drag',
+    templateUrl: './table-drag.component.html',
+    styleUrl: './table-drag.component.scss',
+    standalone: false
 })
 export class TableDragComponent implements OnInit {
 

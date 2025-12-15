@@ -12,9 +12,10 @@ enum FilterName {
 }
 
 @Component({
-  selector: 'app-table-with-filter-actions',
-  templateUrl: './table-with-filter-actions.component.html',
-  styleUrls: ['./table-with-filter-actions.component.scss']
+    selector: 'app-table-with-filter-actions',
+    templateUrl: './table-with-filter-actions.component.html',
+    styleUrls: ['./table-with-filter-actions.component.scss'],
+    standalone: false
 })
 export class TableWithFilterActionsComponent {
 
