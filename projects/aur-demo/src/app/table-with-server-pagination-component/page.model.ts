@@ -1,4 +1,4 @@
-import {HttpParams} from "@angular/common/http";
+import { HttpParams } from "@angular/common/http";
 
 export class Page<T> {
   constructor(
