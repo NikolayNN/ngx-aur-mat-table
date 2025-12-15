@@ -19,7 +19,7 @@ export class TableWithSortComponent {
         valueConverter: v => v.name,
         sort: {
           enable: true,
-          customSort: (data, key) => data.rowSrc.name.length
+          customSort: (data, key) => data.rowSrc.name
         }
       },
       {
