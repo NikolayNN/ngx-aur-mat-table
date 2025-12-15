@@ -7,9 +7,10 @@ export interface MinMax {
 }
 
 @Component({
-  selector: 'app-filter-min-max',
-  templateUrl: './filter-min-max.component.html',
-  styleUrls: ['./filter-min-max.component.scss']
+    selector: 'app-filter-min-max',
+    templateUrl: './filter-min-max.component.html',
+    styleUrls: ['./filter-min-max.component.scss'],
+    standalone: false
 })
 export class FilterMinMaxComponent {
 

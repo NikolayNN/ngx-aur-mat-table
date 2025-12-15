@@ -4,9 +4,10 @@ import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 import {Customer} from "../shared/model/customer";
 
 @Component({
-  selector: 'app-table-with-icons',
-  templateUrl: './table-with-icons.component.html',
-  styleUrls: ['./table-with-icons.component.scss']
+    selector: 'app-table-with-icons',
+    templateUrl: './table-with-icons.component.html',
+    styleUrls: ['./table-with-icons.component.scss'],
+    standalone: false
 })
 export class TableWithIconsComponent {
   tableConfig: TableConfig<Customer> = {

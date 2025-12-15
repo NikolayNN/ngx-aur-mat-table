@@ -4,9 +4,10 @@ import {TableConfig} from "ngx-aur-mat-table";
 import {Book} from "../shared/model/book";
 
 @Component({
-  selector: 'app-complex-object',
-  templateUrl: './complex-object.component.html',
-  styleUrls: ['./complex-object.component.scss']
+    selector: 'app-complex-object',
+    templateUrl: './complex-object.component.html',
+    styleUrls: ['./complex-object.component.scss'],
+    standalone: false
 })
 export class ComplexObjectComponent {
 

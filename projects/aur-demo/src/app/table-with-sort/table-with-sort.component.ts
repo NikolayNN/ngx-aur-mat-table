@@ -5,9 +5,10 @@ import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 import {Sort} from "@angular/material/sort";
 
 @Component({
-  selector: 'app-table-with-sort',
-  templateUrl: './table-with-sort.component.html',
-  styleUrls: ['./table-with-sort.component.scss']
+    selector: 'app-table-with-sort',
+    templateUrl: './table-with-sort.component.html',
+    styleUrls: ['./table-with-sort.component.scss'],
+    standalone: false
 })
 export class TableWithSortComponent {
 

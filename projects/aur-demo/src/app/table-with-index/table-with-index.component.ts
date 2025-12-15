@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-index',
-  templateUrl: './table-with-index.component.html',
-  styleUrls: ['./table-with-index.component.scss']
+    selector: 'app-table-with-index',
+    templateUrl: './table-with-index.component.html',
+    styleUrls: ['./table-with-index.component.scss'],
+    standalone: false
 })
 export class TableWithIndexComponent {
 

@@ -8,9 +8,10 @@ import {
 
 
 @Component({
-  selector: 'app-customer-drag-preview',
-  templateUrl: './customer-drag-preview.component.html',
-  styleUrl: './customer-drag-preview.component.scss'
+    selector: 'app-customer-drag-preview',
+    templateUrl: './customer-drag-preview.component.html',
+    styleUrl: './customer-drag-preview.component.scss',
+    standalone: false
 })
 export class CustomerDragPreviewComponent implements AurDragPreviewComponent<TableRow<Customer>>, OnInit, OnDestroy {
   // @ts-ignore

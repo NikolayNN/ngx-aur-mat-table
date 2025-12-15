@@ -3,9 +3,10 @@ import {TableConfig} from "ngx-aur-mat-table";
 import {Customer} from "../shared/model/customer";
 
 @Component({
-  selector: 'app-table-empty',
-  templateUrl: './table-empty.component.html',
-  styleUrls: ['./table-empty.component.scss']
+    selector: 'app-table-empty',
+    templateUrl: './table-empty.component.html',
+    styleUrls: ['./table-empty.component.scss'],
+    standalone: false
 })
 export class TableEmptyComponent {
   tableConfig: TableConfig<Customer> = {

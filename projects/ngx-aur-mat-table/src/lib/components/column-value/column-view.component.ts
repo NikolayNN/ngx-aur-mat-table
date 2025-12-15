@@ -2,9 +2,10 @@ import {Component, Input, OnInit} from '@angular/core';
 import {ColumnView} from "../../model/ColumnConfig";
 
 @Component({
-  selector: 'lib-column-view',
-  templateUrl: './column-view.component.html',
-  styleUrls: ['./column-view.component.css']
+    selector: 'lib-column-view',
+    templateUrl: './column-view.component.html',
+    styleUrls: ['./column-view.component.css'],
+    standalone: false
 })
 export class ColumnViewComponent {
   @Input() config: ColumnView<string> | undefined;

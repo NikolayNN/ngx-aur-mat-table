@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-editable',
-  templateUrl: './table-editable.component.html',
-  styleUrls: ['./table-editable.component.scss']
+    selector: 'app-table-editable',
+    templateUrl: './table-editable.component.html',
+    styleUrls: ['./table-editable.component.scss'],
+    standalone: false
 })
 export class TableEditableComponent {
 

@@ -5,9 +5,10 @@ import {Customer} from "../../shared/model/customer";
 import {PageEvent} from "@angular/material/paginator";
 
 @Component({
-  selector: 'app-table-with-server-pagination-and-select',
-  templateUrl: './table-with-server-pagination-and-select.component.html',
-  styleUrl: './table-with-server-pagination-and-select.component.scss'
+    selector: 'app-table-with-server-pagination-and-select',
+    templateUrl: './table-with-server-pagination-and-select.component.html',
+    styleUrl: './table-with-server-pagination-and-select.component.scss',
+    standalone: false
 })
 export class TableWithServerPaginationAndSelectComponent {
   private customerService = new CustomerService();

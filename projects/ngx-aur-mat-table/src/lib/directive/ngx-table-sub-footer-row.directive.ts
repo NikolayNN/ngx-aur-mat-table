@@ -1,7 +1,8 @@
 import {Directive} from '@angular/core';
 
 @Directive({
-  selector: '[ngxAurTableSubFooterRow]'
+    selector: '[ngxAurTableSubFooterRow]',
+    standalone: false
 })
 export class NgxTableSubFooterRowDirective {
   constructor() {}

@@ -4,9 +4,10 @@ import {CustomerGenerator} from "../../shared/generator/CustomerGenerator";
 import {tap} from "rxjs";
 
 @Component({
-  selector: 'app-tables-drag-drop',
-  templateUrl: './tables-drag-drop.component.html',
-  styleUrl: './tables-drag-drop.component.scss'
+    selector: 'app-tables-drag-drop',
+    templateUrl: './tables-drag-drop.component.html',
+    styleUrl: './tables-drag-drop.component.scss',
+    standalone: false
 })
 export class TablesDragDropComponent implements OnInit {
   tableDataFirst = CustomerGenerator.generate(5);

@@ -4,9 +4,10 @@ import {Customer} from "../../shared/model/customer";
 import {CustomerGenerator} from "../../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-actions-before',
-  templateUrl: './actions-before.component.html',
-  styleUrls: ['./actions-before.component.scss']
+    selector: 'app-actions-before',
+    templateUrl: './actions-before.component.html',
+    styleUrls: ['./actions-before.component.scss'],
+    standalone: false
 })
 export class ActionsBeforeComponent {
 
