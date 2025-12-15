@@ -1,7 +1,8 @@
 import { Directive } from '@angular/core';
 
 @Directive({
-  selector: '[ngxAurTableSearchPrefix]',
+    selector: '[ngxAurTableSearchPrefix]',
+    standalone: false
 })
 export class NgxAurTableSearchPrefixDirective {
 

@@ -6,9 +6,10 @@ import {PageEvent} from "@angular/material/paginator";
 import {NgxAurTablePageEventUtils} from "../../../../ngx-aur-mat-table/src/lib/utils/ngx-aur-table-page-event.utils";
 
 @Component({
-  selector: 'app-table-with-server-pagination',
-  templateUrl: './table-with-server-pagination.component.html',
-  styleUrl: './table-with-server-pagination.component.scss'
+    selector: 'app-table-with-server-pagination',
+    templateUrl: './table-with-server-pagination.component.html',
+    styleUrl: './table-with-server-pagination.component.scss',
+    standalone: false
 })
 export class TableWithServerPaginationComponent implements OnInit {
   private customerService = new CustomerService();

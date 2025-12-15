@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-simple-table',
-  templateUrl: './simple-table.component.html',
-  styleUrls: ['./simple-table.component.scss']
+    selector: 'app-simple-table',
+    templateUrl: './simple-table.component.html',
+    styleUrls: ['./simple-table.component.scss'],
+    standalone: false
 })
 export class SimpleTableComponent {
 

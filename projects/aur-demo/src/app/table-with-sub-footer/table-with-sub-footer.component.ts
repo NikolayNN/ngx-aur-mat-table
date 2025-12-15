@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-sub-footer',
-  templateUrl: './table-with-sub-footer.component.html',
-  styleUrls: ['./table-with-sub-footer.component.scss']
+    selector: 'app-table-with-sub-footer',
+    templateUrl: './table-with-sub-footer.component.html',
+    styleUrls: ['./table-with-sub-footer.component.scss'],
+    standalone: false
 })
 export class TableWithSubFooterComponent {
 

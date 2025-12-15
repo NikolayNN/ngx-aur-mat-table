@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-selection',
-  templateUrl: './table-with-selection.component.html',
-  styleUrls: ['./table-with-selection.component.scss']
+    selector: 'app-table-with-selection',
+    templateUrl: './table-with-selection.component.html',
+    styleUrls: ['./table-with-selection.component.scss'],
+    standalone: false
 })
 export class TableWithSelectionComponent {
 

@@ -7,9 +7,10 @@ import BorderStyle = StyleBuilder.BorderStyle;
 import FontWeight = StyleBuilder.FontWeight;
 
 @Component({
-  selector: 'app-table-with-total',
-  templateUrl: './table-with-total.component.html',
-  styleUrls: ['./table-with-total.component.scss']
+    selector: 'app-table-with-total',
+    templateUrl: './table-with-total.component.html',
+    styleUrls: ['./table-with-total.component.scss'],
+    standalone: false
 })
 export class TableWithTotalComponent {
   tableConfig: TableConfig<Customer> = {

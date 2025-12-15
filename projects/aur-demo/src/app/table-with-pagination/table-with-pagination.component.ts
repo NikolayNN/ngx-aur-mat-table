@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-pagination',
-  templateUrl: './table-with-pagination.component.html',
-  styleUrls: ['./table-with-pagination.component.scss']
+    selector: 'app-table-with-pagination',
+    templateUrl: './table-with-pagination.component.html',
+    styleUrls: ['./table-with-pagination.component.scss'],
+    standalone: false
 })
 export class TableWithPaginationComponent {
 

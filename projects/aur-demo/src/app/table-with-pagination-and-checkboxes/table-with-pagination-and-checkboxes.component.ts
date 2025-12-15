@@ -5,9 +5,10 @@ import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 import {Action} from "rxjs/internal/scheduler/Action";
 
 @Component({
-  selector: 'app-table-with-pagination-and-checkboxes',
-  templateUrl: './table-with-pagination-and-checkboxes.component.html',
-  styleUrls: ['./table-with-pagination-and-checkboxes.component.scss']
+    selector: 'app-table-with-pagination-and-checkboxes',
+    templateUrl: './table-with-pagination-and-checkboxes.component.html',
+    styleUrls: ['./table-with-pagination-and-checkboxes.component.scss'],
+    standalone: false
 })
 export class TableWithPaginationAndCheckboxesComponent {
 

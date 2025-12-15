@@ -3,9 +3,10 @@ import { IconView } from '../../model/ColumnConfig';
 
 
 @Component({
-  selector: 'lib-icon-view',
-  templateUrl: './icon-view.component.html',
-  styleUrl: './icon-view.component.css'
+    selector: 'lib-icon-view',
+    templateUrl: './icon-view.component.html',
+    styleUrl: './icon-view.component.css',
+    standalone: false
 })
 export class IconViewComponent {
 

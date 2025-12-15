@@ -3,9 +3,10 @@ import {debounceTime, Subject} from "rxjs";
 
 
 @Component({
-  selector: 'app-filter-string',
-  templateUrl: './filter-string.component.html',
-  styleUrls: ['./filter-string.component.scss']
+    selector: 'app-filter-string',
+    templateUrl: './filter-string.component.html',
+    styleUrls: ['./filter-string.component.scss'],
+    standalone: false
 })
 export class FilterStringComponent {
 

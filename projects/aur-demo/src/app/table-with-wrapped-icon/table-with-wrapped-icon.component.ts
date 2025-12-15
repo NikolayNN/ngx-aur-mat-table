@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-wrapped-icon',
-  templateUrl: './table-with-wrapped-icon.component.html',
-  styleUrls: ['./table-with-wrapped-icon.component.scss']
+    selector: 'app-table-with-wrapped-icon',
+    templateUrl: './table-with-wrapped-icon.component.html',
+    styleUrls: ['./table-with-wrapped-icon.component.scss'],
+    standalone: false
 })
 export class TableWithWrappedIconComponent implements OnInit {
 

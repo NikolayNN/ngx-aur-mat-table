@@ -4,9 +4,10 @@ import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-  selector: 'app-table-with-top-column',
-  templateUrl: './table-with-top-column.component.html',
-  styleUrl: './table-with-top-column.component.scss'
+    selector: 'app-table-with-top-column',
+    templateUrl: './table-with-top-column.component.html',
+    styleUrl: './table-with-top-column.component.scss',
+    standalone: false
 })
 export class TableWithTopColumnComponent {
   tableConfig: TableConfig<Customer> = {

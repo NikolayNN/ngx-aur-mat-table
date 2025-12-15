@@ -5,9 +5,10 @@ import {Person} from "../shared/model/person";
 import {CdkDragDrop, moveItemInArray, transferArrayItem} from "@angular/cdk/drag-drop";
 
 @Component({
-  selector: 'app-table-with-custom-columns',
-  templateUrl: './table-with-custom-columns.component.html',
-  styleUrls: ['./table-with-custom-columns.component.scss']
+    selector: 'app-table-with-custom-columns',
+    templateUrl: './table-with-custom-columns.component.html',
+    styleUrls: ['./table-with-custom-columns.component.scss'],
+    standalone: false
 })
 export class TableWithCustomColumnsComponent implements OnInit {
 
