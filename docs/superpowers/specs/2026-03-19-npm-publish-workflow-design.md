@@ -11,17 +11,37 @@ GitHub Action workflow that automatically publishes `ngx-aur-mat-table` to npm w
 
 ## Version Change Detection
 
-Checkout with `fetch-depth: 2` to access the previous commit. Compare `version` field between `HEAD~1` and `HEAD` using `git show`. If versions are identical, the workflow exits early.
+Compare the current version from `projects/ngx-aur-mat-table/package.json` with the latest published version on the npm registry via `npm view ngx-aur-mat-table version`. If versions are identical, the workflow exits early. This approach is reliable regardless of git history shape (merge commits, squash merges, multi-commit pushes). Gracefully handles the first publish when the package does not yet exist on npm.
+
+```bash
+CURRENT=$(node -p "require('./projects/ngx-aur-mat-table/package.json').version")
+PUBLISHED=$(npm view ngx-aur-mat-table version 2>/dev/null || echo "0.0.0")
+if [ "$CURRENT" = "$PUBLISHED" ]; then
+  echo "Version $CURRENT already published, skipping."
+fi
+```
+
+## Permissions and Concurrency
+
+```yaml
+permissions:
+  contents: read
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false   # don't cancel a publish mid-flight
+```
 
 ## Workflow Steps
 
-1. **Checkout** — `actions/checkout@v4` with `fetch-depth: 2`
-2. **Check version change** — extract version from current and previous commit; skip remaining steps if unchanged
-3. **Setup Node 20** — `actions/setup-node@v4` with `registry-url: https://registry.npmjs.org`
+1. **Checkout** — `actions/checkout@v4`
+2. **Setup Node 20** — `actions/setup-node@v4` with `registry-url: https://registry.npmjs.org` and `cache: npm`
+3. **Check version change** — compare current version with npm registry; skip remaining steps if unchanged
 4. **Install dependencies** — `npm ci`
 5. **Run tests** — `npx ng test ngx-aur-mat-table --watch=false --browsers=ChromeHeadless`
-6. **Build library** — `npx ng build ngx-aur-mat-table`
-7. **Publish** — `npm publish` from `dist/ngx-aur-mat-table` with `NODE_AUTH_TOKEN` from secret `NPM_TOKEN`
+6. **Build library** — `npx ng build ngx-aur-mat-table --configuration production`
+7. **Copy LICENSE** — `cp LICENSE dist/ngx-aur-mat-table/`
+8. **Publish** — `npm publish dist/ngx-aur-mat-table --provenance` with `NODE_AUTH_TOKEN` from secret `NPM_TOKEN`
 
 ## NPM Token Setup Instructions
 
@@ -56,7 +76,9 @@ After setup, push a commit to `master` that changes the version in `projects/ngx
 
 - The `NPM_TOKEN` secret is never exposed in logs — GitHub masks it automatically
 - The token has minimal scope (only `ngx-aur-mat-table` package, read+write)
-- Consider rotating the token annually
+- `--provenance` flag generates a signed attestation linking the package to this GitHub repo
+- `permissions: contents: read` restricts the GitHub token to read-only
+- Consider rotating the npm token annually
 
 ## File Location
 
