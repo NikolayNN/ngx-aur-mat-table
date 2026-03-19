@@ -23,9 +23,10 @@
   }
 }
 
-.aur-mat-table th, td {
-  padding-right: 4px !important;
-  padding-left: 4px !important;
+.aur-mat-table th,
+.aur-mat-table td {
+  padding-right: var(--aur-table-cell-padding, 12px) !important;
+  padding-left: var(--aur-table-cell-padding, 12px) !important;
 }
 
 .aur-mat-table .new-color td.mat-mdc-cell,
