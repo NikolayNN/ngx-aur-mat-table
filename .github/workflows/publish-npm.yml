@@ -1,0 +1,67 @@
+name: Publish to npm
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'projects/ngx-aur-mat-table/package.json'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - name: Check version change
+        id: version
+        run: |
+          CURRENT=$(node -p "require('./projects/ngx-aur-mat-table/package.json').version")
+          PUBLISHED=$(npm view ngx-aur-mat-table version 2>/dev/null || echo "0.0.0")
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "published=$PUBLISHED" >> "$GITHUB_OUTPUT"
+          if [ "$CURRENT" = "$PUBLISHED" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Version $CURRENT already published, skipping."
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Version changed: $PUBLISHED -> $CURRENT"
+          fi
+
+      - name: Install dependencies
+        if: steps.version.outputs.changed == 'true'
+        run: npm ci
+
+      - name: Run tests
+        if: steps.version.outputs.changed == 'true'
+        run: npx ng test ngx-aur-mat-table --watch=false --browsers=ChromeHeadless
+
+      - name: Build library
+        if: steps.version.outputs.changed == 'true'
+        run: npx ng build ngx-aur-mat-table --configuration production
+
+      - name: Copy LICENSE
+        if: steps.version.outputs.changed == 'true'
+        run: cp LICENSE dist/ngx-aur-mat-table/
+
+      - name: Publish to npm
+        if: steps.version.outputs.changed == 'true'
+        run: npm publish dist/ngx-aur-mat-table --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
