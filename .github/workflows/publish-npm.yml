@@ -66,6 +66,6 @@ jobs:
 
       - name: Publish to npm
         if: steps.version.outputs.changed == 'true'
-        run: npm publish dist/ngx-aur-mat-table --access public
+        run: npm publish ./dist/ngx-aur-mat-table --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
