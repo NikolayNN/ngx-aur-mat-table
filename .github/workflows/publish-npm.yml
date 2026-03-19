@@ -60,6 +60,10 @@ jobs:
         if: steps.version.outputs.changed == 'true'
         run: cp LICENSE dist/ngx-aur-mat-table/
 
+      - name: Verify dist package.json
+        if: steps.version.outputs.changed == 'true'
+        run: node -e "const p=require('./dist/ngx-aur-mat-table/package.json'); if(!p.repository) throw new Error('repository field missing in dist package.json'); console.log('repository:', JSON.stringify(p.repository));"
+
       - name: Publish to npm
         if: steps.version.outputs.changed == 'true'
         run: npm publish dist/ngx-aur-mat-table --provenance --access public
