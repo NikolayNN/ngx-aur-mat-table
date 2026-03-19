@@ -23,30 +23,37 @@ CSS-only changes in `ngx-aur-mat-table.component.scss` using CSS custom properti
 
 ### 1. `.table-container` — rounded outer border
 
-Add `border`, `border-radius`, and `overflow: hidden` to `.table-container` so the table gets rounded outer borders. The `overflow: hidden` clips the inner `<table>` corners to match the container radius.
+Add `border`, `border-radius`, and `overflow: clip` to `.table-container`. Using `overflow: clip` instead of `overflow: hidden` is essential — it clips the inner `<table>` corners to match the container radius without breaking `position: sticky` headers/footers or interfering with the existing `overflow: auto` in bottom-pagination mode.
+
+The border-radius works because we round the **container** and clip its content. The inner `<table>` keeps `border-collapse: collapse` — border-radius has no effect on collapsed tables themselves, but the container clip handles the visual rounding.
 
 ```scss
 .aur-mat-table .table-container {
   border: var(--aur-table-border-width, 1px) solid var(--aur-table-border-color, #bdbdbd);
   border-radius: var(--aur-table-border-radius, 10px);
-  overflow: hidden;
+  overflow: clip;
 }
 ```
 
+Note: The existing `.table-container.bottom-pagination` rule sets `overflow: auto` for scroll behavior. Since the `.bottom-pagination` variant has higher specificity (two classes vs one), it will naturally override `overflow: clip`, preserving scroll functionality. However, this means bottom-pagination mode will not get corner clipping — this is acceptable since scrollable containers need `overflow: auto`.
+
 ### 2. `th, td` — increased cell padding
 
-Replace the current `4px` padding with `12px` via CSS custom property.
+Replace the current `4px` padding with `12px` via CSS custom property. Also fix the existing selector bug: the bare `td` selector was unscoped (CSS parses `.aur-mat-table th, td` as two independent selectors). Angular's emulated encapsulation attributes mask this in practice, but the selector should be correct.
 
 ```scss
-.aur-mat-table th, td {
+.aur-mat-table th,
+.aur-mat-table td {
   padding-right: var(--aur-table-cell-padding, 12px) !important;
   padding-left: var(--aur-table-cell-padding, 12px) !important;
 }
 ```
 
+Note: `!important` is retained to override Angular Material's default cell padding. Consumers who need to override this value should use the CSS custom property rather than competing with specificity.
+
 ### 3. Header row — background and bold text
 
-Style `mat-mdc-header-row` with a light background and bolder font.
+Style all `mat-mdc-header-row` elements with a light background and bolder font. This applies to all header rows (main header, extra-header-top, extra-header-bottom) — intentional, as a consistent header band looks cohesive.
 
 ```scss
 .aur-mat-table .mat-mdc-header-row {
@@ -57,6 +64,10 @@ Style `mat-mdc-header-row` with a light background and bolder font.
   font-weight: var(--aur-table-header-font-weight, 700);
 }
 ```
+
+### 4. Pagination visual note
+
+The `<mat-paginator>` sits outside `.table-container` in the template, so it is not enclosed by the rounded border. This is intentional — the paginator is a separate control below the table data. The border frames the data area only.
 
 ## Files Modified
 
