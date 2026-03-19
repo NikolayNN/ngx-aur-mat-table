@@ -26,6 +26,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+          registry-url: https://registry.npmjs.org
           cache: npm
 
       - name: Check version change
@@ -65,4 +66,7 @@ jobs:
 
       - name: Publish to npm
         if: steps.version.outputs.changed == 'true'
-        run: npm publish ./dist/ngx-aur-mat-table --provenance --access public
+        run: |
+          # Remove token auth from .npmrc to force OIDC (Trusted Publishing)
+          sed -i '/_authToken/d' "$NPM_CONFIG_USERCONFIG" 2>/dev/null || true
+          npm publish ./dist/ngx-aur-mat-table --provenance --access public
