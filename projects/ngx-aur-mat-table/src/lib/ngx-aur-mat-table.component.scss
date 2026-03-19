@@ -42,6 +42,14 @@
   text-align: right !important;
 }
 
+.aur-mat-table .mat-mdc-header-row {
+  background-color: var(--aur-table-header-bg, #fafafa);
+}
+
+.aur-mat-table .mat-mdc-header-cell {
+  font-weight: var(--aur-table-header-font-weight, 700);
+}
+
 .aur-mat-table .pointer:hover {
   background-color: #f2f2f2;
   cursor: pointer;
