@@ -13,9 +13,6 @@
 
 .aur-mat-table .table-container {
   position: relative;
-  border: var(--aur-table-border-width, 1px) solid var(--aur-table-border-color, #bdbdbd);
-  border-radius: var(--aur-table-border-radius, 10px);
-  overflow: clip;
 
   &.bottom-pagination {
     flex-grow: 1;
@@ -23,10 +20,9 @@
   }
 }
 
-.aur-mat-table th,
-.aur-mat-table td {
-  padding-right: var(--aur-table-cell-padding, 12px) !important;
-  padding-left: var(--aur-table-cell-padding, 12px) !important;
+.aur-mat-table th, td {
+  padding-right: 4px !important;
+  padding-left: 4px !important;
 }
 
 .aur-mat-table .new-color td.mat-mdc-cell,
@@ -40,14 +36,6 @@
 
 .aur-mat-table .text-right {
   text-align: right !important;
-}
-
-.aur-mat-table .mat-mdc-header-row {
-  background-color: var(--aur-table-header-bg, #fafafa);
-}
-
-.aur-mat-table .mat-mdc-header-cell {
-  font-weight: var(--aur-table-header-font-weight, 700);
 }
 
 .aur-mat-table .pointer:hover {
