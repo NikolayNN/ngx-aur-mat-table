@@ -13,6 +13,9 @@
 
 .aur-mat-table .table-container {
   position: relative;
+  border: var(--aur-table-border-width, 1px) solid var(--aur-table-border-color, #bdbdbd);
+  border-radius: var(--aur-table-border-radius, 10px);
+  overflow: clip;
 
   &.bottom-pagination {
     flex-grow: 1;
