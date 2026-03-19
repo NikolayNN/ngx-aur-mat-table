@@ -41,6 +41,7 @@ import {NgxTableSubFooterRowDirective} from "./directive/ngx-table-sub-footer-ro
 import {SelectionModel} from "@angular/cdk/collections";
 import {HeaderButtonProvider, HeaderButtonProviderDummy} from "./providers/HeaderButtonProvider";
 import {DragDropProvider, DragProviderDummy} from "./providers/DragDropProvider";
+import {TimelineProvider, TimelineProviderDummy} from "./providers/TimelineProvider";
 import {AurDragDropComponent} from "./drag-drop/aur-drag-drop-component";
 
 
@@ -136,6 +137,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   @Input() extendedRowTemplate: TemplateRef<any> | null = null;
 
+  @Input() timelineMarkerTemplate: TemplateRef<any> | null = null;
+
   // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
   @Input() paginatorState: PaginatorState | undefined;
 
@@ -182,6 +185,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
 
   dragDropProvider: DragDropProvider<T> = new DragProviderDummy();
+
+  timelineProvider: TimelineProvider<T> = new TimelineProviderDummy();
+  _timelineFirstId = -1;
+  _timelineLastId = -1;
+  _timelineGaps = new Map<number, { topGap: boolean; bottomGap: boolean; topColor: string | null; bottomColor: string | null }>();
 
   selectionProvider: SelectionProvider<T> = new SelectionProviderDummy();
 
@@ -327,6 +335,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.dragDropProvider = DragDropProvider.create(this.viewContainerRef, this.tableConfig)
       .addColumn(this._displayColumns);
 
+    // Timeline ПОСЛЕДНИМ — unshift гарантирует позицию 0 после всех остальных провайдеров
+    this.timelineProvider = TimelineProvider.create(this.tableConfig)
+      .addTimelineColumn(this._displayColumns);
+
     this.emitFilteredValues();
 
     this._displayExtraHeaderTopCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_TOP_SUFFIX)
@@ -389,11 +401,74 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private emitFilteredValues(): void {
-    this.onFilter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc))
+    this.onFilter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc));
+    this.updateTimelineBounds();
   }
 
   sortTable(sortParameters: Sort) {
     this.sort.emit(sortParameters);
+    // MatTableDataSource обрабатывает sort через RxJS-подписку —
+    // filteredData обновится в следующем микротаске
+    Promise.resolve().then(() => {
+      this.updateTimelineBounds();
+      this.cdr.markForCheck();
+    });
+  }
+
+  onPageChangeInternal(event: PageEvent): void {
+    this.updateTimelineBounds();
+    this.pageChange.emit(event);
+  }
+
+  private updateTimelineBounds(): void {
+    if (!this.timelineProvider.isEnabled) return;
+
+    const visibleData = this.getTimelineVisibleData();
+    const segmentColorFn = this.timelineProvider.segmentColor;
+
+    const isDefaultOrder = !this.matSort?.active || this.matSort?.direction === '';
+    const hasActiveFilter = this.tableDataSource.filteredData.length
+      < this.tableDataSource.data.length;
+    const detectGaps = isDefaultOrder && hasActiveFilter;
+
+    this._timelineGaps.clear();
+
+    for (let i = 0; i < visibleData.length; i++) {
+      const topColor = segmentColorFn && i > 0
+        ? segmentColorFn(visibleData[i - 1], visibleData[i])
+        : null;
+      const bottomColor = segmentColorFn && i < visibleData.length - 1
+        ? segmentColorFn(visibleData[i], visibleData[i + 1])
+        : null;
+
+      this._timelineGaps.set(visibleData[i].id, {
+        topGap: detectGaps && i > 0
+          && visibleData[i].id !== visibleData[i - 1].id + 1,
+        bottomGap: detectGaps && i < visibleData.length - 1
+          && visibleData[i].id !== visibleData[i + 1].id - 1,
+        topColor,
+        bottomColor
+      });
+    }
+
+    this._timelineFirstId = visibleData.length > 0 ? visibleData[0].id : -1;
+    this._timelineLastId = visibleData.length > 0 ? visibleData[visibleData.length - 1].id : -1;
+  }
+
+  private getTimelineVisibleData(): TableRow<T>[] {
+    const data = this.tableDataSource.filteredData;
+
+    // Server-side: данные уже постраничные, не режем повторно
+    if (this.paginatorState) return data;
+
+    // Client-side с пагинацией: вырезаем видимый срез
+    if (this.paginationProvider.isEnabled && this.matPaginator) {
+      const start = this.matPaginator.pageIndex * this.matPaginator.pageSize;
+      return data.slice(start, start + this.matPaginator.pageSize);
+    }
+
+    // Без пагинации
+    return data;
   }
 
   emitSelectedRowsAction(action: string, rows: T[]) {

@@ -42,6 +42,40 @@
              [ngClass]="{'hide-table-body': isTableBodyHide}">
 
 
+        <!--        timeline-column-->
+        <ng-container *ngIf="timelineProvider.isEnabled" [matColumnDef]="timelineProvider.COLUMN_NAME">
+          <th mat-header-cell *matHeaderCellDef class="aur-timeline-cell"></th>
+          <td mat-cell *matCellDef="let element" class="aur-timeline-cell">
+            <div class="aur-timeline-marker-container">
+
+              <div class="aur-timeline-line"
+                   *ngIf="element.id !== _timelineFirstId"
+                   [style.border-left-width.px]="timelineProvider.line.width"
+                   [style.border-left-color]="_timelineGaps.get(element.id)?.topColor ?? timelineProvider.line.color"
+                   [style.border-left-style]="_timelineGaps.get(element.id)?.topGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+              </div>
+
+              <ng-container *ngIf="timelineMarkerTemplate; else defaultMarker">
+                <ng-container *ngTemplateOutlet="timelineMarkerTemplate; context: {$implicit: element}"></ng-container>
+              </ng-container>
+              <ng-template #defaultMarker>
+                <div class="aur-timeline-marker-default"
+                     [style.background-color]="timelineProvider.markerColor">
+                </div>
+              </ng-template>
+
+              <div class="aur-timeline-line"
+                   *ngIf="element.id !== _timelineLastId"
+                   [style.border-left-width.px]="timelineProvider.line.width"
+                   [style.border-left-color]="_timelineGaps.get(element.id)?.bottomColor ?? timelineProvider.line.color"
+                   [style.border-left-style]="_timelineGaps.get(element.id)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+              </div>
+
+            </div>
+          </td>
+          <td mat-footer-cell *matFooterCellDef class="aur-timeline-cell"></td>
+        </ng-container>
+
         <!--        drag-column-->
         <ng-container *ngIf="dragDropProvider.isEnabled && dragDropProvider.draggable" [matColumnDef]="dragDropProvider.COLUMN_NAME">
 
@@ -238,6 +272,13 @@
               style="padding-right: 0!important;">
             <div class="row-detail"
                  [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
+              <!-- timeline continuation -->
+              <div *ngIf="timelineProvider.isEnabled"
+                   class="aur-timeline-continuation"
+                   [style.border-left-width.px]="timelineProvider.line.width"
+                   [style.border-left-color]="_timelineGaps.get(element.id)?.bottomColor ?? timelineProvider.line.color"
+                   [style.border-left-style]="_timelineGaps.get(element.id)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+              </div>
               <!-- lazy-load of details -->
               <ng-container *ngIf="element.rowSrc === highlighted">
                 <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
@@ -281,7 +322,7 @@
                    [style]="tableConfig?.pageableCfg?.style"
                    [length]="paginatorState?.length"
                    [pageIndex]="paginatorState?.pageIndex"
-                   (page)="pageChange.emit($event)"
+                   (page)="onPageChangeInternal($event)"
                    showFirstLastButtons>
     </mat-paginator>
   }

@@ -13,6 +13,7 @@ export * from './lib/model/ColumnConfig';
 export * from './lib/providers/RowActionProvider';
 export * from './lib/providers/SelectionProvider';
 export * from './lib/providers/IndexProvider';
+export * from './lib/providers/TimelineProvider';
 export * from './lib/style-builder/style-builder';
 export * from './lib/filters/NgxAurFilters';
 export * from './lib/directive/ngx-table-sub-footer-row.directive'

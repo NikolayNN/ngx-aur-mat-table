@@ -1,4 +1,4 @@
-import {ActionConfig, IndexConfig, PaginationConfig, SelectionConfig, TableConfig} from "../model/ColumnConfig";
+import {ActionConfig, IndexConfig, PaginationConfig, SelectionConfig, TableConfig, TimelineConfig} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
 import {MatTableDataSource} from "@angular/material/table";
 
@@ -31,6 +31,10 @@ export class EmptyValue {
     indexCfg: EmptyValue.INDEX_CONFIG,
     pageableCfg: EmptyValue.PAGINATION_CONFIG
   }
+
+  public static readonly TIMELINE_CONFIG: TimelineConfig = {
+    enable: false
+  };
 
   public static readonly MAT_TABLE_DATA_SOURCE: MatTableDataSource<TableRow<any>> = new MatTableDataSource();
 

@@ -42,7 +42,8 @@ export interface TableConfig<T> {
   tableView?: TableView,
   tableHeaderButtonCfg?: TableHeaderButtonConfig,
   dragCfg?: DragDropConfig,
-  totalRowCfg?: TotalRowConfig
+  totalRowCfg?: TotalRowConfig,
+  timelineCfg?: TimelineConfig<T>
 
 }
 
@@ -224,4 +225,18 @@ export interface DragDropConfig {
 export interface TotalRowConfig {
   enable: boolean,
   totalRowView?: TotalRowView
+}
+
+export interface TimelineLineConfig {
+  color?: string;
+  width?: number;
+  style?: 'solid' | 'dashed' | 'dotted';
+  gapStyle?: 'solid' | 'dashed' | 'dotted' | 'none';
+}
+
+export interface TimelineConfig<T = any> {
+  enable: boolean;
+  markerColor?: string;
+  line?: TimelineLineConfig;
+  segmentColor?: (prev: TableRow<T>, next: TableRow<T>) => string;
 }

@@ -1,0 +1,17 @@
+<h3>Route timeline — default marker + segmentColor + filter</h3>
+<aur-mat-table
+  [tableData]="tableData"
+  [tableConfig]="tableConfig">
+</aur-mat-table>
+
+<h3>Route timeline — custom marker template</h3>
+<aur-mat-table
+  [tableData]="tableData"
+  [tableConfig]="tableConfigCustomMarker"
+  [timelineMarkerTemplate]="customMarker">
+</aur-mat-table>
+<ng-template #customMarker let-element>
+  <div class="custom-marker" [ngClass]="getMarkerClass(element.rowSrc.status)">
+    {{ getMarkerIcon(element.rowSrc.status) }}
+  </div>
+</ng-template>

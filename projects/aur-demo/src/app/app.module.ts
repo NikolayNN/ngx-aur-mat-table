@@ -55,6 +55,7 @@ import {
 } from "./table-drag/tables-drag-drop/customer-drag-preview/customer-drag-preview.component";
 import {MatIcon} from "@angular/material/icon";
 import {MatDivider} from "@angular/material/divider";
+import {TableTimelineComponent} from "./table-timeline/table-timeline.component";
 
 @NgModule({
   declarations: [
@@ -89,7 +90,8 @@ import {MatDivider} from "@angular/material/divider";
     TableWithTopColumnComponent,
     TablesDragDropComponent,
     TableDragComponent,
-    CustomerDragPreviewComponent
+    CustomerDragPreviewComponent,
+    TableTimelineComponent
   ],
   imports: [
     BrowserModule,
