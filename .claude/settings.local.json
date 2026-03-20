@@ -5,7 +5,8 @@
       "Bash(npx ng:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(bash \"C:/Users/Nikolay/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.5/skills/brainstorming/scripts/start-server.sh\" --project-dir \"C:/Users/Nikolay/IdeaProjects/ngx-aur-mat-table-libs\")"
     ]
   }
 }
