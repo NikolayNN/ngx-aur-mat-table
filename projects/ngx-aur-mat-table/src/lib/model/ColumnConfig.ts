@@ -83,6 +83,7 @@ export interface ColumnConfig<T> {
   headerView?: ColumnView<string>;
   valueView?: ColumnView<(value: TableRow<T>) => string>;
   totalConverter?: (value: TableRow<T>[]) => any;
+  size?: ColumnSize;
 }
 
 export interface TotalRowView {
@@ -206,6 +207,12 @@ export interface TableView {
   height?: string;
   minHeight?: string;
   maxHeight?: string;
+}
+
+export interface ColumnSize {
+  width?: string;
+  minWidth?: string;
+  maxWidth?: string;
 }
 
 export interface TableHeaderButtonConfig {
