@@ -206,6 +206,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();
 
   private filterStorage = new Map<string, NgxAurFilters.Base<T>>();
+  private _searchText = '';
+  private _defaultFilterPredicate!: (data: TableRow<T>, filter: string) => boolean;
 
   //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
   // @ts-ignore
@@ -359,6 +361,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private initTable() {
     this._tableName = this.tableConfig.name ?? 'unknown-table-name';
     this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
+    this._defaultFilterPredicate = this.tableDataSource.filterPredicate;
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
     if (!this._customDisplayColumnsEnabled) {
       this._displayColumns = DisplayColumnsFactory.create(this.tableConfig);
@@ -366,9 +369,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   applySearchFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.tableDataSource.filter = filterValue.trim().toLowerCase();
-    this.emitFilteredValues();
+    this._searchText = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.applyAllFilters();
   }
 
   public removeFilter(filterName: string) {
@@ -391,12 +393,21 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private applyFiltersInternal() {
+    this.applyAllFilters();
+  }
+
+  private applyAllFilters() {
     const filterActions = [...this.filterStorage.values()];
-    this.tableDataSource.filterPredicate = (data) => {
-      return filterActions.every(filterAction => filterAction.filterFn()(data));
+    const searchText = this._searchText;
+    const defaultPredicate = this._defaultFilterPredicate;
+
+    this.tableDataSource.filterPredicate = (data, _filter) => {
+      const passesCustom = filterActions.length === 0 || filterActions.every(f => f.filterFn()(data));
+      const passesSearch = !searchText || defaultPredicate(data, searchText);
+      return passesCustom && passesSearch;
     };
-    // Применение фильтрации. нужно передать уникальное значение чтобы фильтрация запустилась
-    this.tableDataSource.filter = 'trigger-' + Math.random();
+    // Передать уникальное значение чтобы фильтрация запустилась
+    this.tableDataSource.filter = 'combined-' + Math.random();
     this.emitFilteredValues();
   }
 
