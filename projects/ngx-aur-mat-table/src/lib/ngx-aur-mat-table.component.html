@@ -110,7 +110,7 @@
           </td>
 
           <td mat-footer-cell *matFooterCellDef>
-            {{ totalRowProvider.totals.get(indexProvider.COLUMN_NAME) || '' }}
+            {{ totalRowProvider.totals.get(indexProvider.COLUMN_NAME) ?? '' }}
           </td>
         </ng-container>
 
@@ -223,7 +223,7 @@
               [style.width]="columnConfig.size?.width"
               [style.min-width]="columnConfig.size?.minWidth"
               [style.max-width]="columnConfig.size?.maxWidth">
-            {{ totalRowProvider.totals.get(columnConfig.key) || '' }}
+            {{ totalRowProvider.totals.get(columnConfig.key) ?? '' }}
           </td>
 
         </ng-container>
@@ -342,6 +342,6 @@
 
 <ng-template #footerCellTemplate let-columnName>
   <td mat-footer-cell *matFooterCellDef>
-    {{ totalRowProvider.totals.get(columnName) || '' }}
+    {{ totalRowProvider.totals.get(columnName) ?? '' }}
   </td>
 </ng-template>
