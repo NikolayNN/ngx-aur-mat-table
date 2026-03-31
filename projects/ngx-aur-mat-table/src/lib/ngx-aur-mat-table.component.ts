@@ -518,10 +518,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return this.selectionProvider.selection;
   }
 
-  private hoverTimer: any = null;
-
   ngOnDestroy() {
-    clearTimeout(this.hoverTimer);
     this.resizeColumnOffsetsObserver.disconnect();
   }
 

@@ -43,7 +43,8 @@ export class DragPreviewManager {
 
   public removePreview() {
     if (this.currentPreviewComponentRef) {
-      document.body.removeChild(this.currentPreviewComponentRef.location.nativeElement);
+      const el = this.currentPreviewComponentRef.location.nativeElement;
+      el.parentNode?.removeChild(el);
       this.currentPreviewComponentRef.destroy();
       this.currentPreviewComponentRef = undefined;
     }

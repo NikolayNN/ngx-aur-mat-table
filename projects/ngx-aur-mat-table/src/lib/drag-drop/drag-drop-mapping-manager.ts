@@ -21,7 +21,7 @@ export class DragDropMappingManager {
     mappings.forEach(mapping => {
       const key = this.buildKeyForMapping(mapping);
       if (this.mappingsStorage.has(key)) {
-        console.log(`WARN: duplicate drag drop mapping: ${key}`);
+        console.warn(`Duplicate drag drop mapping: ${key}`);
       }
       this.mappingsStorage.set(key, mapping)
     });
