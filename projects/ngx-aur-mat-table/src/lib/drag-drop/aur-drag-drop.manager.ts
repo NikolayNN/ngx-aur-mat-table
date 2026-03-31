@@ -114,19 +114,17 @@ export class AurDragDropManager {
   public endDrag(): void {
     this.previewManager.removePreview();
     if (!this.dropEvent || !this.startDragEvent) {
+      this.startDragEvent = undefined;
       return;
     }
 
     const mapping = this.getMapping(this.startDragEvent!.sourceName, this.dropEvent.targetName);
-    const dropContext = this.buildDropContext()
+    const dropContext = this.buildDropContext();
 
-    mapping.afterDropFn(dropContext)?.pipe(first())
-      .pipe(
-        finalize(() => {
-          this.dropEvent = undefined;
-          this.startDragEvent = undefined;
-        })
-      ).subscribe();
+    this.dropEvent = undefined;
+    this.startDragEvent = undefined;
+
+    mapping.afterDropFn(dropContext)?.pipe(first()).subscribe();
   }
 
   private buildDropContext(): DropContext<any, any> {
