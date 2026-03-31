@@ -349,7 +349,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private removeWrongKeysFromDisplayColumns() {
     const whiteKeys = new Set(this.tableConfig.columnsCfg.map(cfg => cfg.key));
-    this.displayColumns = this._displayColumns.filter(actual => whiteKeys.has(actual) || actual.startsWith('tbl_'));
+    this._displayColumns = this._displayColumns.filter(actual => whiteKeys.has(actual) || actual.startsWith('tbl_'));
   }
 
   private initCustomSortFunctionsMap() {
