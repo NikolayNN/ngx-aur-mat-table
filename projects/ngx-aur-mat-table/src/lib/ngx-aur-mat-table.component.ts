@@ -292,6 +292,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private updateColumnOffsets() {
     if (this.table?.nativeElement?.querySelectorAll('th')) {
       const offsets: ColumnOffset[] = Array.from(this.table.nativeElement.querySelectorAll('th'))
+        .slice(0, this._displayColumns.length)
         .map((c) => (c as HTMLElement))
         .map((c, index) => ({
           left: c.offsetLeft,
