@@ -7,7 +7,7 @@ import {EmptyValue} from "../model/EmptyValue";
 import {AbstractProvider} from "./AbstractProvider";
 
 export class SelectionProvider<T> extends AbstractProvider {
-  public readonly isEnabled = true;
+  public readonly isEnabled: boolean = true;
   public static readonly COLUMN_NAME = 'tbl_selects';
   selection: SelectionModel<T>;
   config: SelectionConfig<T>;
@@ -84,7 +84,7 @@ export class SelectionProvider<T> extends AbstractProvider {
 }
 
 export class SelectionProviderDummy<T> extends SelectionProvider<T> {
-  public override readonly isEnabled = true;
+  public override readonly isEnabled = false;
 
   constructor() {
     super(EmptyValue.TABLE_CONFIG, EmptyValue.MAT_TABLE_DATA_SOURCE, []);
