@@ -23,7 +23,6 @@ export class DragPreviewManager {
   }
 
   public showPreview(sourceName: string, event: DragEvent, draggedData: unknown[]) {
-    this.previewStorage.forEach((k, v) => console.log('key', k, 'value', v))
     let previewConstructor = this.previewStorage.get(sourceName);
     if (previewConstructor) {
       // Динамически создаем компонент превью
