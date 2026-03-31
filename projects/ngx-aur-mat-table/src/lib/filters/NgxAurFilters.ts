@@ -144,8 +144,9 @@ export namespace NgxAurFilters {
 
     public override filterFn(): (data: TableRow<T>) => boolean {
       return (data) => {
+        if (!this.value) return true;
         const given = this.extractProperty(data);
-        return given?.toLowerCase().includes(this.value?.toLowerCase());
+        return given?.toLowerCase().includes(this.value.toLowerCase()) ?? false;
       };
     }
   }
