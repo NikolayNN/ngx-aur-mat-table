@@ -1,5 +1,4 @@
 import {
-  AfterViewChecked,
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -92,7 +91,7 @@ enum ExpandState {
     ],
     standalone: false
 })
-export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, AfterViewChecked, OnDestroy, NgxAurMatTablePublic<T>, AurDragDropComponent<TableRow<T>> {
+export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy, NgxAurMatTablePublic<T>, AurDragDropComponent<TableRow<T>> {
 
   expandedStateEnum = ExpandState;
 
@@ -269,9 +268,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
   }
 
-  ngAfterViewChecked() {
-    this.updateColumnOffsets();
-  }
 
   private initPaginator(): void {
     if (this.tableDataSource) {

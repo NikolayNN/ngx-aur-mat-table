@@ -26,7 +26,7 @@ describe('NgxAurMatTableComponent updateColumnOffsets', () => {
     let emitted: ColumnOffset[] | undefined;
     component.columnOffsets.subscribe(v => emitted = v);
 
-    component.ngAfterViewChecked();
+    (component as any).updateColumnOffsets();
 
     expect(emitted).toBeDefined();
     expect(emitted!.length).toBe(3);
