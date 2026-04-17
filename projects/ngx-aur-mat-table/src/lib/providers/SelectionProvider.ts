@@ -2,7 +2,7 @@ import {SelectionModel} from '@angular/cdk/collections';
 import {MatTableDataSource} from '@angular/material/table';
 import {EventEmitter} from '@angular/core';
 import {TableRow} from "../model/TableRow";
-import {SelectionConfig, TableConfig} from "../model/ColumnConfig";
+import {ColumnSize, SelectionConfig, TableConfig} from "../model/ColumnConfig";
 import {EmptyValue} from "../model/EmptyValue";
 import {AbstractProvider} from "./AbstractProvider";
 
@@ -12,6 +12,7 @@ export class SelectionProvider<T> extends AbstractProvider {
   selection: SelectionModel<T>;
   config: SelectionConfig<T>;
   tableDataSource: MatTableDataSource<TableRow<T>>;
+  public readonly size: ColumnSize | undefined;
 
   constructor(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>, initSelection: T[]) {
     super();
@@ -21,6 +22,7 @@ export class SelectionProvider<T> extends AbstractProvider {
       this.selection.compareWith = this.config.compareWith;
     }
     this.tableDataSource = tableDataSource;
+    this.size = this.config.size;
   }
 
   get COLUMN_NAME() {

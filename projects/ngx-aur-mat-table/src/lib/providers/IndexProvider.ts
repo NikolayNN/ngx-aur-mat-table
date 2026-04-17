@@ -1,4 +1,4 @@
-import {ColumnView, IndexConfig, TableConfig} from "../model/ColumnConfig";
+import {ColumnSize, ColumnView, IndexConfig, TableConfig} from "../model/ColumnConfig";
 import {AbstractProvider} from "./AbstractProvider";
 
 /**
@@ -11,12 +11,14 @@ export class IndexProvider extends AbstractProvider {
   public headerView: ColumnView<string> | undefined;
   public name: string;
   public offset: number;
+  public size: ColumnSize | undefined;
 
   constructor(private indexConfig?: IndexConfig) {
     super();
     this.headerView = indexConfig?.headerColumn;
     this.name = indexConfig?.name || '';
     this.offset = indexConfig?.offset || 0;
+    this.size = indexConfig?.size;
   }
 
   get COLUMN_NAME() {

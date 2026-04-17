@@ -1,4 +1,4 @@
-import {TableConfig, TimelineConfig, TimelineLineConfig} from "../model/ColumnConfig";
+import {ColumnSize, TableConfig, TimelineConfig, TimelineLineConfig} from "../model/ColumnConfig";
 import {AbstractProvider} from "./AbstractProvider";
 import {TableRow} from "../model/TableRow";
 import {EmptyValue} from "../model/EmptyValue";
@@ -9,6 +9,7 @@ export class TimelineProvider<T> extends AbstractProvider {
   public readonly markerColor: string;
   public readonly line: Required<TimelineLineConfig>;
   public readonly segmentColor?: (prev: TableRow<T>, next: TableRow<T>) => string;
+  public readonly size: ColumnSize | undefined;
 
   private static readonly LINE_DEFAULTS: Required<TimelineLineConfig> = {
     color: '#ccc',
@@ -22,6 +23,7 @@ export class TimelineProvider<T> extends AbstractProvider {
     this.line = {...TimelineProvider.LINE_DEFAULTS, ...config.line};
     this.markerColor = config.markerColor ?? '#ccc';
     this.segmentColor = config.segmentColor;
+    this.size = config.size;
   }
 
   get COLUMN_NAME(): string {

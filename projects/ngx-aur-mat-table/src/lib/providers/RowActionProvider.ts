@@ -1,4 +1,4 @@
-import {Action, ActionConfig, TableConfig} from "../model/ColumnConfig";
+import {Action, ActionConfig, ColumnSize, TableConfig} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
 import {ActionViewFactory} from "../factories/ActionViewFactory";
 import {EmptyValue} from "../model/EmptyValue";
@@ -14,6 +14,7 @@ export class RowActionProvider<T> extends AbstractProvider {
   public readonly isEnabled: boolean = true;
 
   private readonly config: ActionConfig<T>;
+  public readonly size: ColumnSize | undefined;
 
   // key is rowId
   public actionView: Map<number, Action<string>[]> = new Map();
@@ -24,6 +25,7 @@ export class RowActionProvider<T> extends AbstractProvider {
       throw new Error("Actions is undefined")
     }
     this.config = tableConfig.actionCfg;
+    this.size = this.config.size;
   }
 
   get COLUMN_NAME() {

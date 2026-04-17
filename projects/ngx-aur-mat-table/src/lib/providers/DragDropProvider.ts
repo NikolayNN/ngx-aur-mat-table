@@ -1,5 +1,5 @@
 import {AbstractProvider} from "./AbstractProvider";
-import {DragDropConfig, IconView, TableConfig} from "../model/ColumnConfig";
+import {ColumnSize, DragDropConfig, IconView, TableConfig} from "../model/ColumnConfig";
 import {ViewContainerRef} from "@angular/core";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 
@@ -15,6 +15,7 @@ export class DragDropProvider<T> extends AbstractProvider {
   public readonly draggable: boolean = false;
   public readonly dragIconView: IconView<string> = DragDropProvider.DEFAULT_ICON_VIEW;
   public readonly multiple: boolean = false;
+  public readonly size: ColumnSize | undefined;
 
   constructor(private readonly viewContainerRef: ViewContainerRef,
               private tableName: string,
@@ -25,6 +26,7 @@ export class DragDropProvider<T> extends AbstractProvider {
     this.multiple = dragCfg?.multiple ?? false;
     this.draggable = (new Set(this.manager.draggableSourceNames)).has(tableName);
     this.dragIconView = dragCfg?.dragIcon ?? DragDropProvider.DEFAULT_ICON_VIEW;
+    this.size = dragCfg?.size;
   }
 
   public addColumn(columns: string[]): DragDropProvider<T> {
