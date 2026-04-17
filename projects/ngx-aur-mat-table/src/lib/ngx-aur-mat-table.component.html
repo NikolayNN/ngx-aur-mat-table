@@ -194,8 +194,14 @@
 
         <!-- action column -->
         <ng-container *ngIf="rowActionsProvider.isEnabled" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
-          <th mat-header-cell *matHeaderCellDef></th>
-          <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()" style="cursor: default">
+          <th mat-header-cell *matHeaderCellDef
+              [style.width]="rowActionsProvider.size?.width"
+              [style.min-width]="rowActionsProvider.size?.minWidth"
+              [style.max-width]="rowActionsProvider.size?.maxWidth"></th>
+          <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()" style="cursor: default"
+              [style.width]="rowActionsProvider.size?.width"
+              [style.min-width]="rowActionsProvider.size?.minWidth"
+              [style.max-width]="rowActionsProvider.size?.maxWidth">
             <ng-container *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
               <button mat-icon-button
                       (click)="emitRowAction(action.action, element.rowSrc, $event)"
@@ -208,8 +214,12 @@
             </ng-container>
           </td>
 
-          <ng-container *ngTemplateOutlet="footerCellTemplate; context: {$implicit: rowActionsProvider.COLUMN_NAME}">
-          </ng-container>
+          <td mat-footer-cell *matFooterCellDef
+              [style.width]="rowActionsProvider.size?.width"
+              [style.min-width]="rowActionsProvider.size?.minWidth"
+              [style.max-width]="rowActionsProvider.size?.maxWidth">
+            {{ totalRowProvider.totals.get(rowActionsProvider.COLUMN_NAME) ?? '' }}
+          </td>
         </ng-container>
 
         <!--    value-icon-->
@@ -375,9 +385,3 @@
     </mat-paginator>
   }
 </div>
-
-<ng-template #footerCellTemplate let-columnName>
-  <td mat-footer-cell *matFooterCellDef>
-    {{ totalRowProvider.totals.get(columnName) ?? '' }}
-  </td>
-</ng-template>
