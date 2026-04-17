@@ -65,7 +65,10 @@ jobs:
 
       - name: Publish to npm
         if: steps.version.outputs.changed == 'true'
+        # Node 22 ships with npm 10, but Trusted Publishing (OIDC) requires npm >= 11.5.1.
+        # Use npx to fetch npm@11 into the cache instead of `npm i -g npm@latest`,
+        # which self-replaces the running npm and intermittently loses transitive deps
+        # (e.g. MODULE_NOT_FOUND: promise-retry) on GitHub-hosted runners.
         run: |
-          npm install -g npm@latest
           npm config set registry https://registry.npmjs.org/
-          npm publish ./dist/ngx-aur-mat-table --provenance --access public
+          npx -y npm@11 publish ./dist/ngx-aur-mat-table --provenance --access public
