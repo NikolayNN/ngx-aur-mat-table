@@ -44,8 +44,14 @@
 
         <!--        timeline-column-->
         <ng-container *ngIf="timelineProvider.isEnabled" [matColumnDef]="timelineProvider.COLUMN_NAME">
-          <th mat-header-cell *matHeaderCellDef class="aur-timeline-cell"></th>
-          <td mat-cell *matCellDef="let element" class="aur-timeline-cell">
+          <th mat-header-cell *matHeaderCellDef class="aur-timeline-cell"
+              [style.width]="timelineProvider.size?.width"
+              [style.min-width]="timelineProvider.size?.minWidth"
+              [style.max-width]="timelineProvider.size?.maxWidth"></th>
+          <td mat-cell *matCellDef="let element" class="aur-timeline-cell"
+              [style.width]="timelineProvider.size?.width"
+              [style.min-width]="timelineProvider.size?.minWidth"
+              [style.max-width]="timelineProvider.size?.maxWidth">
             <div class="aur-timeline-marker-container">
 
               <div class="aur-timeline-line"
@@ -73,16 +79,25 @@
 
             </div>
           </td>
-          <td mat-footer-cell *matFooterCellDef class="aur-timeline-cell"></td>
+          <td mat-footer-cell *matFooterCellDef class="aur-timeline-cell"
+              [style.width]="timelineProvider.size?.width"
+              [style.min-width]="timelineProvider.size?.minWidth"
+              [style.max-width]="timelineProvider.size?.maxWidth"></td>
         </ng-container>
 
         <!--        drag-column-->
         <ng-container *ngIf="dragDropProvider.isEnabled && dragDropProvider.draggable" [matColumnDef]="dragDropProvider.COLUMN_NAME">
 
-          <th mat-header-cell *matHeaderCellDef>
+          <th mat-header-cell *matHeaderCellDef
+              [style.width]="dragDropProvider.size?.width"
+              [style.min-width]="dragDropProvider.size?.minWidth"
+              [style.max-width]="dragDropProvider.size?.maxWidth">
           </th>
 
-          <td mat-cell *matCellDef="let element;" class="drag-column">
+          <td mat-cell *matCellDef="let element;" class="drag-column"
+              [style.width]="dragDropProvider.size?.width"
+              [style.min-width]="dragDropProvider.size?.minWidth"
+              [style.max-width]="dragDropProvider.size?.maxWidth">
             <lib-icon-view  draggable="true"
                             class="drag-icon"
                             [view]="dragDropProvider.dragIconView"
@@ -92,31 +107,46 @@
 
           </td>
 
-          <td mat-footer-cell *matFooterCellDef>
+          <td mat-footer-cell *matFooterCellDef
+              [style.width]="dragDropProvider.size?.width"
+              [style.min-width]="dragDropProvider.size?.minWidth"
+              [style.max-width]="dragDropProvider.size?.maxWidth">
           </td>
         </ng-container>
 
         <!--        index-column-->
         <ng-container *ngIf="indexProvider.isEnabled" [matColumnDef]="indexProvider.COLUMN_NAME">
 
-          <th mat-header-cell *matHeaderCellDef>
+          <th mat-header-cell *matHeaderCellDef
+              [style.width]="indexProvider.size?.width"
+              [style.min-width]="indexProvider.size?.minWidth"
+              [style.max-width]="indexProvider.size?.maxWidth">
             <lib-column-view [config]="indexProvider.headerView">
               {{ indexProvider.name }}
             </lib-column-view>
           </th>
 
-          <td mat-cell *matCellDef="let element;">
+          <td mat-cell *matCellDef="let element;"
+              [style.width]="indexProvider.size?.width"
+              [style.min-width]="indexProvider.size?.minWidth"
+              [style.max-width]="indexProvider.size?.maxWidth">
             {{ element.id + indexProvider.offset }}
           </td>
 
-          <td mat-footer-cell *matFooterCellDef>
+          <td mat-footer-cell *matFooterCellDef
+              [style.width]="indexProvider.size?.width"
+              [style.min-width]="indexProvider.size?.minWidth"
+              [style.max-width]="indexProvider.size?.maxWidth">
             {{ totalRowProvider.totals.get(indexProvider.COLUMN_NAME) ?? '' }}
           </td>
         </ng-container>
 
         <!--        selection-column-->
         <ng-container [matColumnDef]="selectionProvider.COLUMN_NAME" *ngIf="selectionProvider.isEnabled">
-          <th mat-header-cell *matHeaderCellDef>
+          <th mat-header-cell *matHeaderCellDef
+              [style.width]="selectionProvider.size?.width"
+              [style.min-width]="selectionProvider.size?.minWidth"
+              [style.max-width]="selectionProvider.size?.maxWidth">
             <div class="flex-container">
               <mat-checkbox (change)="$event ? masterToggle() : null"
                             [checked]="selectionProvider.selection.hasValue() && isAllSelected()"
@@ -145,14 +175,20 @@
 
           </th>
           <td mat-cell *matCellDef="let row"
-              (click)="$event.stopPropagation(); selectionProvider.selection.toggle(castSrc(row).rowSrc)">
+              (click)="$event.stopPropagation(); selectionProvider.selection.toggle(castSrc(row).rowSrc)"
+              [style.width]="selectionProvider.size?.width"
+              [style.min-width]="selectionProvider.size?.minWidth"
+              [style.max-width]="selectionProvider.size?.maxWidth">
             <mat-checkbox (click)="$event.stopPropagation()"
                           (change)="$event ? selectionProvider.selection.toggle(castSrc(row).rowSrc) : null"
                           [checked]="selectionProvider.selection.isSelected(castSrc(row).rowSrc)">
             </mat-checkbox>
           </td>
 
-          <td mat-footer-cell *matFooterCellDef>
+          <td mat-footer-cell *matFooterCellDef
+              [style.width]="selectionProvider.size?.width"
+              [style.min-width]="selectionProvider.size?.minWidth"
+              [style.max-width]="selectionProvider.size?.maxWidth">
           </td>
         </ng-container>
 
