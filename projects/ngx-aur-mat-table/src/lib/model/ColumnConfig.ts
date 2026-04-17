@@ -158,6 +158,7 @@ export interface IndexConfig {
 
   /** название для колонки, по умолчанию ''*/
   name?: string;
+  size?: ColumnSize;
 }
 
 export interface FilterConfig {
@@ -170,6 +171,7 @@ export interface ActionConfig<T> {
   enable?: boolean;
   actions: Action<(value: T) => string>[];
   position?: 'start' | 'end';
+  size?: ColumnSize;
 }
 
 export interface Action<T> {
@@ -187,6 +189,7 @@ export interface SelectionConfig<T> {
   showTotalCount?: boolean;
   enable: boolean;
   actions?: Action<string>[];
+  size?: ColumnSize;
 }
 
 export interface PaginationConfig {
@@ -227,6 +230,7 @@ export interface DragDropConfig {
   manager: AurDragDropManager;
   multiple?: boolean;
   dragIcon?: IconView<string>;
+  size?: ColumnSize;
 }
 
 export interface TotalRowConfig {
@@ -246,4 +250,5 @@ export interface TimelineConfig<T = any> {
   markerColor?: string;
   line?: TimelineLineConfig;
   segmentColor?: (prev: TableRow<T>, next: TableRow<T>) => string;
+  size?: ColumnSize;
 }
