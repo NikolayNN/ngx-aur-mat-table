@@ -211,7 +211,7 @@
                       <button mat-menu-item
                               *ngIf="item.display !== 'none'"
                               [disabled]="item.disabled === 'true'"
-                              (click)="emitRowAction(item.action, element.rowSrc, $event)">
+                              (click)="emitMenuAction(item.action, element.rowSrc)">
                         <mat-icon *ngIf="item.icon" [style.color]="item.icon.color">
                           {{ item.icon.name }}
                         </mat-icon>
