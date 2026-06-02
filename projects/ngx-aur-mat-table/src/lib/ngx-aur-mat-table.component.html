@@ -205,27 +205,28 @@
             <ng-container *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
               <!-- action with dropdown menu -->
               <ng-container *ngIf="action.menu; else directAction">
-                <button mat-icon-button
-                        [matMenuTriggerFor]="actionMenu"
-                        [matTooltip]="action.icon.tooltip || ''"
-                        *ngIf="action.display !== 'none'">
-                  <mat-icon [style.color]="action.icon.color">
-                    {{ action.icon.name }}
-                  </mat-icon>
-                </button>
-                <mat-menu #actionMenu="matMenu">
-                  <ng-container *ngFor="let item of action.menu">
-                    <button mat-menu-item
-                            *ngIf="item.display !== 'none'"
-                            [disabled]="item.disabled === 'true'"
-                            (click)="emitRowAction(item.action, element.rowSrc, $event)">
-                      <mat-icon *ngIf="item.icon" [style.color]="item.icon.color">
-                        {{ item.icon.name }}
-                      </mat-icon>
-                      <span>{{ item.text }}</span>
-                    </button>
-                  </ng-container>
-                </mat-menu>
+                <ng-container *ngIf="action.display !== 'none'">
+                  <mat-menu #actionMenu="matMenu">
+                    <ng-container *ngFor="let item of action.menu">
+                      <button mat-menu-item
+                              *ngIf="item.display !== 'none'"
+                              [disabled]="item.disabled === 'true'"
+                              (click)="emitRowAction(item.action, element.rowSrc, $event)">
+                        <mat-icon *ngIf="item.icon" [style.color]="item.icon.color">
+                          {{ item.icon.name }}
+                        </mat-icon>
+                        <span>{{ item.text }}</span>
+                      </button>
+                    </ng-container>
+                  </mat-menu>
+                  <button mat-icon-button
+                          [matMenuTriggerFor]="actionMenu"
+                          [matTooltip]="action.icon.tooltip || ''">
+                    <mat-icon [style.color]="action.icon.color">
+                      {{ action.icon.name }}
+                    </mat-icon>
+                  </button>
+                </ng-container>
               </ng-container>
 
               <!-- direct action (existing behavior) -->
