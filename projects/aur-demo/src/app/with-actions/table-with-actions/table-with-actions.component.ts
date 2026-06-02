@@ -42,6 +42,31 @@ export class TableWithActionsComponent {
             tooltip:  () => 'удалить',
             color: () => 'red'
           }
+        },
+        {
+          action: () => 'more',
+          icon: {
+            name: () => 'more_vert',
+            tooltip: () => 'ещё'
+          },
+          menu: [
+            {
+              action: () => 'duplicate',
+              text: () => 'Дублировать',
+              icon: {name: () => 'content_copy', color: () => 'green'}
+            },
+            {
+              action: () => 'archive',
+              text: () => 'В архив',
+              icon: {name: () => 'archive'},
+              disabled: (c) => (c.age < 18 ? 'true' : 'false')
+            },
+            {
+              action: () => 'block',
+              text: () => 'Заблокировать',
+              display: (c) => (c.age < 18 ? 'none' : 'show')
+            }
+          ]
         }
       ]
     }
