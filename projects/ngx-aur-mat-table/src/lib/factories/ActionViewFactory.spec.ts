@@ -20,7 +20,7 @@ describe('ActionViewFactory menu resolution', () => {
           menu: [
             {
               action: () => 'edit',
-              text: () => 'Edit',
+              text: (c) => c.name,
               icon: {name: () => 'edit', color: () => 'blue'},
             },
             {
@@ -45,7 +45,7 @@ describe('ActionViewFactory menu resolution', () => {
 
     const edit = action.menu![0];
     expect(edit.action).toBe('edit');
-    expect(edit.text).toBe('Edit');
+    expect(edit.text).toBe('Bob');
     expect(edit.icon!.name).toBe('edit');
     expect(edit.icon!.color).toBe('blue');
     expect(edit.display).toBe('show');
