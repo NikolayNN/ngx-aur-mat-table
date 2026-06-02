@@ -488,6 +488,19 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.onRowAction.emit({action, value: row});
   }
 
+  /**
+   * Emit an action triggered from a mat-menu item.
+   *
+   * Unlike {@link emitRowAction} this must NOT call $event.stopPropagation():
+   * mat-menu closes when the click bubbles up to its panel
+   * ((click)="closed.emit('click')"), so stopping propagation would keep the
+   * menu open. The menu renders in an overlay outside the row, so there is no
+   * row-click to suppress here.
+   */
+  emitMenuAction(action: string, row: T) {
+    this.onRowAction.emit({action, value: row});
+  }
+
   masterToggle() {
     this.selectionProvider.masterToggle();
   }

@@ -1,4 +1,4 @@
-import {Action, ActionConfig, IconView} from "../model/ColumnConfig";
+import {Action, ActionConfig, IconView, MenuItem} from "../model/ColumnConfig";
 import {TableRow} from "../model/TableRow";
 
 export class ActionViewFactory {
@@ -26,8 +26,19 @@ export class ActionViewFactory {
     return actionConfig.actions.map(action => ({
       action: action.action(row.rowSrc),
       icon: this.prepareIconConfig(action.icon, row.rowSrc),
-      display: action.display? action.display(row.rowSrc): 'show'
+      display: action.display? action.display(row.rowSrc): 'show',
+      menu: action.menu? action.menu.map(item => this.prepareMenuItem(item, row.rowSrc)): undefined
     }));
+  }
+
+  private static prepareMenuItem<T>(item: MenuItem<(value: T) => string>, value: T): MenuItem<string> {
+    return {
+      action: item.action(value),
+      text: item.text(value),
+      icon: item.icon? this.prepareIconConfig(item.icon, value): undefined,
+      display: item.display? item.display(value): 'show',
+      disabled: item.disabled? item.disabled(value): 'false'
+    };
   }
 
   private static prepareIconConfig<T>(iconSource: IconView<(value: T) => string>, value: T): IconView<string> {

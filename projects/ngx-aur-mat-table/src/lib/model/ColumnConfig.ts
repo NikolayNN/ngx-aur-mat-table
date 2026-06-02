@@ -178,6 +178,20 @@ export interface Action<T> {
   action: T;
   icon: IconView<T>;
   display?: T;
+  menu?: MenuItem<T>[];
+}
+
+export interface MenuItem<T> {
+  /** action code emitted via onRowAction */
+  action: T;
+  /** menu item label text */
+  text: T;
+  /** optional leading icon */
+  icon?: IconView<T>;
+  /** 'show' | 'none' — conditionally hide the item */
+  display?: T;
+  /** 'true' | 'false' — conditionally disable the item */
+  disabled?: T;
 }
 
 export interface SelectionConfig<T> {

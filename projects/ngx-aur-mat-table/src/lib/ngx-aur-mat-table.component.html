@@ -203,14 +203,43 @@
               [style.min-width]="rowActionsProvider.size?.minWidth"
               [style.max-width]="rowActionsProvider.size?.maxWidth">
             <ng-container *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
-              <button mat-icon-button
-                      (click)="emitRowAction(action.action, element.rowSrc, $event)"
-                      [matTooltip]="action.icon.tooltip || ''"
-                      *ngIf="action.display !== 'none'">
-                <mat-icon [style.color]="action.icon.color">
-                  {{ action.icon.name }}
-                </mat-icon>
-              </button>
+              <!-- action with dropdown menu -->
+              <ng-container *ngIf="action.menu; else directAction">
+                <ng-container *ngIf="action.display !== 'none'">
+                  <mat-menu #actionMenu="matMenu">
+                    <ng-container *ngFor="let item of action.menu">
+                      <button mat-menu-item
+                              *ngIf="item.display !== 'none'"
+                              [disabled]="item.disabled === 'true'"
+                              (click)="emitMenuAction(item.action, element.rowSrc)">
+                        <mat-icon *ngIf="item.icon" [style.color]="item.icon.color">
+                          {{ item.icon.name }}
+                        </mat-icon>
+                        <span>{{ item.text }}</span>
+                      </button>
+                    </ng-container>
+                  </mat-menu>
+                  <button mat-icon-button
+                          [matMenuTriggerFor]="actionMenu"
+                          [matTooltip]="action.icon.tooltip || ''">
+                    <mat-icon [style.color]="action.icon.color">
+                      {{ action.icon.name }}
+                    </mat-icon>
+                  </button>
+                </ng-container>
+              </ng-container>
+
+              <!-- direct action (existing behavior) -->
+              <ng-template #directAction>
+                <button mat-icon-button
+                        (click)="emitRowAction(action.action, element.rowSrc, $event)"
+                        [matTooltip]="action.icon.tooltip || ''"
+                        *ngIf="action.display !== 'none'">
+                  <mat-icon [style.color]="action.icon.color">
+                    {{ action.icon.name }}
+                  </mat-icon>
+                </button>
+              </ng-template>
             </ng-container>
           </td>
 

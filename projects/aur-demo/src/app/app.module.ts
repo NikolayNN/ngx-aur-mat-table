@@ -56,6 +56,7 @@ import {
 import {MatIcon} from "@angular/material/icon";
 import {MatDivider} from "@angular/material/divider";
 import {TableTimelineComponent} from "./table-timeline/table-timeline.component";
+import {TableWithMenuComponent} from "./table-with-menu/table-with-menu.component";
 
 @NgModule({
   declarations: [
@@ -91,7 +92,8 @@ import {TableTimelineComponent} from "./table-timeline/table-timeline.component"
     TablesDragDropComponent,
     TableDragComponent,
     CustomerDragPreviewComponent,
-    TableTimelineComponent
+    TableTimelineComponent,
+    TableWithMenuComponent
   ],
   imports: [
     BrowserModule,

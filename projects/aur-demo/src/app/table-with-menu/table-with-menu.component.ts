@@ -1,18 +1,18 @@
 import {Component} from '@angular/core';
 import {ActionEvent, TableConfig} from "ngx-aur-mat-table";
-import {Customer} from "../../shared/model/customer";
-import {CustomerGenerator} from "../../shared/generator/CustomerGenerator";
+import {Customer} from "../shared/model/customer";
+import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
 @Component({
-    selector: 'app-table-with-actions',
-    templateUrl: './table-with-actions.component.html',
-    styleUrls: ['./table-with-actions.component.scss'],
+    selector: 'app-table-with-menu',
+    templateUrl: './table-with-menu.component.html',
+    styleUrls: ['./table-with-menu.component.scss'],
     standalone: false
 })
-export class TableWithActionsComponent {
+export class TableWithMenuComponent {
 
   tableConfig: TableConfig<Customer> = {
-    columnsCfg:  [
+    columnsCfg: [
       {
         name: 'customers name',
         key: 'name',
@@ -28,43 +28,32 @@ export class TableWithActionsComponent {
     actionCfg: {
       actions: [
         {
-          action: () =>'edit',
-          icon: {
-            name: () => 'edit',
-            tooltip: () => 'редактировать',
-            color: () => 'blue'
-          }
-        },
-        {
-          action: () => 'delete',
-          icon: {
-            name: () => 'delete',
-            tooltip:  () => 'удалить',
-            color: () => 'red'
-          }
-        },
-        {
-          action: () => 'more',
+          action: () => 'menu',
           icon: {
             name: () => 'more_vert',
-            tooltip: () => 'ещё'
+            tooltip: () => 'действия'
           },
           menu: [
             {
-              action: () => 'duplicate',
-              text: () => 'Дублировать',
-              icon: {name: () => 'content_copy', color: () => 'green'}
+              action: () => 'view',
+              text: () => 'Просмотр',
+              icon: {name: () => 'visibility', color: () => 'blue'}
             },
             {
               action: () => 'archive',
-              text: () => 'В архив',
+              text: () => 'Архивировать',
               icon: {name: () => 'archive'},
               disabled: (c) => (c.age < 18 ? 'true' : 'false')
             },
             {
               action: () => 'block',
               text: () => 'Заблокировать',
+              icon: {name: () => 'block', color: () => 'orange'},
               display: (c) => (c.age < 18 ? 'none' : 'show')
+            },
+            {
+              action: () => 'delete',
+              text: () => 'Удалить'
             }
           ]
         }
