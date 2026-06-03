@@ -212,6 +212,8 @@ export interface PaginationConfig {
   sizes?: number[];
   style?: string;
   position?: 'under' | 'bottom';
+  /** 'client' (default) lets MatTableDataSource slice in memory; 'server' uses pageSource / paginatorState. */
+  mode?: 'client' | 'server';
 }
 
 export interface StickyConfig {

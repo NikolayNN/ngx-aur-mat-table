@@ -1,0 +1,9 @@
+<aur-mat-table
+  [tableConfig]="tableConfig"
+  [tableData]="tableData"
+  [externalPaginator]="pg">
+</aur-mat-table>
+
+<div class="my-footer">
+  <mat-paginator #pg [pageSizeOptions]="[5, 10, 20]" [pageSize]="20"></mat-paginator>
+</div>

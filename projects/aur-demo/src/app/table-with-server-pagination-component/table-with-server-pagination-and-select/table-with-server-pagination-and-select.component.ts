@@ -1,8 +1,7 @@
 import {Component} from '@angular/core';
 import {CustomerService} from "../customer.service";
-import {NgxAurTablePageEventUtils, PaginatorState, TableConfig} from "ngx-aur-mat-table";
+import {AurPageSource, TableConfig} from "ngx-aur-mat-table";
 import {Customer} from "../../shared/model/customer";
-import {PageEvent} from "@angular/material/paginator";
 
 @Component({
     selector: 'app-table-with-server-pagination-and-select',
@@ -34,27 +33,11 @@ export class TableWithServerPaginationAndSelectComponent {
     },
     pageableCfg: {
       enable: true,
-      size: 20
+      size: 20,
+      mode: 'server'
     }
   }
 
-  paginatorState = PaginatorState.empty();
-
-  tableData: Customer[] = [];
-
-
-  ngOnInit(): void {
-    this.loadPage();
-  }
-
-  loadPage(pageEvent?: PageEvent) {
-    if (!pageEvent) {
-      pageEvent = NgxAurTablePageEventUtils.createEmpty(this.tableConfig);
-    }
-
-    this.customerService.page(pageEvent.pageIndex, pageEvent.pageSize).subscribe(page => {
-      this.tableData = page.content
-      this.paginatorState = new PaginatorState(page.totalElements, page.number);
-    })
-  }
+  loadPage: AurPageSource<Customer> = req =>
+    this.customerService.page(req.pageIndex, req.pageSize);
 }

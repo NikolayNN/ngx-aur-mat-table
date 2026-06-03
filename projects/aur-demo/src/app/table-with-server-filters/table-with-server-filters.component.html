@@ -1,0 +1,10 @@
+<div class="toolbar">
+  <input placeholder="filter name" (input)="onNameFilterChange($any($event.target).value)">
+  <span *ngIf="showSpinner">loading…</span>
+</div>
+
+<aur-mat-table #table
+  [tableConfig]="tableConfig"
+  [pageSource]="loadPage"
+  (loadingChange)="showSpinner = $event">
+</aur-mat-table>

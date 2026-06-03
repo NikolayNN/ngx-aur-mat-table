@@ -1,5 +1,5 @@
 <div class="aur-mat-table"
-     [ngClass]="{'bottom-pagination': paginationProvider.isEnabled && paginationProvider.position === 'bottom'}">
+     [ngClass]="{'bottom-pagination': paginationProvider.isEnabled && !externalPaginator && paginationProvider.position === 'bottom'}">
   <ng-container>
     <!-- Filter -->
     <ng-container *ngIf="tableConfig.filterCfg?.enable ?? false">
@@ -22,7 +22,7 @@
 
 
     <div class="table-container"
-         [ngClass]="{'bottom-pagination': paginationProvider.isEnabled && paginationProvider.position === 'bottom'}">
+         [ngClass]="{'bottom-pagination': paginationProvider.isEnabled && !externalPaginator && paginationProvider.position === 'bottom'}">
       <mat-icon *ngIf="headerButtonProvider.isEnabled"
                 class="table-settings-button"
                 [style.color]="headerButtonProvider.color"
@@ -402,7 +402,7 @@
   </ng-container>
 
   <!-- Pagination -->
-  @if (this.paginationProvider.isEnabled) {
+  @if (this.paginationProvider.isEnabled && !externalPaginator) {
     <mat-paginator [ngClass]="{'hidePaginator': isTableBodyHide}"
                    [pageSizeOptions]="paginationProvider.sizes"
                    [pageSize]="paginationProvider.size"

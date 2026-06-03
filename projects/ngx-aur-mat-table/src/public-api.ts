@@ -23,3 +23,6 @@ export * from './lib/drag-drop/aur-drag-drop-component'
 export * from './lib/drag-drop/aur-drag-drop.manager'
 export * from './lib/drag-drop/model/aur-drag-drop-mapping'
 export * from './lib/drag-drop/model/aur-drag-preview-component'
+export * from './lib/model/AurPage';
+export { ServerPageController } from './lib/providers/ServerPageController';
+export type { ServerPageResult } from './lib/providers/ServerPageController';

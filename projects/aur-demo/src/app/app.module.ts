@@ -1,6 +1,10 @@
 import {NgModule} from '@angular/core';
 import {BrowserModule} from '@angular/platform-browser';
 import {AppComponent} from './app.component';
+import {MatPaginatorModule} from '@angular/material/paginator';
+import {
+  TableWithExternalPaginatorComponent
+} from './table-with-external-paginator/table-with-external-paginator.component';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {TableWithIconsComponent} from './table-with-icons/table-with-icons.component';
 import {ComplexObjectComponent} from './complex-object/complex-object.component';
@@ -57,6 +61,12 @@ import {MatIcon} from "@angular/material/icon";
 import {MatDivider} from "@angular/material/divider";
 import {TableTimelineComponent} from "./table-timeline/table-timeline.component";
 import {TableWithMenuComponent} from "./table-with-menu/table-with-menu.component";
+import {
+  TableWithServerFiltersComponent
+} from "./table-with-server-filters/table-with-server-filters.component";
+import {
+  TablePaginationMatrixComponent
+} from "./table-pagination-matrix/table-pagination-matrix.component";
 
 @NgModule({
   declarations: [
@@ -93,7 +103,10 @@ import {TableWithMenuComponent} from "./table-with-menu/table-with-menu.componen
     TableDragComponent,
     CustomerDragPreviewComponent,
     TableTimelineComponent,
-    TableWithMenuComponent
+    TableWithMenuComponent,
+    TableWithServerFiltersComponent,
+    TableWithExternalPaginatorComponent,
+    TablePaginationMatrixComponent
   ],
   imports: [
     BrowserModule,
@@ -109,6 +122,7 @@ import {TableWithMenuComponent} from "./table-with-menu/table-with-menu.componen
     TableHideShowBodyComponent,
     MatIcon,
     MatDivider,
+    MatPaginatorModule,
   ],
   providers: [],
   bootstrap: [AppComponent]

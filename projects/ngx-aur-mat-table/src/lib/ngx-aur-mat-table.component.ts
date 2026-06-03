@@ -42,25 +42,11 @@ import {HeaderButtonProvider, HeaderButtonProviderDummy} from "./providers/Heade
 import {DragDropProvider, DragProviderDummy} from "./providers/DragDropProvider";
 import {TimelineProvider, TimelineProviderDummy} from "./providers/TimelineProvider";
 import {AurDragDropComponent} from "./drag-drop/aur-drag-drop-component";
-
-
-export class PaginatorState {
-
-  constructor(private _length: number, private _pageIndex: number) {
-  }
-
-  get length(): number {
-    return this._length;
-  }
-
-  get pageIndex(): number {
-    return this._pageIndex;
-  }
-
-  public static empty(): PaginatorState {
-    return new PaginatorState(0, 0);
-  }
-}
+import {PaginatorState} from './model/PaginatorState';
+export {PaginatorState} from './model/PaginatorState';
+import {AurPageSource} from './model/AurPage';
+import {ServerPageController} from './providers/ServerPageController';
+import {Subscription} from 'rxjs';
 
 export interface HighlightContainer<T> {
   value: any;
@@ -141,12 +127,24 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
   @Input() paginatorState: PaginatorState | undefined;
 
+  // Server-mode declarative loader. When set, the table owns the fetch loop.
+  // @ts-ignore
+  @Input() pageSource?: AurPageSource<T>;
+
+  // Optional host-owned paginator placed elsewhere in the host layout.
+  // @ts-ignore
+  @Input() externalPaginator?: MatPaginator;
+
   @Input() isTableBodyHide = false;
 
   // @ts-ignore
   @ViewChild(MatPaginator, {static: false}) matPaginator: MatPaginator;
   // @ts-ignore
   @ViewChild(MatSort, {static: true}) matSort: MatSort;
+
+  get activePaginator(): MatPaginator {
+    return this.externalPaginator ?? this.matPaginator;
+  }
 
   @Output() sort: EventEmitter<Sort> = new EventEmitter();
 
@@ -167,6 +165,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   //------------------------
 
   @Output() onRowClick = new EventEmitter<T>();
+
+  @Output() loadingChange = new EventEmitter<boolean>();
+  @Output() pageError = new EventEmitter<unknown>();
 
   /**
    * return filtered rows
@@ -198,6 +199,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   paginationProvider: PaginationProvider = new PaginationProviderDummy();
 
+  private serverPageController?: ServerPageController<T>;
+  private externalPaginatorSub?: Subscription;
+
   totalRowProvider: TotalRowProvider<T> = new TotalRowProviderDummy();
 
   highlighted: T | undefined;
@@ -223,11 +227,38 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (changes['highlight'] && this.highlight) {
       this.handleHighlightChange(this.highlight);
     }
+    if (changes['externalPaginator']) {
+      if (this.externalPaginator) {
+        if (this.isServerMode()) {
+          // Server mode: do NOT bind dataSource.paginator (would slice the loaded page).
+          // Only (re)wire once the controller exists; a first-change arriving before
+          // ngAfterViewInit is handled by startServerController().
+          if (this.serverPageController) {
+            this.subscribeExternalPaginator();
+            if (this.paginatorState) {
+              this.applyExternalPaginatorState(this.paginatorState);
+            }
+          }
+        } else if (!changes['externalPaginator'].firstChange) {
+          // Client mode: bind the external paginator so MatTableDataSource slices through it.
+          // Guard firstChange so we don't call initPaginator() before ngAfterViewInit.
+          this.initPaginator();
+        }
+      } else {
+        // External paginator removed: tear down its page subscription to avoid a leak.
+        this.externalPaginatorSub?.unsubscribe();
+        this.externalPaginatorSub = undefined;
+        // Client mode falls back to the (now-rendered) built-in paginator.
+        if (!this.isServerMode() && !changes['externalPaginator'].firstChange) {
+          this.initPaginator();
+        }
+      }
+    }
   }
 
   public resetPaginatorPageIndex() {
-    if (this.matPaginator) {
-      this.matPaginator.firstPage();
+    if (this.activePaginator) {
+      this.activePaginator.firstPage();
     }
   }
 
@@ -258,20 +289,35 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (!this.tableConfig) {
       throw new Error("init inputs [tableConfig] is mandatory!")
     }
+    if (this.isServerWiring() && !this.paginatorState) {
+      this.paginatorState = PaginatorState.empty();
+    }
   }
 
   // we need this, in order to make pagination work with *ngIf
   ngAfterViewInit(): void {
+    // Must remain unconditional — also covers the externalPaginator first-change case
+    // for client mode (ngOnChanges defers initPaginator() on firstChange).
     this.initPaginator()
     this.initSortingDataAccessor();
     this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
     this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
+    if (this.isServerMode()) {
+      this.startServerController();
+    }
   }
 
 
   private initPaginator(): void {
     if (this.tableDataSource) {
-      this.tableDataSource.paginator = this.matPaginator;
+      // In server mode, do NOT bind the paginator to the data source — MatTableDataSource
+      // would call _updatePaginator(filteredDataLength) and overwrite the server-supplied length.
+      // Pagination is driven by ServerPageController instead.
+      if (this.isServerMode()) {
+        this.tableDataSource.paginator = null;
+      } else {
+        this.tableDataSource.paginator = this.activePaginator;
+      }
     }
   }
 
@@ -415,6 +461,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   sortTable(sortParameters: Sort) {
     this.sort.emit(sortParameters);
+    if (this.isServerMode() && this.serverPageController) {
+      this.serverPageController.onSort(sortParameters);
+    }
     // MatTableDataSource обрабатывает sort через RxJS-подписку —
     // filteredData обновится в следующем микротаске
     Promise.resolve().then(() => {
@@ -426,6 +475,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   onPageChangeInternal(event: PageEvent): void {
     this.updateTimelineBounds();
     this.pageChange.emit(event);
+    if (this.isServerMode() && this.serverPageController) {
+      this.serverPageController.onPage({ pageIndex: event.pageIndex, pageSize: event.pageSize });
+    }
   }
 
   private updateTimelineBounds(): void {
@@ -470,9 +522,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (this.paginatorState) return data;
 
     // Client-side с пагинацией: вырезаем видимый срез
-    if (this.paginationProvider.isEnabled && this.matPaginator) {
-      const start = this.matPaginator.pageIndex * this.matPaginator.pageSize;
-      return data.slice(start, start + this.matPaginator.pageSize);
+    if (this.paginationProvider.isEnabled && this.activePaginator) {
+      const start = this.activePaginator.pageIndex * this.activePaginator.pageSize;
+      return data.slice(start, start + this.activePaginator.pageSize);
     }
 
     // Без пагинации
@@ -527,8 +579,77 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return this.selectionProvider.selection;
   }
 
+  private isServerMode(): boolean {
+    return !!this.pageSource;
+  }
+
+  private isServerWiring(): boolean {
+    return !!this.pageSource || this.tableConfig?.pageableCfg?.mode === 'server';
+  }
+
+  private startServerController(): void {
+    if (!this.pageSource) {
+      return;
+    }
+    this.serverPageController = new ServerPageController<T>(this.pageSource, {
+      onResult: result => {
+        this.paginatorState = result.state;
+        this.applyExternalPaginatorState(result.state);
+        this.tableData = result.content;
+        this.refreshTable();
+        this.cdr.markForCheck();
+      },
+      onLoading: loading => {
+        this.loadingChange.emit(loading);
+        this.cdr.markForCheck();
+      },
+      onError: error => this.pageError.emit(error),
+    });
+
+    this.subscribeExternalPaginator();
+
+    const initialSort: Sort | undefined =
+      this.matSort?.active ? { active: this.matSort.active, direction: this.matSort.direction } : undefined;
+
+    this.serverPageController.start({
+      // provider may not be initialized yet (no tableData binding in server mode) — read from config
+      pageSize: this.tableConfig.pageableCfg?.size ?? 20,
+      sort: initialSort,
+    });
+  }
+
+  private subscribeExternalPaginator(): void {
+    this.externalPaginatorSub?.unsubscribe();
+    if (this.externalPaginator) {
+      this.externalPaginatorSub = this.externalPaginator.page.subscribe(event =>
+        this.onPageChangeInternal(event)
+      );
+    }
+  }
+
+  private applyExternalPaginatorState(state: PaginatorState): void {
+    if (this.externalPaginator) {
+      // RISK (spec approach C): OnPush MatPaginator needs CD to reflect imperative changes.
+      this.externalPaginator.length = state.length;
+      this.externalPaginator.pageIndex = state.pageIndex;
+      this.cdr.markForCheck();
+    }
+  }
+
+  /** Re-invoke pageSource (server mode). resetPageIndex defaults to true (e.g. external filter changed). */
+  public reload(opts?: { resetPageIndex?: boolean }): void {
+    if (this.isServerMode() && this.serverPageController) {
+      this.serverPageController.reload(opts);
+    } else {
+      // Client mode: re-apply current data/filters.
+      this.refreshTable();
+    }
+  }
+
   ngOnDestroy() {
     this.resizeColumnOffsetsObserver.disconnect();
+    this.serverPageController?.stop();
+    this.externalPaginatorSub?.unsubscribe();
   }
 
   onDragStart($event: DragEvent, row: TableRow<T>) {

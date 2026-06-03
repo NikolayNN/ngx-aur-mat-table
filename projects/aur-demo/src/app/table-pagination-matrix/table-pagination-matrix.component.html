@@ -1,0 +1,13 @@
+<h3>1. Встроенный пагинатор + полные данные (client)</h3>
+<aur-mat-table [tableConfig]="clientCfg" [tableData]="fullData"></aur-mat-table>
+
+<h3>2. Внешний пагинатор + полные данные (client)</h3>
+<aur-mat-table [tableConfig]="clientCfg" [tableData]="fullData" [externalPaginator]="pgClientExt"></aur-mat-table>
+<mat-paginator #pgClientExt [pageSizeOptions]="[5, 10, 20]" [pageSize]="5"></mat-paginator>
+
+<h3>3. Встроенный пагинатор + серверные данные (pageSource)</h3>
+<aur-mat-table [tableConfig]="serverCfg" [pageSource]="loadPage"></aur-mat-table>
+
+<h3>4. Внешний пагинатор + серверные данные (pageSource)</h3>
+<aur-mat-table [tableConfig]="serverCfg" [pageSource]="loadPage" [externalPaginator]="pgServerExt"></aur-mat-table>
+<mat-paginator #pgServerExt [pageSizeOptions]="[5, 10, 20]" [pageSize]="5"></mat-paginator>
