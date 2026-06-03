@@ -43,7 +43,8 @@ export interface TableConfig<T> {
   tableHeaderButtonCfg?: TableHeaderButtonConfig,
   dragCfg?: DragDropConfig,
   totalRowCfg?: TotalRowConfig,
-  timelineCfg?: TimelineConfig<T>
+  timelineCfg?: TimelineConfig<T>,
+  rowStyleCfg?: RowStyleConfig<T>
 
 }
 
@@ -68,6 +69,15 @@ export interface DecorStyles {
   color?: string;
   background?: string;
   border?: string;
+  /** font-weight, e.g. 'bold' | 'bolder' | '600'. StyleBuilder.FontWeight values are valid strings. */
+  fontWeight?: string;
+}
+
+export interface RowStyleConfig<T> {
+  /** CSS class(es) added to the body <tr mat-row>; may return several space-separated classes, e.g. 'total not-hover'. */
+  class?: (row: TableRow<T>) => string | null;
+  /** Inline style for the body <tr mat-row>. */
+  style?: (row: TableRow<T>) => DecorStyles;
 }
 
 export interface ColumnConfig<T> {

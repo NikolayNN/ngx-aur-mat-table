@@ -345,12 +345,8 @@
             (drop)="onDrop($event, row)"
             *matRowDef="let row; columns: _displayColumns;"
             (click)="rowClick(row)"
-            [ngClass]="{'pointer': tableConfig.clickCfg?.pointer || false, 'new-color': highlighted===row.rowSrc && tableConfig?.clickCfg?.highlightClicked?.color}"
-            [ngStyle]="{
-          'color': highlighted===row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.color : undefined,
-          'background-color': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.background : undefined,
-          'border': highlighted === row.rowSrc? tableConfig?.clickCfg?.highlightClicked?.border : undefined
-          }">
+            [ngClass]="rowNgClass(row)"
+            [ngStyle]="rowNgStyle(row)">
         </tr>
 
         <!--expanded-row-->

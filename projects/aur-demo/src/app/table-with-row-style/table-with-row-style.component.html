@@ -1,0 +1,11 @@
+<div>
+  Каждая 5-я строка — «подытог»: жирный шрифт задаётся инлайново через
+  <code>rowStyleCfg.style</code> (поле <code>fontWeight</code> в <code>DecorStyles</code>), а класс
+  <code>not-hover</code> (через <code>rowStyleCfg.class</code>) отключает ховер.
+</div>
+
+<aur-mat-table
+  class="limit-size"
+  [tableData]="tableData"
+  [tableConfig]="tableConfig"
+></aur-mat-table>

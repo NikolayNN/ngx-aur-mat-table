@@ -126,3 +126,31 @@ Bind a host-owned `<mat-paginator>` so the table uses it instead of its built-in
 
 Публикация новой версии
 run publish.bat
+
+## Per-row styling (`rowStyleCfg`)
+
+Decorate body rows (`<tr mat-row>`) as a function of their data — e.g. bold subtotal rows.
+
+```ts
+tableConfig: TableConfig<ReportRow> = {
+  columnsCfg: [ /* ... */ ],
+  clickCfg: { pointer: true },
+  rowStyleCfg: {
+    // inline + typed; bold needs no stylesheet (DecorStyles.fontWeight)
+    style: row => row.rowSrc.bold ? { fontWeight: 'bold' } : {},
+    // CSS class(es) you own; here, suppress hover on those rows
+    class: row => row.rowSrc.bold ? 'not-hover' : null,
+  },
+};
+```
+
+- `style` returns `DecorStyles` (`color`, `background`, `border`, `fontWeight`). `background`/`border`/`fontWeight` style the whole `<tr>`; for per-row **text color** prefer a `class`, since Material cells set their own `color` and can override a `color` inherited from the row.
+- `class` returns one or more space-separated class names, or `null`.
+- On the clicked/highlighted row, `clickCfg.highlightClicked` overrides only the properties it sets; everything else falls through to `rowStyleCfg`.
+- The hooks run once per data refresh (OnPush-friendly).
+
+> **CSS scope:** classes from `class` are applied to the table's own `<tr>`, which lives inside the library component's encapsulated view. Define their styles in **global** styles, or pierce encapsulation with `::ng-deep`:
+>
+> ```scss
+> :host ::ng-deep tr.not-hover:hover { background-color: inherit !important; cursor: default; }
+> ```

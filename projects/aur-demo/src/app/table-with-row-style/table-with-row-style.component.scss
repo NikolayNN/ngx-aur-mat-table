@@ -1,0 +1,19 @@
+:host {
+  display: block;
+  padding: 8px;
+}
+
+/*
+ * Classes from rowStyleCfg.class land on the LIBRARY's <tr>, which lives in the
+ * aur-mat-table component's encapsulated view. To style it from here we must
+ * pierce encapsulation with ::ng-deep — or define the class in global styles.
+ */
+:host ::ng-deep tr.not-hover:hover {
+  background-color: inherit !important;
+  cursor: default;
+}
+
+/* the `subtotal` class (also added via rowStyleCfg.class) draws a separator above each subtotal row */
+:host ::ng-deep tr.subtotal td {
+  border-top: 2px solid #bdbdbd;
+}

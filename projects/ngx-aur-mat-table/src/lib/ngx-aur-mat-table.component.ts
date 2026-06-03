@@ -18,7 +18,7 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-import {ColumnView, TableConfig} from './model/ColumnConfig';
+import {ColumnView, DecorStyles, TableConfig} from './model/ColumnConfig';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
@@ -26,6 +26,7 @@ import {SelectionProvider, SelectionProviderDummy} from './providers/SelectionPr
 import {ActionEvent, RowActionProvider, RowActionProviderDummy} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewFactory} from "./model/TableViewFactory";
+import {ResolvedRowStyle, RowStyleFactory} from "./model/RowStyleFactory";
 import {IndexProvider, IndexProviderDummy} from "./providers/IndexProvider";
 import {PaginationProvider, PaginationProviderDummy} from "./providers/PaginationProvider";
 import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
@@ -101,6 +102,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   tableView: Map<string, ColumnView<string>>[] = [];
+
+  private rowStyles: ResolvedRowStyle[] = [];
 
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
 
@@ -406,6 +409,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
     this._defaultFilterPredicate = this.tableDataSource.filterPredicate;
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
+    this.rowStyles = RowStyleFactory.toRowStyles(this.tableDataSource.data, this.tableConfig)
     if (!this._customDisplayColumnsEnabled) {
       this._displayColumns = DisplayColumnsFactory.create(this.tableConfig);
     }
@@ -563,6 +567,39 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   castSrc(row: any): TableRow<T> {
     return row;
+  }
+
+  private decorToCss(d?: DecorStyles): { [klass: string]: string } {
+    const css: { [klass: string]: string } = {};
+    if (!d) {
+      return css;
+    }
+    if (d.color) css['color'] = d.color;
+    if (d.background) css['background-color'] = d.background;
+    if (d.border) css['border'] = d.border;
+    if (d.fontWeight) css['font-weight'] = d.fontWeight;
+    return css;
+  }
+
+  rowNgStyle(row: TableRow<T>): { [klass: string]: string } {
+    const base = this.decorToCss(this.rowStyles[row.id]?.style);
+    if (this.highlighted === row.rowSrc) {
+      // highlightClicked overrides only the properties it sets (per-property merge; highlight wins)
+      return { ...base, ...this.decorToCss(this.tableConfig.clickCfg?.highlightClicked) };
+    }
+    return base;
+  }
+
+  rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
+    const cls: { [klass: string]: boolean } = {
+      'pointer': this.tableConfig.clickCfg?.pointer || false,
+      'new-color': this.highlighted === row.rowSrc && !!this.tableConfig.clickCfg?.highlightClicked?.color,
+    };
+    const custom = this.rowStyles[row.id]?.class;
+    if (custom) {
+      cls[custom] = true; // NgClass accepts a multi-class key, e.g. 'total not-hover'
+    }
+    return cls;
   }
 
   rowClick(row: TableRow<T>) {

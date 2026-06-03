@@ -67,6 +67,9 @@ import {
 import {
   TablePaginationMatrixComponent
 } from "./table-pagination-matrix/table-pagination-matrix.component";
+import {
+  TableWithRowStyleComponent
+} from "./table-with-row-style/table-with-row-style.component";
 
 @NgModule({
   declarations: [
@@ -106,7 +109,8 @@ import {
     TableWithMenuComponent,
     TableWithServerFiltersComponent,
     TableWithExternalPaginatorComponent,
-    TablePaginationMatrixComponent
+    TablePaginationMatrixComponent,
+    TableWithRowStyleComponent
   ],
   imports: [
     BrowserModule,
