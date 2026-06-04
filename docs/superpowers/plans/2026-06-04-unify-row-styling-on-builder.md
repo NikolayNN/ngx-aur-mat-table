@@ -968,18 +968,18 @@ git commit -m "refactor(demo): migrate row-style and total demos to bodyRowCfg/t
 
 **Files:**
 - Modify: `README.md`
-- Create: `changelog/19.0.20.md`
+- Create: `changelog/19.1.0.md`
 - Modify: `projects/ngx-aur-mat-table/package.json`
 
 - [ ] **Step 1: Confirm the next version**
 
 Run: `git --no-pager log --oneline -5 -- changelog`
-Inspect existing files: `changelog/19.0.19.md` is the latest. Use **`19.0.20`** as the next version (adjust if a newer changelog file already exists).
+Inspect existing files: `changelog/19.0.19.md` is the latest. Use **`19.1.0`** as the next version (adjust if a newer changelog file already exists).
 
-- [ ] **Step 2: Create `changelog/19.0.20.md`**
+- [ ] **Step 2: Create `changelog/19.1.0.md`**
 
 ```markdown
-# 19.0.20
+# 19.1.0
 
 ## BREAKING — unified row config & styling on StyleBuilder.Row
 
@@ -1014,7 +1014,7 @@ totalRowCfg: { enable: true, styleCfg: { style: StyleBuilder.Row.builder().color
 
 - [ ] **Step 3: Bump the library version**
 
-In `projects/ngx-aur-mat-table/package.json`, set `"version"` to `"19.0.20"`.
+In `projects/ngx-aur-mat-table/package.json`, set `"version"` to `"19.1.0"`.
 
 - [ ] **Step 4: Update README**
 
@@ -1023,8 +1023,8 @@ Open `README.md`, find the existing per-row styling / `DecorStyles` / `clickCfg`
 - [ ] **Step 5: Commit**
 
 ```bash
-git add README.md changelog/19.0.20.md projects/ngx-aur-mat-table/package.json
-git commit -m "docs: document unified row config & styling; bump to 19.0.20"
+git add README.md changelog/19.1.0.md projects/ngx-aur-mat-table/package.json
+git commit -m "docs: document unified row config & styling; bump to 19.1.0"
 ```
 
 ---

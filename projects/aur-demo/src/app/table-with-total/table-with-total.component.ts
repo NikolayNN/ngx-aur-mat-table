@@ -40,7 +40,7 @@ export class TableWithTotalComponent {
         style: totals => StyleBuilder.Row.builder()
           .color(totals.get('age') < 100 ? 'red' : 'blue')
           .background('lightgray')
-          .border(borderBuilder => borderBuilder.top('3px', BorderStyle.SOLID, 'RED'))
+          .border(borderBuilder => borderBuilder.top('3px', BorderStyle.SOLID, 'red'))
           .fontWeight(FontWeight.BOLDER)
       }
     }

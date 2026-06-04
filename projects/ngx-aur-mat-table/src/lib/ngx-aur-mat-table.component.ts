@@ -215,6 +215,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   highlighted: T | undefined;
 
+  // Hover state. Compares TableRow object identity (the same instance the template iterates),
+  // unlike `highlighted`, which compares row.rowSrc (an external @Input value, not a TableRow).
   hovered: TableRow<T> | null = null;
 
   private customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();

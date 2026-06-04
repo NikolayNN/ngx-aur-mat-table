@@ -7,6 +7,9 @@
  * Classes from bodyRowCfg.styleCfg.class land on the LIBRARY's <tr>, which lives in the
  * aur-mat-table component's encapsulated view. To style it from here we must
  * pierce encapsulation with ::ng-deep — or define the class in global styles.
+ *
+ * The library now applies hover as an inline [style] overlay (bodyRowCfg.hoverCfg.styleCfg),
+ * so this rule needs `!important` to win over that inline style and suppress hover per-row.
  */
 :host ::ng-deep tr.not-hover:hover {
   background-color: inherit !important;

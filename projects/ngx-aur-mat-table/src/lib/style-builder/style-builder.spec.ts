@@ -1,6 +1,7 @@
 import { StyleBuilder } from './style-builder';
 import Row = StyleBuilder.Row;
 import FontWeight = StyleBuilder.FontWeight;
+import BorderStyle = StyleBuilder.BorderStyle;
 
 describe('StyleBuilder.Row', () => {
   it('exposes the configured color via colorValue, empty string when unset', () => {
@@ -24,5 +25,13 @@ describe('StyleBuilder.Row', () => {
     base.overrideWith(overlay);
     expect(base.colorValue).toBe('red');
     expect(overlay.colorValue).toBe('green');
+  });
+
+  it('overrideWith preserves a base-only border when the overlay sets none', () => {
+    const base = Row.builder().border(b => b.top('1px', BorderStyle.SOLID, 'black'));
+    const overlay = Row.builder().color('green');
+    const css = base.overrideWith(overlay).build();
+    expect(css).toContain('border-top: 1px solid black;');
+    expect(css).toContain('color: green;');
   });
 });
