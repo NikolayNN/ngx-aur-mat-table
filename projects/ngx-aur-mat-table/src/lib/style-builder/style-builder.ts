@@ -32,6 +32,20 @@ export namespace StyleBuilder {
       return this;
     }
 
+    /** configured text color ('' if unset) — used to toggle `.new-color` */
+    get colorValue(): string {
+      return this._color;
+    }
+
+    overrideWith(o: Row): Row {
+      const r = new Row();
+      r._background = o._background || this._background;
+      r._color      = o._color      || this._color;
+      r._border     = o._border     || this._border;
+      r._fontWeight = o._fontWeight || this._fontWeight;
+      return r;
+    }
+
     build(): string {
       let styles = '';
       if (this._background) styles += `background: ${this._background}; `;
