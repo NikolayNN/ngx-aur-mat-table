@@ -6,18 +6,18 @@
     &lt;app-row-details [row]="row"&gt;&lt;/app-row-details&gt;
   &lt;/ng-template&gt;
 </pre>
-<p>Также можно настроить clickCfg для управления подсветкой строк и тп </p>
+<p>Также можно настроить bodyRowCfg.clickCfg и bodyRowCfg.hoverCfg для управления подсветкой и наведением строк и тп </p>
 <p>Пример</p>
 <pre>
-  clickCfg: &#123;
-  pointer: true,
-  highlightClicked: &#123;
-        background: 'blue',
-        color: 'red',
-        border: '2px solid green'
-      &#125;,
+  bodyRowCfg: &#123;
+    clickCfg: &#123;
+      highlightClicked: StyleBuilder.Row.builder()
+        .background('blue').color('red')
+        .border(b =&gt; b.allBorders('2px', StyleBuilder.BorderStyle.SOLID, 'green')),
       cancelable: true
     &#125;,
+    hoverCfg: &#123; pointer: true &#125;
+  &#125;,
 </pre>
 
 <aur-mat-table
