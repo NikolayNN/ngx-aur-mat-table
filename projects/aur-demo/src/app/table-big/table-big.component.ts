@@ -89,8 +89,8 @@ export class TableBigComponent {
     stickyCfg: {
       header: true
     },
-    clickCfg: {
-      pointer: true
+    bodyRowCfg: {
+      hoverCfg: { pointer: true },
     },
     filterCfg: {
       enable: false

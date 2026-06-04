@@ -28,15 +28,20 @@ export class TableWithTotalComponent {
         totalConverter: v => v.map(v => v.rowSrc.age).reduce((sum, age) => sum + age, 0)
       }
     ],
+    headerRowCfg: {
+      styleCfg: {
+        style: StyleBuilder.Row.builder().background('#eee').fontWeight(FontWeight.BOLDER)
+      }
+    },
     totalRowCfg: {
       enable: true,
-      totalRowView: {
-        style: StyleBuilder.Row.builder()
-          .color('blue')
+      styleCfg: {
+        // value-driven: red when the summed age is below the threshold, else the default look
+        style: totals => StyleBuilder.Row.builder()
+          .color(totals.get('age') < 100 ? 'red' : 'blue')
           .background('lightgray')
           .border(borderBuilder => borderBuilder.top('3px', BorderStyle.SOLID, 'RED'))
           .fontWeight(FontWeight.BOLDER)
-          .build()
       }
     }
   }

@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
-import { TableConfig, TableRow } from 'ngx-aur-mat-table';
+import { StyleBuilder, TableConfig, TableRow } from 'ngx-aur-mat-table';
 import { Customer } from '../shared/model/customer';
 import { CustomerGenerator } from '../shared/generator/CustomerGenerator';
+import FontWeight = StyleBuilder.FontWeight;
 
 @Component({
   selector: 'app-table-with-row-style',
@@ -19,12 +20,17 @@ export class TableWithRowStyleComponent {
       { name: 'name', key: 'name', valueConverter: v => v.name },
       { name: 'age', key: 'age', valueConverter: v => v.age },
     ],
-    clickCfg: { pointer: true },
-    rowStyleCfg: {
-      // inline + typed: bold via the fontWeight field of DecorStyles — no stylesheet needed
-      style: row => this.isSubtotal(row) ? { fontWeight: 'bold', background: '#fafafa' } : {},
-      // class hook: CSS the consumer owns (see scss) — here it suppresses hover on subtotal rows
-      class: row => this.isSubtotal(row) ? 'subtotal not-hover' : null,
+    bodyRowCfg: {
+      hoverCfg: {
+        pointer: true,
+        styleCfg: { style: StyleBuilder.Row.builder().background('#eef') }, // custom hover bg
+      },
+      styleCfg: {
+        style: row => this.isSubtotal(row)
+          ? StyleBuilder.Row.builder().fontWeight(FontWeight.BOLD).background('#fafafa')
+          : '',
+        class: row => this.isSubtotal(row) ? 'subtotal not-hover' : null,
+      },
     },
   };
 

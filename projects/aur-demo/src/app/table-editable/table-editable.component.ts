@@ -24,8 +24,8 @@ export class TableEditableComponent {
         valueConverter: v => v.age
       }
     ],
-    clickCfg: {
-      pointer: true
+    bodyRowCfg: {
+      hoverCfg: { pointer: true },
     },
     actionCfg: {
       actions: [
