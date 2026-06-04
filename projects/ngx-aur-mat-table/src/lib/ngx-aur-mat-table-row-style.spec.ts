@@ -4,27 +4,33 @@ import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxAurMatTableComponent } from './ngx-aur-mat-table.component';
 import { NgxAurMatTableModule } from './ngx-aur-mat-table.module';
 import { TableConfig } from './model/ColumnConfig';
+import { StyleBuilder } from './style-builder/style-builder';
+import Row = StyleBuilder.Row;
+import FontWeight = StyleBuilder.FontWeight;
 
-interface Row { name: string; bold?: boolean; }
+interface R { name: string; bold?: boolean; }
 
 @Component({
   standalone: false,
   template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
 })
 class HostComponent {
-  @ViewChild('t') table!: NgxAurMatTableComponent<Row>;
-  cfg: TableConfig<Row> = {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  cfg: TableConfig<R> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
-    clickCfg: { pointer: true, highlightClicked: { background: 'yellow' } },
-    rowStyleCfg: {
-      style: r => r.rowSrc.bold ? { fontWeight: 'bold', color: 'black' } : {},
-      class: r => r.rowSrc.bold ? 'total not-hover' : null,
+    bodyRowCfg: {
+      clickCfg: { highlightClicked: Row.builder().background('yellow') },
+      hoverCfg: { pointer: true, styleCfg: { style: Row.builder().background('#eee'), class: 'hovering' } },
+      styleCfg: {
+        style: r => r.rowSrc.bold ? Row.builder().fontWeight(FontWeight.BOLD).color('black') : '',
+        class: r => r.rowSrc.bold ? 'total not-hover' : null,
+      },
     },
   };
-  data: Row[] = [{ name: 'a', bold: true }, { name: 'b' }];
+  data: R[] = [{ name: 'a', bold: true }, { name: 'b' }];
 }
 
-describe('NgxAurMatTable rowStyleCfg', () => {
+describe('NgxAurMatTable bodyRowCfg', () => {
   let fixture: ComponentFixture<HostComponent>;
   let host: HostComponent;
 
@@ -38,14 +44,14 @@ describe('NgxAurMatTable rowStyleCfg', () => {
     fixture.detectChanges();
   });
 
-  it('applies the style hook to the bold row only', () => {
+  it('applies the style hook to the bold row only (as a CSS string)', () => {
     const [boldRow, plainRow] = host.table.tableDataSource.data;
-    expect(host.table.rowNgStyle(boldRow)['font-weight']).toBe('bold');
-    expect(host.table.rowNgStyle(boldRow)['color']).toBe('black');
-    expect(host.table.rowNgStyle(plainRow)['font-weight']).toBeUndefined();
+    expect(host.table.rowStyle(boldRow)).toContain('font-weight: bold;');
+    expect(host.table.rowStyle(boldRow)).toContain('color: black;');
+    expect(host.table.rowStyle(plainRow)).toBe('');
   });
 
-  it('applies the class hook to the bold row, alongside pointer', () => {
+  it('applies the class hook to the bold row, alongside pointer (from hoverCfg)', () => {
     const [boldRow, plainRow] = host.table.tableDataSource.data;
     expect(host.table.rowNgClass(boldRow)['total not-hover']).toBeTrue();
     expect(host.table.rowNgClass(boldRow)['pointer']).toBeTrue();
@@ -53,12 +59,26 @@ describe('NgxAurMatTable rowStyleCfg', () => {
     expect(host.table.rowNgClass(plainRow)['pointer']).toBeTrue();
   });
 
-  it('lets highlightClicked override the base style per-property on the highlighted row', () => {
+  it('layers the highlight overlay over the base per-property on the highlighted row', () => {
     const [boldRow] = host.table.tableDataSource.data;
     host.table.highlighted = boldRow.rowSrc;
-    const style = host.table.rowNgStyle(boldRow);
-    expect(style['background-color']).toBe('yellow'); // from highlightClicked
-    expect(style['font-weight']).toBe('bold');         // base preserved (highlight didn't set it)
+    const style = host.table.rowStyle(boldRow)!;
+    expect(style).toContain('background: yellow;'); // from highlightClicked
+    expect(style).toContain('font-weight: bold;');  // base preserved
+  });
+
+  it('applies the hover overlay (style + class) only while the row is hovered', () => {
+    const [, plainRow] = host.table.tableDataSource.data;
+    expect(host.table.rowStyle(plainRow)).toBe('');
+    expect(host.table.rowNgClass(plainRow)['hovering']).toBeUndefined();
+
+    host.table.onRowEnter(plainRow);
+    expect(host.table.rowStyle(plainRow)).toContain('background: #eee;');
+    expect(host.table.rowNgClass(plainRow)['hovering']).toBeTrue();
+
+    host.table.onRowLeave(plainRow);
+    expect(host.table.rowStyle(plainRow)).toBe('');
+    expect(host.table.rowNgClass(plainRow)['hovering']).toBeUndefined();
   });
 
   it('renders the inline font-weight on the bold row <tr>', () => {
@@ -73,15 +93,60 @@ describe('NgxAurMatTable rowStyleCfg', () => {
   standalone: false,
   template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
 })
-class PlainHostComponent {
-  @ViewChild('t') table!: NgxAurMatTableComponent<Row>;
-  cfg: TableConfig<Row> = {
-    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+class HeaderTotalHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name, totalConverter: rows => rows.length }],
+    headerRowCfg: { styleCfg: { style: Row.builder().background('#ddd'), class: 'hdr' } },
+    totalRowCfg: {
+      enable: true,
+      styleCfg: {
+        style: totals => totals.get('name') >= 2 ? Row.builder().color('green') : Row.builder().color('red'),
+        class: totals => totals.get('name') >= 2 ? 'many' : 'few',
+      },
+    },
   };
-  data: Row[] = [{ name: 'a' }];
+  data: R[] = [{ name: 'a' }, { name: 'b' }];
 }
 
-describe('NgxAurMatTable rowStyleCfg absent (back-compat)', () => {
+describe('NgxAurMatTable headerRowCfg / totalRowCfg', () => {
+  let fixture: ComponentFixture<HeaderTotalHostComponent>;
+  let host: HeaderTotalHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [HeaderTotalHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(HeaderTotalHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('resolves the static header style/class', () => {
+    expect(host.table._headerStyle).toContain('background: #ddd;');
+    expect(host.table._headerClass).toBe('hdr');
+  });
+
+  it('resolves the value-driven total style/class from the totals map', () => {
+    expect(host.table._totalStyle).toContain('color: green;'); // 2 rows -> 'many'
+    expect(host.table._totalClass).toBe('many');
+  });
+});
+
+@Component({
+  standalone: false,
+  template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class PlainHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+  };
+  data: R[] = [{ name: 'a' }];
+}
+
+describe('NgxAurMatTable no row cfg (back-compat)', () => {
   let fixture: ComponentFixture<PlainHostComponent>;
   let host: PlainHostComponent;
 
@@ -95,9 +160,11 @@ describe('NgxAurMatTable rowStyleCfg absent (back-compat)', () => {
     fixture.detectChanges();
   });
 
-  it('produces empty inline style and only the default classes', () => {
+  it('produces null inline style and only the default classes', () => {
     const [row] = host.table.tableDataSource.data;
-    expect(host.table.rowNgStyle(row)).toEqual({});
+    expect(host.table.rowStyle(row)).toBeNull();
     expect(host.table.rowNgClass(row)).toEqual({ 'pointer': false, 'new-color': false });
+    expect(host.table._headerStyle).toBeNull();
+    expect(host.table._totalStyle).toBeNull();
   });
 });

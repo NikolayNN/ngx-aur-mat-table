@@ -7,15 +7,9 @@ import {AbstractProvider} from "./AbstractProvider";
 export class TotalRowProvider<T> extends AbstractProvider {
   isEnabled = true;
   totals = new Map<string, any>();
-  style: string | undefined;
 
   constructor(private tableConfig: TableConfig<T>, private tableDataSource: MatTableDataSource<TableRow<T>>) {
     super();
-  }
-
-  setStyle(): TotalRowProvider<T> {
-    this.style = this.tableConfig.totalRowCfg?.totalRowView?.style;
-    return this;
   }
 
   setTotalRow(): TotalRowProvider<T> {

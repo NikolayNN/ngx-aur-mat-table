@@ -18,7 +18,8 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-import {ColumnView, DecorStyles, TableConfig} from './model/ColumnConfig';
+import {ColumnView, TableConfig} from './model/ColumnConfig';
+import {StyleBuilder} from './style-builder/style-builder';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
@@ -104,6 +105,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   tableView: Map<string, ColumnView<string>>[] = [];
 
   private rowStyles: ResolvedRowStyle[] = [];
+
+  _headerStyle: string | null = null;
+  _headerClass: string | null = null;
+  _totalStyle: string | null = null;
+  _totalClass: string | null = null;
 
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
 
@@ -208,6 +214,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   totalRowProvider: TotalRowProvider<T> = new TotalRowProviderDummy();
 
   highlighted: T | undefined;
+
+  hovered: TableRow<T> | null = null;
 
   private customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();
 
@@ -375,8 +383,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
 
     this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
-      .setStyle()
       .setTotalRow();
+
+    const _totals = this.totalRowProvider.totals;
+    const _data = this.tableDataSource.data;
+    const _sc = this.tableConfig.totalRowCfg?.styleCfg;
+    this._totalStyle = this.toCss(this.resolveTotal(_sc?.style, _totals, _data) ?? null);
+    this._totalClass = this.resolveTotal(_sc?.class, _totals, _data) ?? null;
 
     this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.tableHeaderButtonCfg)
 
@@ -410,6 +423,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this._defaultFilterPredicate = this.tableDataSource.filterPredicate;
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
     this.rowStyles = RowStyleFactory.toRowStyles(this.tableDataSource.data, this.tableConfig)
+    this._headerStyle = this.toCss(this.tableConfig.headerRowCfg?.styleCfg?.style);
+    this._headerClass = this.tableConfig.headerRowCfg?.styleCfg?.class ?? null;
     if (!this._customDisplayColumnsEnabled) {
       this._displayColumns = DisplayColumnsFactory.create(this.tableConfig);
     }
@@ -569,41 +584,70 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return row;
   }
 
-  private decorToCss(d?: DecorStyles): { [klass: string]: string } {
-    const css: { [klass: string]: string } = {};
-    if (!d) {
-      return css;
-    }
-    if (d.color) css['color'] = d.color;
-    if (d.background) css['background-color'] = d.background;
-    if (d.border) css['border'] = d.border;
-    if (d.fontWeight) css['font-weight'] = d.fontWeight;
-    return css;
+  /** StyleBuilder.Row | string | null -> CSS string | null. */
+  private toCss(s?: StyleBuilder.Row | string | null): string | null {
+    if (s == null) return null;
+    return typeof s === 'string' ? s : s.build();
   }
 
-  rowNgStyle(row: TableRow<T>): { [klass: string]: string } {
-    const base = this.decorToCss(this.rowStyles[row.id]?.style);
-    if (this.highlighted === row.rowSrc) {
-      // highlightClicked overrides only the properties it sets (per-property merge; highlight wins)
-      return { ...base, ...this.decorToCss(this.tableConfig.clickCfg?.highlightClicked) };
+  /** base with `overlay` on top. Builders -> field override; any string -> concat (CSS last-wins). */
+  private mergeStyle(
+    base?: StyleBuilder.Row | string | null,
+    overlay?: StyleBuilder.Row | string | null,
+  ): string | null {
+    if (base == null) return this.toCss(overlay);
+    if (overlay == null) return this.toCss(base);
+    if (base instanceof StyleBuilder.Row && overlay instanceof StyleBuilder.Row) {
+      return base.overrideWith(overlay).build();
     }
-    return base;
+    return `${this.toCss(base) ?? ''} ${this.toCss(overlay) ?? ''}`.trim();
+  }
+
+  /** total hook: static value or (totals, data) => value. */
+  private resolveTotal<R>(
+    v: R | ((t: Map<string, any>, d: TableRow<T>[]) => R) | undefined,
+    totals: Map<string, any>, data: TableRow<T>[],
+  ): R | undefined {
+    return typeof v === 'function' ? (v as any)(totals, data) : v;
+  }
+
+  private hoverActive(row: TableRow<T>): boolean {
+    const h = this.tableConfig.bodyRowCfg?.hoverCfg;
+    return this.hovered === row && h?.enable !== false;
+  }
+
+  onRowEnter(row: TableRow<T>) { this.hovered = row; }
+  onRowLeave(row: TableRow<T>) { if (this.hovered === row) this.hovered = null; }
+
+  /** [style] for the body <tr>: base -> hover overlay -> highlight overlay (highlight wins). */
+  rowStyle(row: TableRow<T>): string | null {
+    let acc: StyleBuilder.Row | string | null = this.rowStyles[row.id]?.style ?? null;
+    if (this.hoverActive(row)) {
+      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style ?? null);
+    }
+    if (this.highlighted === row.rowSrc) {
+      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.clickCfg?.highlightClicked ?? null);
+    }
+    return this.toCss(acc);
   }
 
   rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
+    const hover = this.tableConfig.bodyRowCfg?.hoverCfg;
+    const hl = this.tableConfig.bodyRowCfg?.clickCfg?.highlightClicked;
+    const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
     const cls: { [klass: string]: boolean } = {
-      'pointer': this.tableConfig.clickCfg?.pointer || false,
-      'new-color': this.highlighted === row.rowSrc && !!this.tableConfig.clickCfg?.highlightClicked?.color,
+      'pointer': hover?.pointer || false,
+      'new-color': this.highlighted === row.rowSrc && hlHasColor,
     };
     const custom = this.rowStyles[row.id]?.class;
-    if (custom) {
-      cls[custom] = true; // NgClass accepts a multi-class key, e.g. 'total not-hover'
-    }
+    if (custom) cls[custom] = true;
+    const hcls = this.hoverActive(row) ? hover?.styleCfg?.class : null;
+    if (hcls) cls[hcls] = true;
     return cls;
   }
 
   rowClick(row: TableRow<T>) {
-    if (row.rowSrc !== this.highlighted || (row.rowSrc === this.highlighted && !this.tableConfig.clickCfg?.cancelable)) {
+    if (row.rowSrc !== this.highlighted || (row.rowSrc === this.highlighted && !this.tableConfig.bodyRowCfg?.clickCfg?.cancelable)) {
       this.onRowClick.emit(row.rowSrc);
       this.highlighted = row.rowSrc;
     } else {

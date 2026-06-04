@@ -1,6 +1,7 @@
 import {RowStyleFactory} from './RowStyleFactory';
 import {TableRow} from './TableRow';
 import {TableConfig} from './ColumnConfig';
+import {StyleBuilder} from '../style-builder/style-builder';
 
 interface Row { name: string; bold?: boolean; }
 
@@ -14,44 +15,46 @@ function baseCfg(): TableConfig<Row> {
 
 describe('RowStyleFactory', () => {
 
-  it('returns [] when rowStyleCfg is absent', () => {
+  it('returns [] when bodyRowCfg.styleCfg is absent', () => {
     expect(RowStyleFactory.toRowStyles(rows({ name: 'a' }), baseCfg())).toEqual([]);
   });
 
-  it('returns [] when rowStyleCfg has neither class nor style', () => {
-    const cfg: TableConfig<Row> = { ...baseCfg(), rowStyleCfg: {} };
+  it('returns [] when styleCfg has neither class nor style', () => {
+    const cfg: TableConfig<Row> = { ...baseCfg(), bodyRowCfg: { styleCfg: {} } };
     expect(RowStyleFactory.toRowStyles(rows({ name: 'a' }), cfg)).toEqual([]);
   });
 
-  it('resolves the class hook per row, with empty style', () => {
+  it('resolves the class hook per row, with null style', () => {
     const cfg: TableConfig<Row> = {
       ...baseCfg(),
-      rowStyleCfg: { class: r => r.rowSrc.bold ? 'total not-hover' : null },
+      bodyRowCfg: { styleCfg: { class: r => r.rowSrc.bold ? 'total not-hover' : null } },
     };
     const result = RowStyleFactory.toRowStyles(rows({ name: 'a', bold: true }, { name: 'b' }), cfg);
     expect(result.length).toBe(2);
-    expect(result[0]).toEqual({ class: 'total not-hover', style: {} });
-    expect(result[1]).toEqual({ class: null, style: {} });
+    expect(result[0]).toEqual({ class: 'total not-hover', style: null });
+    expect(result[1]).toEqual({ class: null, style: null });
   });
 
-  it('resolves the style hook per row (incl. fontWeight), with null class', () => {
+  it('keeps the style hook result raw (un-built builder), with null class', () => {
     const cfg: TableConfig<Row> = {
       ...baseCfg(),
-      rowStyleCfg: { style: r => r.rowSrc.bold ? { fontWeight: 'bold' } : {} },
+      bodyRowCfg: { styleCfg: { style: r => r.rowSrc.bold ? StyleBuilder.Row.builder().fontWeight(StyleBuilder.FontWeight.BOLD) : '' } },
     };
     const result = RowStyleFactory.toRowStyles(rows({ name: 'a', bold: true }, { name: 'b' }), cfg);
-    expect(result[0]).toEqual({ class: null, style: { fontWeight: 'bold' } });
-    expect(result[1]).toEqual({ class: null, style: {} });
+    expect(result[0].class).toBeNull();
+    expect(result[0].style instanceof StyleBuilder.Row).toBeTrue();
+    expect((result[0].style as StyleBuilder.Row).build()).toContain('font-weight: bold;');
+    expect(result[1].style).toBe('');
   });
 
   it('aligns result order/length with row.id', () => {
     const cfg: TableConfig<Row> = {
       ...baseCfg(),
-      rowStyleCfg: { style: r => ({ color: 'c' + r.id }) },
+      bodyRowCfg: { styleCfg: { style: r => `color: c${r.id}` } },
     };
     const result = RowStyleFactory.toRowStyles(rows({ name: 'a' }, { name: 'b' }, { name: 'c' }), cfg);
     expect(result.length).toBe(3);
-    expect(result[0].style.color).toBe('c0');
-    expect(result[2].style.color).toBe('c2');
+    expect(result[0].style).toBe('color: c0');
+    expect(result[2].style).toBe('color: c2');
   });
 });

@@ -1,5 +1,6 @@
 import {TableRow} from "./TableRow";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
+import {StyleBuilder} from "../style-builder/style-builder";
 
 export interface TableConfig<T> {
 
@@ -37,47 +38,73 @@ export interface TableConfig<T> {
    * Настройка пагинации таблицы
    */
   pageableCfg?: PaginationConfig,
-  clickCfg?: ClickConfig,
   stickyCfg?: StickyConfig,
   tableView?: TableView,
   tableHeaderButtonCfg?: TableHeaderButtonConfig,
   dragCfg?: DragDropConfig,
-  totalRowCfg?: TotalRowConfig,
+  totalRowCfg?: TotalRowConfig<T>,
   timelineCfg?: TimelineConfig<T>,
-  rowStyleCfg?: RowStyleConfig<T>
+  headerRowCfg?: HeaderRowConfig,
+  bodyRowCfg?: BodyRowConfig<T>,
 
 }
 
 export interface ClickConfig {
-  /**
-   * Show pointer on hovered row
-   */
-  pointer?: boolean;
-  highlightClicked?: DecorStyles;
+  /** highlight style applied to the clicked/highlighted row; pointer moved to HoverConfig */
+  highlightClicked?: StyleBuilder.Row | string;
 
   /**
    * default false
-   * false первое и второе нажатие генерирует событие с этой строкой выделение со строки не снимается
-   *
-   * если true первое нажатие генерирует событие с этой строкой, второе нажатие вернет undefined,
-   * первое нажатие выделяет строку второе отменяет выделение
+   * false: first and second click both emit this row; selection is not cleared.
+   * true: first click emits this row, second click emits undefined; first selects, second deselects.
    */
   cancelable?: boolean;
 }
 
-export interface DecorStyles {
-  color?: string;
-  background?: string;
-  border?: string;
-  /** font-weight, e.g. 'bold' | 'bolder' | '600'. StyleBuilder.FontWeight values are valid strings. */
-  fontWeight?: string;
+export interface HoverConfig {
+  /** master switch for the hover overlay; treated as true when hoverCfg is present and this is not false */
+  enable?: boolean;
+  /** show cursor: pointer on the body row */
+  pointer?: boolean;
+  /** style/class applied while the row is hovered (overlay, like highlight) */
+  styleCfg?: HoverStyleConfig;
 }
 
-export interface RowStyleConfig<T> {
-  /** CSS class(es) added to the body <tr mat-row>; may return several space-separated classes, e.g. 'total not-hover'. */
+export interface HoverStyleConfig {
+  class?: string;
+  style?: StyleBuilder.Row | string;
+}
+
+export interface HeaderRowConfig {
+  styleCfg?: HeaderStyleConfig;
+}
+
+export interface BodyRowConfig<T> {
+  clickCfg?: ClickConfig;
+  hoverCfg?: HoverConfig;
+  styleCfg?: BodyStyleConfig<T>;
+}
+
+export interface HeaderStyleConfig {
+  /** CSS class(es) on the main header <tr>. */
+  class?: string;
+  /** Inline style; a StyleBuilder.Row (built/un-built) or a raw CSS string. */
+  style?: StyleBuilder.Row | string;
+}
+
+export interface BodyStyleConfig<T> {
+  /** CSS class(es) on the body <tr mat-row>; space-separated allowed, e.g. 'total not-hover'. */
   class?: (row: TableRow<T>) => string | null;
-  /** Inline style for the body <tr mat-row>. */
-  style?: (row: TableRow<T>) => DecorStyles;
+  /** Inline style for the body <tr>; a StyleBuilder.Row or a raw CSS string. */
+  style?: (row: TableRow<T>) => StyleBuilder.Row | string;
+}
+
+/** static value OR a function of the computed totals + source rows */
+export type TotalHook<T, R> = R | ((totals: Map<string, any>, data: TableRow<T>[]) => R);
+
+export interface TotalStyleConfig<T> {
+  class?: TotalHook<T, string | null>;
+  style?: TotalHook<T, StyleBuilder.Row | string>;
 }
 
 export interface ColumnConfig<T> {
@@ -94,10 +121,6 @@ export interface ColumnConfig<T> {
   valueView?: ColumnView<(value: TableRow<T>) => string>;
   totalConverter?: (value: TableRow<T>[]) => any;
   size?: ColumnSize;
-}
-
-export interface TotalRowView {
-  style?: string;
 }
 
 export interface IconView<T> {
@@ -259,9 +282,9 @@ export interface DragDropConfig {
   size?: ColumnSize;
 }
 
-export interface TotalRowConfig {
-  enable: boolean,
-  totalRowView?: TotalRowView
+export interface TotalRowConfig<T> {
+  enable: boolean;
+  styleCfg?: TotalStyleConfig<T>;
 }
 
 export interface TimelineLineConfig {

@@ -330,7 +330,8 @@
         </ng-container>
 
         <!--        header  row-->
-        <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header">
+        <tr mat-header-row *matHeaderRowDef="_displayColumns;  sticky: this.tableConfig.stickyCfg?.header"
+            [style]="_headerStyle" [ngClass]="_headerClass">
         </tr>
 
         <!--        extra header bottom row -->
@@ -345,8 +346,10 @@
             (drop)="onDrop($event, row)"
             *matRowDef="let row; columns: _displayColumns;"
             (click)="rowClick(row)"
+            (mouseenter)="onRowEnter(row)"
+            (mouseleave)="onRowLeave(row)"
             [ngClass]="rowNgClass(row)"
-            [ngStyle]="rowNgStyle(row)">
+            [style]="rowStyle(row)">
         </tr>
 
         <!--expanded-row-->
@@ -377,7 +380,7 @@
 
         <ng-container *ngIf="totalRowProvider.isEnabled">
           <tr mat-footer-row *matFooterRowDef="_displayColumns; sticky: this.tableConfig.stickyCfg?.total"
-              [style]="totalRowProvider.style"></tr>
+              [style]="_totalStyle" [ngClass]="_totalClass"></tr>
         </ng-container>
 
         <!--sub-footer-row-->
