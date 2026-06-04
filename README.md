@@ -127,29 +127,73 @@ Bind a host-owned `<mat-paginator>` so the table uses it instead of its built-in
 Публикация новой версии
 run publish.bat
 
-## Per-row styling (`rowStyleCfg`)
+## Row config & styling
 
-Decorate body rows (`<tr mat-row>`) as a function of their data — e.g. bold subtotal rows.
+Style header, body, and total rows independently via a uniform trio, each with a `styleCfg`.
+All `style` fields accept a `StyleBuilder.Row` (typed builder) **or** a raw CSS string.
 
 ```ts
 tableConfig: TableConfig<ReportRow> = {
   columnsCfg: [ /* ... */ ],
-  clickCfg: { pointer: true },
-  rowStyleCfg: {
-    // inline + typed; bold needs no stylesheet (DecorStyles.fontWeight)
-    style: row => row.rowSrc.bold ? { fontWeight: 'bold' } : {},
-    // CSS class(es) you own; here, suppress hover on those rows
-    class: row => row.rowSrc.bold ? 'not-hover' : null,
+
+  // header row — static style/class
+  headerRowCfg: {
+    styleCfg: { style: StyleBuilder.Row.builder().background('#eee'), class: 'my-header' },
+  },
+
+  // body rows — per-row style/class hooks + click highlight + configurable hover overlay
+  bodyRowCfg: {
+    clickCfg: {
+      highlightClicked: StyleBuilder.Row.builder().background('blue').color('red'),
+      cancelable: true,           // second click deselects
+    },
+    hoverCfg: {
+      pointer: true,              // cursor: pointer on body rows
+      styleCfg: { style: StyleBuilder.Row.builder().background('#f5f5f5') },
+    },
+    styleCfg: {
+      // StyleBuilder.Row or raw CSS string; '' means no override
+      style: row => row.rowSrc.bold ? StyleBuilder.Row.builder().fontWeight(StyleBuilder.FontWeight.BOLD) : '',
+      // CSS class(es); space-separated allowed
+      class: row => row.rowSrc.bold ? 'subtotal not-hover' : null,
+    },
+  },
+
+  // total/footer row — static value or (totals, data) => value  (value-driven)
+  totalRowCfg: {
+    enable: true,
+    styleCfg: {
+      style: totals => StyleBuilder.Row.builder().color(totals.get('age') < 100 ? 'red' : 'blue'),
+      class: totals => totals.get('age') < 100 ? 'few' : 'many',
+    },
   },
 };
 ```
 
-- `style` returns `DecorStyles` (`color`, `background`, `border`, `fontWeight`). `background`/`border`/`fontWeight` style the whole `<tr>`; for per-row **text color** prefer a `class`, since Material cells set their own `color` and can override a `color` inherited from the row.
-- `class` returns one or more space-separated class names, or `null`.
-- On the clicked/highlighted row, `clickCfg.highlightClicked` overrides only the properties it sets; everything else falls through to `rowStyleCfg`.
-- The hooks run once per data refresh (OnPush-friendly).
+- `bodyRowCfg.styleCfg.style` / `class` are per-row hooks called once per data refresh (OnPush-friendly).
+- `bodyRowCfg.clickCfg.highlightClicked` overlays the clicked row; `overrideWith` merges builder fields so base styles survive.
+- `bodyRowCfg.hoverCfg` drives a mouse-enter/leave overlay; the `#f2f2f2` hardcoded hover background is gone — configure it via `hoverCfg.styleCfg` or suppress hover entirely by omitting `hoverCfg`.
+- `totalRowCfg.styleCfg.style` / `class` can be a **static value** or a **function of `(totals: Map<string,any>, data: TableRow<T>[])`** — value-driven total styling.
+- For per-row **text color** prefer a `class` over the `style` hook, since Material cells set their own `color` and can override a `color` inherited from the row.
 
-> **CSS scope:** classes from `class` are applied to the table's own `<tr>`, which lives inside the library component's encapsulated view. Define their styles in **global** styles, or pierce encapsulation with `::ng-deep`:
+### Migration from pre-19.0.20
+
+```ts
+// before
+clickCfg: { pointer: true, highlightClicked: { background: 'blue', color: 'red' }, cancelable: true },
+rowStyleCfg: { style: r => r.rowSrc.bold ? { fontWeight: 'bold' } : {} },
+totalRowCfg: { enable: true, totalRowView: { style: StyleBuilder.Row.builder().color('blue').build() } },
+
+// after
+bodyRowCfg: {
+  clickCfg: { highlightClicked: StyleBuilder.Row.builder().background('blue').color('red'), cancelable: true },
+  hoverCfg: { pointer: true },
+  styleCfg: { style: r => r.rowSrc.bold ? StyleBuilder.Row.builder().fontWeight(StyleBuilder.FontWeight.BOLD) : '' },
+},
+totalRowCfg: { enable: true, styleCfg: { style: StyleBuilder.Row.builder().color('blue') } },
+```
+
+> **CSS scope:** classes from `bodyRowCfg.styleCfg.class` are applied to the table's own `<tr>`, which lives inside the library component's encapsulated view. Define their styles in **global** styles, or pierce encapsulation with `::ng-deep`:
 >
 > ```scss
 > :host ::ng-deep tr.not-hover:hover { background-color: inherit !important; cursor: default; }
