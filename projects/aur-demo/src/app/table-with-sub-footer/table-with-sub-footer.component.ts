@@ -1,5 +1,5 @@
-import { Component, OnInit } from '@angular/core';
-import {TableConfig} from "ngx-aur-mat-table";
+import { Component } from '@angular/core';
+import {StyleBuilder, TableConfig} from "ngx-aur-mat-table";
 import {Customer} from "../shared/model/customer";
 import {CustomerGenerator} from "../shared/generator/CustomerGenerator";
 
@@ -24,14 +24,14 @@ export class TableWithSubFooterComponent {
         valueConverter: v => v.age
       }
     ],
-    clickCfg: {
-      pointer: true,
-      highlightClicked: {
-        background: 'blue',
-        color: 'red',
-        border: '2px solid green'
+    bodyRowCfg: {
+      clickCfg: {
+        highlightClicked: StyleBuilder.Row.builder()
+          .background('blue').color('red')
+          .border(b => b.allBorders('2px', StyleBuilder.BorderStyle.SOLID, 'green')),
+        cancelable: true,
       },
-      cancelable: true
+      hoverCfg: { pointer: true },
     },
   }
   tableData: Customer[] = CustomerGenerator.generate(10);
