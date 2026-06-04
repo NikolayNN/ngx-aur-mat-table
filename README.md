@@ -176,7 +176,7 @@ tableConfig: TableConfig<ReportRow> = {
 - `totalRowCfg.styleCfg.style` / `class` can be a **static value** or a **function of `(totals: Map<string,any>, data: TableRow<T>[])`** — value-driven total styling.
 - For per-row **text color** prefer a `class` over the `style` hook, since Material cells set their own `color` and can override a `color` inherited from the row.
 
-### Migration from pre-19.0.20
+### Migration from pre-19.1.0
 
 ```ts
 // before

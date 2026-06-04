@@ -1,4 +1,4 @@
-# Migration Guide — 19.0.20 (Row config & styling)
+# Migration Guide — 19.1.0 (Row config & styling)
 
 **This is a BREAKING release.** Row configuration and styling were unified onto a single primitive (`StyleBuilder.Row`) and a uniform per‑row‑kind config trio. This guide maps every old option to its replacement with before/after examples.
 
@@ -8,7 +8,7 @@ If you only used `columnsCfg` (no row styling, no `clickCfg`), **nothing changes
 
 ## At a glance
 
-| Removed / old (≤ 19.0.19) | New (19.0.20) |
+| Removed / old (≤ 19.0.19) | New (19.1.0) |
 | --- | --- |
 | `clickCfg` (table root) | `bodyRowCfg.clickCfg` |
 | `clickCfg.pointer` | `bodyRowCfg.hoverCfg.pointer` |
@@ -226,4 +226,4 @@ For a body row the inline style is composed as: **base (`styleCfg.style`) → ho
 - [ ] (Optional) Add `headerRowCfg.styleCfg` to style the header.
 - [ ] (Optional) Use a `(totals, data) => …` function in `totalRowCfg.styleCfg` for value‑driven total styling.
 
-See `changelog/19.0.20.md` for the release summary, and the demo apps under `projects/aur-demo/src/app/` (`table-highlight-clicked-row`, `table-with-row-style`, `table-with-total`, `table-expanding-row`) for working examples.
+See `changelog/19.1.0.md` for the release summary, and the demo apps under `projects/aur-demo/src/app/` (`table-highlight-clicked-row`, `table-with-row-style`, `table-with-total`, `table-expanding-row`) for working examples.
