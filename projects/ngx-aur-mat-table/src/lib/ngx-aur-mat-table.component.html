@@ -27,7 +27,7 @@
                 class="table-settings-button"
                 [style.color]="headerButtonProvider.color"
                 [style.background-color]="headerButtonProvider.background"
-                (click)="onHeaderButton.emit($event)">
+                (click)="headerButton.emit($event)">
         {{ headerButtonProvider.icon }}
       </mat-icon>
 
