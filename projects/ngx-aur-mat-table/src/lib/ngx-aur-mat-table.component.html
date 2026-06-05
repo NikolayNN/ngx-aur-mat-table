@@ -164,7 +164,7 @@
                   <button mat-icon-button
                           (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
                           [matTooltip]="action.icon.tooltip || ''"
-                          *ngIf="action.display !== 'none'">
+                          *ngIf="action.visible !== false">
                     <mat-icon [style.color]="action.icon.color">
                       {{ action.icon.name }}
                     </mat-icon>
@@ -205,12 +205,12 @@
             <ng-container *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
               <!-- action with dropdown menu -->
               <ng-container *ngIf="action.menu; else directAction">
-                <ng-container *ngIf="action.display !== 'none'">
+                <ng-container *ngIf="action.visible !== false">
                   <mat-menu #actionMenu="matMenu">
                     <ng-container *ngFor="let item of action.menu">
                       <button mat-menu-item
-                              *ngIf="item.display !== 'none'"
-                              [disabled]="item.disabled === 'true'"
+                              *ngIf="item.visible !== false"
+                              [disabled]="item.disabled === true"
                               (click)="emitMenuAction(item.action, element.rowSrc)">
                         <mat-icon *ngIf="item.icon" [style.color]="item.icon.color">
                           {{ item.icon.name }}
@@ -234,7 +234,7 @@
                 <button mat-icon-button
                         (click)="emitRowAction(action.action, element.rowSrc, $event)"
                         [matTooltip]="action.icon.tooltip || ''"
-                        *ngIf="action.display !== 'none'">
+                        *ngIf="action.visible !== false">
                   <mat-icon [style.color]="action.icon.color">
                     {{ action.icon.name }}
                   </mat-icon>

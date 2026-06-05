@@ -2,6 +2,14 @@ import {TableRow} from "./TableRow";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 import {StyleBuilder} from "../style-builder/style-builder";
 
+/**
+ * Maps the leaf-type generic `T` to a resolved value:
+ * - when `T` is a plain value (e.g. `string`), resolves to `R`;
+ * - when `T` is a `(value) => string` resolver, resolves to `(value) => R`.
+ * Used for control fields whose value type must be `boolean`, not the leaf string.
+ */
+export type Resolvable<T, R> = T extends (arg: infer A) => any ? (arg: A) => R : R;
+
 export interface TableConfig<T> {
 
   /**
@@ -137,10 +145,8 @@ export interface IconView<T> {
 
   wrapper?: IconWrapper<T>;
 
-  // принимает значения 'show' | 'none'
-  // 'show' или не указан -  показать иконку
-  //
-  display?: T;
+  /** Show the icon. `undefined`/`true` → shown, `false` → hidden. */
+  visible?: Resolvable<T, boolean>;
 }
 
 export interface IconWrapper<T> {
@@ -210,7 +216,8 @@ export interface ActionConfig<T> {
 export interface Action<T> {
   action: T;
   icon: IconView<T>;
-  display?: T;
+  /** Show the action. `undefined`/`true` → shown, `false` → hidden. */
+  visible?: Resolvable<T, boolean>;
   menu?: MenuItem<T>[];
 }
 
@@ -221,10 +228,10 @@ export interface MenuItem<T> {
   text: T;
   /** optional leading icon */
   icon?: IconView<T>;
-  /** 'show' | 'none' — conditionally hide the item */
-  display?: T;
-  /** 'true' | 'false' — conditionally disable the item */
-  disabled?: T;
+  /** Show the item. `undefined`/`true` → shown, `false` → hidden. */
+  visible?: Resolvable<T, boolean>;
+  /** Disable the item. `undefined`/`false` → enabled, `true` → disabled. */
+  disabled?: Resolvable<T, boolean>;
 }
 
 export interface SelectionConfig<T> {
