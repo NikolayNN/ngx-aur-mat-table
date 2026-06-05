@@ -160,20 +160,20 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() pageChange = new EventEmitter<PageEvent>();
 
   // events if enabled actions
-  @Output() onRowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
+  @Output() rowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
   // -----------------------
 
   // events if enabled select event
-  @Output() selected = new EventEmitter<T[]>();
-  @Output() onSelect = new EventEmitter<T[]>();
-  @Output() onDeselect = new EventEmitter<T[]>();
+  @Output() selectionChange = new EventEmitter<T[]>();
+  @Output() selectAdded = new EventEmitter<T[]>();
+  @Output() selectRemoved = new EventEmitter<T[]>();
 
-  @Output() onSelectedRowsAction = new EventEmitter<ActionEvent<T[]>>();
+  @Output() selectedRowsAction = new EventEmitter<ActionEvent<T[]>>();
 
   @Output() selectionModel = new EventEmitter<SelectionModel<T>>();
   //------------------------
 
-  @Output() onRowClick = new EventEmitter<T>();
+  @Output() rowClick = new EventEmitter<T>();
 
   @Output() loadingChange = new EventEmitter<boolean>();
   @Output() pageError = new EventEmitter<unknown>();
@@ -181,14 +181,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   /**
    * return filtered rows
    */
-  @Output() onFilter = new EventEmitter<T[]>();
+  @Output() filter = new EventEmitter<T[]>();
 
   /** @deprecated use extraHeaderCellTopTemplate or extraHeaderCellBottomTemplate */
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
 
   headerButtonProvider = new HeaderButtonProviderDummy();
-  @Output() onHeaderButton = new EventEmitter<MouseEvent>();
+  @Output() headerButton = new EventEmitter<MouseEvent>();
 
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
@@ -380,7 +380,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
     this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource, initSelection)
       .addCheckboxColumn(this._displayColumns)
-      .bindEventEmitters(this.selected, this.onSelect, this.onDeselect, this.selectionModel);
+      .bindEventEmitters(this.selectionChange, this.selectAdded, this.selectRemoved, this.selectionModel);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
 
@@ -476,7 +476,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private emitFilteredValues(): void {
-    this.onFilter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc));
+    this.filter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc));
     this.updateTimelineBounds();
   }
 
@@ -553,12 +553,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   emitSelectedRowsAction(action: string, rows: T[]) {
-    this.onSelectedRowsAction.emit({action, value: rows});
+    this.selectedRowsAction.emit({action, value: rows});
   }
 
   emitRowAction(action: string, row: T, $event: MouseEvent) {
     $event.stopPropagation();
-    this.onRowAction.emit({action, value: row});
+    this.rowAction.emit({action, value: row});
   }
 
   /**
@@ -571,7 +571,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
    * row-click to suppress here.
    */
   emitMenuAction(action: string, row: T) {
-    this.onRowAction.emit({action, value: row});
+    this.rowAction.emit({action, value: row});
   }
 
   masterToggle() {
@@ -648,12 +648,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return cls;
   }
 
-  rowClick(row: TableRow<T>) {
+  handleRowClick(row: TableRow<T>) {
     if (row.rowSrc !== this.highlighted || (row.rowSrc === this.highlighted && !this.tableConfig.bodyRowCfg?.clickCfg?.cancelable)) {
-      this.onRowClick.emit(row.rowSrc);
+      this.rowClick.emit(row.rowSrc);
       this.highlighted = row.rowSrc;
     } else {
-      this.onRowClick.emit(undefined);
+      this.rowClick.emit(undefined);
       this.highlighted = undefined;
     }
   }

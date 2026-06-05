@@ -345,7 +345,7 @@
             (dragover)="onDragOver($event)"
             (drop)="onDrop($event, row)"
             *matRowDef="let row; columns: _displayColumns;"
-            (click)="rowClick(row)"
+            (click)="handleRowClick(row)"
             (mouseenter)="onRowEnter(row)"
             (mouseleave)="onRowLeave(row)"
             [ngClass]="rowNgClass(row)"
