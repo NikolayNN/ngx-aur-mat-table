@@ -59,12 +59,12 @@ export class TableWithActionsComponent {
               action: () => 'archive',
               text: () => 'В архив',
               icon: {name: () => 'archive'},
-              disabled: (c) => (c.age < 18 ? 'true' : 'false')
+              disabled: (c) => c.age < 18
             },
             {
               action: () => 'block',
               text: () => 'Заблокировать',
-              display: (c) => (c.age < 18 ? 'none' : 'show')
+              visible: (c) => c.age >= 18
             }
           ]
         }

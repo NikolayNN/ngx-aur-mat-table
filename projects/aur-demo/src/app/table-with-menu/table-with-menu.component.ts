@@ -43,13 +43,13 @@ export class TableWithMenuComponent {
               action: () => 'archive',
               text: () => 'Архивировать',
               icon: {name: () => 'archive'},
-              disabled: (c) => (c.age < 18 ? 'true' : 'false')
+              disabled: (c) => c.age < 18
             },
             {
               action: () => 'block',
               text: () => 'Заблокировать',
               icon: {name: () => 'block', color: () => 'orange'},
-              display: (c) => (c.age < 18 ? 'none' : 'show')
+              visible: (c) => c.age >= 18
             },
             {
               action: () => 'delete',
