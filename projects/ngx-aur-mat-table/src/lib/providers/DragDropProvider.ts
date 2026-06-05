@@ -19,14 +19,14 @@ export class DragDropProvider<T> extends AbstractProvider {
 
   constructor(private readonly viewContainerRef: ViewContainerRef,
               private tableName: string,
-              dragCfg?: DragDropConfig) {
+              dragDropCfg?: DragDropConfig) {
     super();
     // здесь заполнить конфиг значениями по умолчанию если такие появятся
-    this.manager = dragCfg?.manager ?? AurDragDropManager.empty();
-    this.multiple = dragCfg?.multiple ?? false;
+    this.manager = dragDropCfg?.manager ?? AurDragDropManager.empty();
+    this.multiple = dragDropCfg?.multiple ?? false;
     this.draggable = (new Set(this.manager.draggableSourceNames)).has(tableName);
-    this.dragIconView = dragCfg?.dragIcon ?? DragDropProvider.DEFAULT_ICON_VIEW;
-    this.size = dragCfg?.size;
+    this.dragIconView = dragDropCfg?.dragIcon ?? DragDropProvider.DEFAULT_ICON_VIEW;
+    this.size = dragDropCfg?.size;
   }
 
   public addColumn(columns: string[]): DragDropProvider<T> {
@@ -45,13 +45,13 @@ export class DragDropProvider<T> extends AbstractProvider {
   public static create<T>(viewContainerRef: ViewContainerRef, tableConfig: TableConfig<T>): DragDropProvider<T> {
     if (DragDropProvider.canCreate(tableConfig)) {
       // @ts-ignore
-      return new DragDropProvider(viewContainerRef, tableConfig.name ?? 'unknown-table', <DragDropConfig>tableConfig.dragCfg);
+      return new DragDropProvider(viewContainerRef, tableConfig.name ?? 'unknown-table', <DragDropConfig>tableConfig.dragDropCfg);
     }
     return new DragProviderDummy();
   }
 
   private static canCreate<T>(tableConfig: TableConfig<T>): boolean {
-    return tableConfig?.dragCfg?.enable ?? false;
+    return tableConfig?.dragDropCfg?.enable ?? false;
   }
 }
 

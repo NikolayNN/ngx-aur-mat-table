@@ -41,7 +41,7 @@ export interface TableConfig<T> {
   stickyCfg?: StickyConfig,
   tableViewCfg?: TableViewConfig,
   headerButtonCfg?: HeaderButtonConfig,
-  dragCfg?: DragDropConfig,
+  dragDropCfg?: DragDropConfig,
   totalRowCfg?: TotalRowConfig<T>,
   timelineCfg?: TimelineConfig<T>,
   headerRowCfg?: HeaderRowConfig,
