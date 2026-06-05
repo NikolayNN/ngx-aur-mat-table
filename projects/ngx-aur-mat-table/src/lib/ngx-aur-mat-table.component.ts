@@ -164,7 +164,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // -----------------------
 
   // events if enabled select event
-  @Output() selectionChange = new EventEmitter<T[]>();
+  @Output() selectChange = new EventEmitter<T[]>();
   @Output() selectAdded = new EventEmitter<T[]>();
   @Output() selectRemoved = new EventEmitter<T[]>();
 
@@ -181,7 +181,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   /**
    * return filtered rows
    */
-  @Output() filter = new EventEmitter<T[]>();
+  @Output() filterChange = new EventEmitter<T[]>();
 
   /** @deprecated use extraHeaderCellTopTemplate or extraHeaderCellBottomTemplate */
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
@@ -380,7 +380,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
     this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource, initSelection)
       .addCheckboxColumn(this._displayColumns)
-      .bindEventEmitters(this.selectionChange, this.selectAdded, this.selectRemoved, this.selectionModel);
+      .bindEventEmitters(this.selectChange, this.selectAdded, this.selectRemoved, this.selectionModel);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
 
@@ -476,7 +476,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private emitFilteredValues(): void {
-    this.filter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc));
+    this.filterChange.emit(this.tableDataSource.filteredData.map(f => f.rowSrc));
     this.updateTimelineBounds();
   }
 
