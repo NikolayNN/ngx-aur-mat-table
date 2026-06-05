@@ -20,10 +20,10 @@ describe('NgxAurMatTableComponent menu actions', () => {
   // $event.stopPropagation(), which would block that bubble and keep the menu
   // open. emitMenuAction therefore emits without touching any DOM event — its
   // signature has no event to stop, so propagation (and the close) is preserved.
-  it('emitMenuAction emits onRowAction with the action and row, taking no DOM event', () => {
+  it('emitMenuAction emits rowAction with the action and row, taking no DOM event', () => {
     const row: TestData = {name: 'Alice'};
     let received: ActionEvent<TestData> | undefined;
-    component.onRowAction.subscribe((e) => (received = e));
+    component.rowAction.subscribe((e) => (received = e));
 
     component.emitMenuAction('view', row);
 
