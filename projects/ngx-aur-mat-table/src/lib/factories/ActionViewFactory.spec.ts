@@ -26,8 +26,8 @@ describe('ActionViewFactory menu resolution', () => {
             {
               action: () => 'delete',
               text: () => 'Delete',
-              display: (c) => (c.age < 21 ? 'none' : 'show'),
-              disabled: (c) => (c.age < 21 ? 'true' : 'false'),
+              visible: (c) => c.age >= 21,
+              disabled: (c) => c.age < 21,
             },
           ],
         },
@@ -35,7 +35,7 @@ describe('ActionViewFactory menu resolution', () => {
     };
   }
 
-  it('resolves menu item functions to strings per row', () => {
+  it('resolves menu item functions to booleans per row', () => {
     const view = ActionViewFactory.create([old], configWithMenu());
     const action = view.get(old.id)![0];
 
@@ -48,16 +48,16 @@ describe('ActionViewFactory menu resolution', () => {
     expect(edit.text).toBe('Bob');
     expect(edit.icon!.name).toBe('edit');
     expect(edit.icon!.color).toBe('blue');
-    expect(edit.display).toBe('show');
-    expect(edit.disabled).toBe('false');
+    expect(edit.visible).toBe(true);
+    expect(edit.disabled).toBe(false);
   });
 
   it('applies per-row display and disabled conditions', () => {
     const view = ActionViewFactory.create([young], configWithMenu());
     const del = view.get(young.id)![0].menu![1];
 
-    expect(del.display).toBe('none');
-    expect(del.disabled).toBe('true');
+    expect(del.visible).toBe(false);
+    expect(del.disabled).toBe(true);
     expect(del.icon).toBeUndefined();
   });
 
