@@ -215,7 +215,7 @@ export interface Action<T> {
 }
 
 export interface MenuItem<T> {
-  /** action code emitted via onRowAction */
+  /** action code emitted via rowAction */
   action: T;
   /** menu item label text */
   text: T;
