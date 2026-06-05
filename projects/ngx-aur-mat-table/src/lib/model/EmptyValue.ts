@@ -29,7 +29,7 @@ export class EmptyValue {
     selectionCfg: EmptyValue.SELECTION_CONFIG,
     actionCfg: EmptyValue.ACTION_CONFIG,
     indexCfg: EmptyValue.INDEX_CONFIG,
-    pageableCfg: EmptyValue.PAGINATION_CONFIG
+    paginationCfg: EmptyValue.PAGINATION_CONFIG
   }
 
   public static readonly TIMELINE_CONFIG: TimelineConfig = {

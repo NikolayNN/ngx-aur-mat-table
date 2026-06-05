@@ -667,7 +667,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private isServerWiring(): boolean {
-    return !!this.pageSource || this.tableConfig?.pageableCfg?.mode === 'server';
+    return !!this.pageSource || this.tableConfig?.paginationCfg?.mode === 'server';
   }
 
   private startServerController(): void {
@@ -696,7 +696,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
     this.serverPageController.start({
       // provider may not be initialized yet (no tableData binding in server mode) — read from config
-      pageSize: this.tableConfig.pageableCfg?.size ?? 20,
+      pageSize: this.tableConfig.paginationCfg?.size ?? 20,
       sort: initialSort,
     });
   }

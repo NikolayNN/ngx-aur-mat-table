@@ -37,7 +37,7 @@ export interface TableConfig<T> {
   /**
    * Настройка пагинации таблицы
    */
-  pageableCfg?: PaginationConfig,
+  paginationCfg?: PaginationConfig,
   stickyCfg?: StickyConfig,
   tableView?: TableView,
   tableHeaderButtonCfg?: TableHeaderButtonConfig,

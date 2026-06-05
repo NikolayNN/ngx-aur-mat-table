@@ -17,12 +17,12 @@ export class PaginationProvider extends AbstractProvider {
   }
 
   public static canEnable<T>(tableConfig: TableConfig<T>): boolean {
-    return (tableConfig.pageableCfg && tableConfig.pageableCfg.enable) || false;
+    return (tableConfig.paginationCfg && tableConfig.paginationCfg.enable) || false;
   }
 
   public static create<T>(tableConfig: TableConfig<T>): PaginationProvider {
-    if (this.canEnable(tableConfig) && tableConfig.pageableCfg) {
-      return new PaginationProvider(tableConfig.pageableCfg)
+    if (this.canEnable(tableConfig) && tableConfig.paginationCfg) {
+      return new PaginationProvider(tableConfig.paginationCfg)
     }
     return new PaginationProviderDummy()
   }

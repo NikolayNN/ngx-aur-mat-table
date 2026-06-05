@@ -405,7 +405,7 @@
     <mat-paginator [ngClass]="{'hidePaginator': isTableBodyHide}"
                    [pageSizeOptions]="paginationProvider.sizes"
                    [pageSize]="paginationProvider.size"
-                   [style]="tableConfig?.pageableCfg?.style"
+                   [style]="tableConfig?.paginationCfg?.style"
                    [length]="paginatorState?.length"
                    [pageIndex]="paginatorState?.pageIndex"
                    (page)="onPageChangeInternal($event)"
