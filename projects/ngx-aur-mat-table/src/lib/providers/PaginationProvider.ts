@@ -1,6 +1,7 @@
 import {PaginationConfig, TableConfig} from "../model/ColumnConfig";
 import {EmptyValue} from "../model/EmptyValue";
 import {AbstractProvider} from "./AbstractProvider";
+import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 export class PaginationProvider extends AbstractProvider {
 
@@ -17,7 +18,7 @@ export class PaginationProvider extends AbstractProvider {
   }
 
   public static canEnable<T>(tableConfig: TableConfig<T>): boolean {
-    return (tableConfig.paginationCfg && tableConfig.paginationCfg.enable) || false;
+    return isFeatureEnabled(tableConfig.paginationCfg);
   }
 
   public static create<T>(tableConfig: TableConfig<T>): PaginationProvider {

@@ -2,6 +2,7 @@ import {AbstractProvider} from "./AbstractProvider";
 import {ColumnSize, DragDropConfig, IconView, TableConfig} from "../model/ColumnConfig";
 import {ViewContainerRef} from "@angular/core";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
+import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 export class DragDropProvider<T> extends AbstractProvider {
 
@@ -51,7 +52,7 @@ export class DragDropProvider<T> extends AbstractProvider {
   }
 
   private static canCreate<T>(tableConfig: TableConfig<T>): boolean {
-    return tableConfig?.dragDropCfg?.enable ?? false;
+    return isFeatureEnabled(tableConfig?.dragDropCfg);
   }
 }
 

@@ -5,6 +5,7 @@ import {TableRow} from "../model/TableRow";
 import {ColumnSize, SelectionConfig, TableConfig} from "../model/ColumnConfig";
 import {EmptyValue} from "../model/EmptyValue";
 import {AbstractProvider} from "./AbstractProvider";
+import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 export class SelectionProvider<T> extends AbstractProvider {
   public readonly isEnabled: boolean = true;
@@ -74,7 +75,7 @@ export class SelectionProvider<T> extends AbstractProvider {
   }
 
   private static canEnable<T>(tableConfig: TableConfig<T>): boolean {
-    return (tableConfig.selectionCfg && tableConfig.selectionCfg.enable) || false;
+    return isFeatureEnabled(tableConfig.selectionCfg);
   }
 
   public static create<T>(tableConfig: TableConfig<T>, tableDataSource: MatTableDataSource<TableRow<T>>, initSelection: T[]): SelectionProvider<T> {
