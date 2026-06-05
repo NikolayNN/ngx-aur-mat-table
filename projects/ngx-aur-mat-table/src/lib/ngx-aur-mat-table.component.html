@@ -36,9 +36,9 @@
              [multiTemplateDataRows]="extendedRowTemplate !== null"
              [dataSource]="tableDataSource"
              (matSortChange)="sortTable($event)"
-             [style.height]="tableConfig.tableView?.height"
-             [style.max-height]="tableConfig.tableView?.maxHeight"
-             [style.min-height]="tableConfig.tableView?.minHeight"
+             [style.height]="tableConfig.tableViewCfg?.height"
+             [style.max-height]="tableConfig.tableViewCfg?.maxHeight"
+             [style.min-height]="tableConfig.tableViewCfg?.minHeight"
              [ngClass]="{'hide-table-body': isTableBodyHide}">
 
 

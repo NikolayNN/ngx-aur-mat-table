@@ -39,7 +39,7 @@ export interface TableConfig<T> {
    */
   paginationCfg?: PaginationConfig,
   stickyCfg?: StickyConfig,
-  tableView?: TableView,
+  tableViewCfg?: TableViewConfig,
   headerButtonCfg?: HeaderButtonConfig,
   dragCfg?: DragDropConfig,
   totalRowCfg?: TotalRowConfig<T>,
@@ -255,7 +255,7 @@ export interface StickyConfig {
   subFooter?: boolean;
 }
 
-export interface TableView {
+export interface TableViewConfig {
   height?: string;
   minHeight?: string;
   maxHeight?: string;
