@@ -178,7 +178,8 @@ export interface ColumnView<T> {
 }
 
 export interface SortConfig<T> {
-  enable: boolean;
+  /** Enable sorting on this column. Default on when `sort` is set; `false` disables. */
+  enable?: boolean;
   position?: 'right' | 'left';
 
   /**
@@ -188,7 +189,8 @@ export interface SortConfig<T> {
 }
 
 export interface IndexConfig {
-  enable: boolean,
+  /** Show the index column. Default on when `indexCfg` is set; `false` disables. */
+  enable?: boolean,
 
   /** смещение для первого индекса например 1 чтобы нумерация началась с 1 по умолчанию от нуля */
   offset?: number,
@@ -201,7 +203,8 @@ export interface IndexConfig {
 }
 
 export interface FilterConfig {
-  enable: boolean;
+  /** Show the filter row. Default on when `filterCfg` is set; `false` disables. */
+  enable?: boolean;
   label?: string;
   placeholder?: string;
 }
@@ -241,13 +244,15 @@ export interface SelectionConfig<T> {
   compareWith?: (o1: T, o2: T) => boolean
   // default: true, показывать
   showTotalCount?: boolean;
-  enable: boolean;
+  /** Enable selection. Default on when `selectionCfg` is set; `false` disables. */
+  enable?: boolean;
   actions?: Action<string>[];
   size?: ColumnSize;
 }
 
 export interface PaginationConfig {
-  enable: boolean;
+  /** Enable pagination. Default on when `paginationCfg` is set; `false` disables. */
+  enable?: boolean;
   size: number;
   sizes?: number[];
   style?: string;
@@ -275,14 +280,16 @@ export interface ColumnSize {
 }
 
 export interface HeaderButtonConfig {
-  enable: boolean;
+  /** Show the header button. Default on when `headerButtonCfg` is set; `false` disables. */
+  enable?: boolean;
   icon?: string;
   color?: string;
   background?: string;
 }
 
 export interface DragDropConfig {
-  enable: boolean;
+  /** Enable drag & drop. Default on when `dragDropCfg` is set; `false` disables. */
+  enable?: boolean;
   manager: AurDragDropManager;
   multiple?: boolean;
   dragIcon?: IconView<string>;
@@ -290,7 +297,8 @@ export interface DragDropConfig {
 }
 
 export interface TotalRowConfig<T> {
-  enable: boolean;
+  /** Show the total row. Default on when any column defines `totalConverter`; `false` disables. */
+  enable?: boolean;
   styleCfg?: TotalStyleConfig<T>;
 }
 
@@ -302,7 +310,8 @@ export interface TimelineLineConfig {
 }
 
 export interface TimelineConfig<T = any> {
-  enable: boolean;
+  /** Enable the timeline column. Default on when `timelineCfg` is set; `false` disables. */
+  enable?: boolean;
   markerColor?: string;
   line?: TimelineLineConfig;
   segmentColor?: (prev: TableRow<T>, next: TableRow<T>) => string;
