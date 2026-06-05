@@ -40,7 +40,7 @@ export interface TableConfig<T> {
   paginationCfg?: PaginationConfig,
   stickyCfg?: StickyConfig,
   tableView?: TableView,
-  tableHeaderButtonCfg?: TableHeaderButtonConfig,
+  headerButtonCfg?: HeaderButtonConfig,
   dragCfg?: DragDropConfig,
   totalRowCfg?: TotalRowConfig<T>,
   timelineCfg?: TimelineConfig<T>,
@@ -267,7 +267,7 @@ export interface ColumnSize {
   maxWidth?: string;
 }
 
-export interface TableHeaderButtonConfig {
+export interface HeaderButtonConfig {
   enable: boolean;
   icon?: string;
   color?: string;

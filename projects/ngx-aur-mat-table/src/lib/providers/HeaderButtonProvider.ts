@@ -1,5 +1,5 @@
 import {AbstractProvider} from "./AbstractProvider";
-import {TableHeaderButtonConfig} from "../model/ColumnConfig";
+import {HeaderButtonConfig} from "../model/ColumnConfig";
 
 export class HeaderButtonProvider extends AbstractProvider {
   isEnabled: boolean;
@@ -7,7 +7,7 @@ export class HeaderButtonProvider extends AbstractProvider {
   color: string;
   background: string;
 
-  constructor(cfg?: TableHeaderButtonConfig) {
+  constructor(cfg?: HeaderButtonConfig) {
     super();
     this.isEnabled = cfg?.enable ?? false;
     this.icon = cfg?.icon ?? 'more_vert';

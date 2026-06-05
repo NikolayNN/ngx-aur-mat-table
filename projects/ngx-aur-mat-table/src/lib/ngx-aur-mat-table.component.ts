@@ -393,7 +393,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this._totalStyle = this.toCss(this.resolveTotal(_sc?.style, _totals, _data) ?? null);
     this._totalClass = this.resolveTotal(_sc?.class, _totals, _data) ?? null;
 
-    this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.tableHeaderButtonCfg)
+    this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.headerButtonCfg)
 
     this.dragDropProvider = DragDropProvider.create(this.viewContainerRef, this.tableConfig)
       .addColumn(this._displayColumns);
