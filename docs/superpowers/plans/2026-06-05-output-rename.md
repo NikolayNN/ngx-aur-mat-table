@@ -12,14 +12,19 @@
 
 | Old | New |
 |---|---|
-| `selected` | `selectionChange` |
+| `selected` | `selectChange` |
 | `onSelect` | `selectAdded` |
 | `onDeselect` | `selectRemoved` |
 | `onRowClick` | `rowClick` |
 | `onRowAction` | `rowAction` |
 | `onSelectedRowsAction` | `selectedRowsAction` |
-| `onFilter` | `filter` |
+| `onFilter` | `filterChange` |
 | `onHeaderButton` | `headerButton` |
+
+> Naming decided during Task 1 review: `select*` stem (avoids Material's `selectionChange`
+> collision and keeps the trio symmetric); `filterChange` (not bare `filter`).
+> An internal method `rowClick(row)` collided with the new `@Output() rowClick` and was
+> renamed `handleRowClick` (template binding updated to match) — already done in Task 1.
 
 **Do NOT touch (false positives):**
 - `ngx-aur-mat-table.component.ts:279,281` — `const selected = ...` is a local variable.
@@ -44,7 +49,7 @@ Line 163:
 ```
 Lines 167–169:
 ```ts
-  @Output() selectionChange = new EventEmitter<T[]>();
+  @Output() selectChange = new EventEmitter<T[]>();
   @Output() selectAdded = new EventEmitter<T[]>();
   @Output() selectRemoved = new EventEmitter<T[]>();
 ```
@@ -58,7 +63,7 @@ Line 176:
 ```
 Line 184:
 ```ts
-  @Output() filter = new EventEmitter<T[]>();
+  @Output() filterChange = new EventEmitter<T[]>();
 ```
 Line 191:
 ```ts
@@ -73,9 +78,9 @@ Line 191:
   ```
   to
   ```ts
-      .bindEventEmitters(this.selectionChange, this.selectAdded, this.selectRemoved, this.selectionModel);
+      .bindEventEmitters(this.selectChange, this.selectAdded, this.selectRemoved, this.selectionModel);
   ```
-- Line ~479: `this.onFilter.emit(...)` → `this.filter.emit(...)`
+- Line ~479: `this.onFilter.emit(...)` → `this.filterChange.emit(...)`
 - Line ~556: `this.onSelectedRowsAction.emit(...)` → `this.selectedRowsAction.emit(...)`
 - Line ~561: `this.onRowAction.emit(...)` → `this.rowAction.emit(...)`
 - Line ~574: `this.onRowAction.emit(...)` → `this.rowAction.emit(...)`
@@ -122,7 +127,7 @@ so the handler reads `headerButton.emit($event)` (keep the rest of the line iden
 
 `SelectionProvider.ts`, the base-class method at line ~44. Rename parameters and their uses (signature and body only — payload semantics unchanged):
 ```ts
-  public bindEventEmitters(selectionChange: EventEmitter<T[]>, selectAdded: EventEmitter<T[]>, selectRemoved: EventEmitter<T[]>, selectionModel: EventEmitter<SelectionModel<T>>): SelectionProvider<T> {
+  public bindEventEmitters(selectChange: EventEmitter<T[]>, selectAdded: EventEmitter<T[]>, selectRemoved: EventEmitter<T[]>, selectionModel: EventEmitter<SelectionModel<T>>): SelectionProvider<T> {
     this.selection.changed.subscribe(event => {
       if (event.added) {
         selectAdded.emit(event.added);
@@ -130,7 +135,7 @@ so the handler reads `headerButton.emit($event)` (keep the rest of the line iden
       if (event.removed) {
         selectRemoved.emit(event.removed);
       }
-      selectionChange.emit(this.selection.selected);
+      selectChange.emit(this.selection.selected);
     });
     selectionModel.emit(this.selection);
     return this;
@@ -141,7 +146,7 @@ so the handler reads `headerButton.emit($event)` (keep the rest of the line iden
 
 `SelectionProvider.ts` line ~99 has a no-op override on the dummy provider (body is just `return this;`, so there are no parameter uses to update — only the signature changes):
 ```ts
-  public override bindEventEmitters(selectionChange: EventEmitter<T[]>, selectAdded: EventEmitter<T[]>, selectRemoved: EventEmitter<T[]>): SelectionProvider<T> {
+  public override bindEventEmitters(selectChange: EventEmitter<T[]>, selectAdded: EventEmitter<T[]>, selectRemoved: EventEmitter<T[]>): SelectionProvider<T> {
     return this;
   }
 ```
@@ -200,15 +205,15 @@ git commit -m "test: update menu-action spec to renamed rowAction output"
 ## Task 4: Update demo template bindings
 
 **Files (each is a one-line binding change — only the output name on the left of `=`):**
-- `projects/aur-demo/src/app/complex-object/complex-object.component.html:4` — `(onFilter)=` → `(filter)=`
+- `projects/aur-demo/src/app/complex-object/complex-object.component.html:4` — `(onFilter)=` → `(filterChange)=`
 - `projects/aur-demo/src/app/table-big/table-big.component.html:4` — `(onRowClick)=` → `(rowClick)=`
 - `projects/aur-demo/src/app/table-big/table-big.component.html:5` — `(onRowAction)=` → `(rowAction)=`
 - `projects/aur-demo/src/app/table-editable/table-editable.component.html:4` — `(onRowClick)=` → `(rowClick)=`
 - `projects/aur-demo/src/app/table-editable/table-editable.component.html:5` — `(onRowAction)=` → `(rowAction)=`
-- `projects/aur-demo/src/app/table-with-filter-actions/table-with-filter-actions.component.html:10` — `(onFilter)=` → `(filter)=`
+- `projects/aur-demo/src/app/table-with-filter-actions/table-with-filter-actions.component.html:10` — `(onFilter)=` → `(filterChange)=`
 - `projects/aur-demo/src/app/table-with-menu/table-with-menu.component.html:4` — `(onRowAction)=` → `(rowAction)=`
 - `projects/aur-demo/src/app/table-with-pagination-and-checkboxes/table-with-pagination-and-checkboxes.component.html:4` — `(onSelectedRowsAction)=` → `(selectedRowsAction)=`
-- `projects/aur-demo/src/app/table-with-selection/table-with-selection.component.html:7` — `(selected)=` → `(selectionChange)=`
+- `projects/aur-demo/src/app/table-with-selection/table-with-selection.component.html:7` — `(selected)=` → `(selectChange)=`
 - `projects/aur-demo/src/app/with-actions/actions-before/actions-before.component.html:4` — `(onRowAction)=` → `(rowAction)=`
 - `projects/aur-demo/src/app/with-actions/table-with-actions/table-with-actions.component.html:4` — `(onRowAction)=` → `(rowAction)=`
 
@@ -221,7 +226,7 @@ For each file/line above, replace only the parenthesized output name on the left
 ```
 Example for `table-with-selection.component.html:7`:
 ```html
-  (selectionChange)="selected = $event"
+  (selectChange)="selected = $event"
 ```
 
 - [ ] **Step 2: Verify no old output bindings remain in the demo**
@@ -276,13 +281,13 @@ template bindings:
 
 | Old | New | Payload |
 |---|---|---|
-| `(selected)` | `(selectionChange)` | full current selection `T[]` |
+| `(selected)` | `(selectChange)` | full current selection `T[]` |
 | `(onSelect)` | `(selectAdded)` | added items `T[]` |
 | `(onDeselect)` | `(selectRemoved)` | removed items `T[]` |
 | `(onRowClick)` | `(rowClick)` | clicked row `T` |
 | `(onRowAction)` | `(rowAction)` | `ActionEvent<T>` |
 | `(onSelectedRowsAction)` | `(selectedRowsAction)` | `ActionEvent<T[]>` |
-| `(onFilter)` | `(filter)` | filtered rows `T[]` |
+| `(onFilter)` | `(filterChange)` | filtered rows `T[]` |
 | `(onHeaderButton)` | `(headerButton)` | `MouseEvent` |
 
 Unchanged: `sort`, `pageChange`, `loadingChange`, `pageError`,
@@ -297,7 +302,7 @@ are unchanged. Example:
 <!-- before -->
 <aur-mat-table (onRowClick)="onClick($event)" (selected)="rows = $event">
 <!-- after -->
-<aur-mat-table (rowClick)="onClick($event)" (selectionChange)="rows = $event">
+<aur-mat-table (rowClick)="onClick($event)" (selectChange)="rows = $event">
 \`\`\`
 ```
 

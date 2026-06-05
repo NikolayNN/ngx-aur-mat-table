@@ -29,14 +29,20 @@ Rename outputs to a single prefix-free convention, with the selection trio renam
 
 | Current | New | Payload (unchanged) |
 |---|---|---|
-| `selected` | `selectionChange` | full current selection `T[]` |
+| `selected` | `selectChange` | full current selection `T[]` |
 | `onSelect` | `selectAdded` | added items `T[]` (`event.added`) |
 | `onDeselect` | `selectRemoved` | removed items `T[]` (`event.removed`) |
 | `onRowClick` | `rowClick` | `T` |
 | `onRowAction` | `rowAction` | `ActionEvent<T>` |
 | `onSelectedRowsAction` | `selectedRowsAction` | `ActionEvent<T[]>` |
-| `onFilter` | `filter` | `T[]` |
+| `onFilter` | `filterChange` | `T[]` |
 | `onHeaderButton` | `headerButton` | `MouseEvent` |
+
+> Naming notes (decided during implementation review): the selection family uses
+> a single `select` stem (`selectChange`/`selectAdded`/`selectRemoved`) for symmetry
+> and to avoid colliding with Angular Material's `selectionChange`. The filter event
+> is `filterChange` (not bare `filter`) to read clearly as an Angular `*Change` event
+> and avoid confusion with `Array.prototype.filter`.
 
 ### Unchanged
 
@@ -78,4 +84,5 @@ Only `@Output()` events. Inputs, config keys, providers' public types, and other
 
 ## Risk
 
-`filter` as an output name could read like `Array.prototype.filter`/RxJS in prose, but in an Angular template binding `(filter)="..."` it is unambiguous. Accepted.
+None outstanding. The earlier concern about a bare `filter` output name was resolved by
+naming it `filterChange`.
