@@ -22,7 +22,7 @@ export class TableWithServerFiltersComponent {
       { name: 'customers name', key: 'name', valueConverter: v => v.name },
       { name: 'customers age', key: 'age', valueConverter: v => v.age },
     ],
-    pageableCfg: { enable: true, size: 20, mode: 'server' },
+    paginationCfg: { enable: true, size: 20, mode: 'server' },
   };
 
   loadPage: AurPageSource<Customer> = req =>

@@ -26,7 +26,7 @@ export class TableWithStickyHeaderComponent {
         valueConverter: v => v.age
       },
     ],
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20,
       style: 'background-color: gray',
@@ -50,7 +50,7 @@ export class TableWithStickyHeaderComponent {
         valueConverter: v => v.age
       },
     ],
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20,
       style: 'background-color: gray',

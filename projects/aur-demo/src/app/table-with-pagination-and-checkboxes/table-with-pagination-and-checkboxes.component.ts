@@ -41,7 +41,7 @@ export class TableWithPaginationAndCheckboxesComponent {
         }
       ],
     },
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20
     }

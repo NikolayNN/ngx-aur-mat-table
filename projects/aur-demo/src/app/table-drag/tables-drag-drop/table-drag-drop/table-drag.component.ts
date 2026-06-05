@@ -34,7 +34,7 @@ export class TableDragComponent implements OnInit {
           valueConverter: v => v.age
         }
       ],
-      dragCfg: {
+      dragDropCfg: {
         enable: true,
         multiple: true,
         manager: this.dragDropManager,

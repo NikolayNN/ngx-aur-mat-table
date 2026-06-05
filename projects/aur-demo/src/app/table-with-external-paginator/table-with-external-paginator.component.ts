@@ -22,7 +22,7 @@ export class TableWithExternalPaginatorComponent {
         valueConverter: v => v.age
       }
     ],
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20
     }

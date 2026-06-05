@@ -31,7 +31,7 @@ export class TableHideShowBodyComponent {
         valueConverter: v => v.age
       }
     ],
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 10
     }
