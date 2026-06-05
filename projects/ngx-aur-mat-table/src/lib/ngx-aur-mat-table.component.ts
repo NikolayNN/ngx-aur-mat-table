@@ -48,6 +48,7 @@ import {PaginatorState} from './model/PaginatorState';
 export {PaginatorState} from './model/PaginatorState';
 import {AurPageSource} from './model/AurPage';
 import {ServerPageController} from './providers/ServerPageController';
+import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.util';
 import {Subscription} from 'rxjs';
 
 export interface HighlightContainer<T> {
@@ -415,7 +416,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private initCustomSortFunctionsMap() {
     this.tableConfig.columnsCfg
-      .filter(c => c.sort && c.sort.enable && c.sort.customSort)
+      .filter(c => c.sort != null && isFeatureEnabledFn(c.sort) && c.sort.customSort)
       .forEach(c => this.customSortFunctions.set(c.key, c.sort!.customSort!))
   }
 
@@ -611,6 +612,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     totals: Map<string, any>, data: TableRow<T>[],
   ): R | undefined {
     return typeof v === 'function' ? (v as any)(totals, data) : v;
+  }
+
+  /** Template helper: a feature is on when its config is present unless `enable: false`. */
+  isFeatureEnabled(cfg: { enable?: boolean } | null | undefined): boolean {
+    return isFeatureEnabledFn(cfg);
   }
 
   private hoverActive(row: TableRow<T>): boolean {
