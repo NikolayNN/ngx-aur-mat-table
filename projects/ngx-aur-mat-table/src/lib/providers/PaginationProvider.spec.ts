@@ -18,3 +18,13 @@ describe('PaginationProvider enable opt-out', () => {
     expect(PaginationProvider.canEnable(cfg(undefined))).toBe(false);
   });
 });
+
+describe('PaginationProvider position vocabulary', () => {
+  it('defaults position to sticky when unset', () => {
+    expect(PaginationProvider.create(cfg({ size: 10 })).position).toBe('sticky');
+  });
+
+  it('passes through the inline position', () => {
+    expect(PaginationProvider.create(cfg({ size: 10, position: 'inline' })).position).toBe('inline');
+  });
+});
