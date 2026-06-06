@@ -257,7 +257,7 @@
           <!-- if sortable column header -->
           <ng-container *ngIf="isFeatureEnabled(columnConfig.sort); else notSortable">
             <th mat-header-cell *matHeaderCellDef [mat-sort-header]="columnConfig.key"
-                [arrowPosition]="columnConfig.sort?.position === 'right' ? 'before' : 'after'"
+                [arrowPosition]="columnConfig.sort?.position === 'start' ? 'before' : 'after'"
                 [style.width]="columnConfig.size?.width"
                 [style.min-width]="columnConfig.size?.minWidth"
                 [style.max-width]="columnConfig.size?.maxWidth">

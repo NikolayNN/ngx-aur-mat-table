@@ -178,7 +178,7 @@ export interface ColumnView<T> {
 export interface SortConfig<T> {
   /** Enable sorting on this column. Default on when `sort` is set; `false` disables. */
   enable?: boolean;
-  position?: 'right' | 'left';
+  position?: 'start' | 'end';
 
   /**
    * column key
