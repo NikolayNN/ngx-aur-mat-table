@@ -26,11 +26,11 @@ export class TableWithStickyHeaderComponent {
         valueConverter: v => v.age
       },
     ],
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20,
       style: 'background-color: gray',
-      position: 'under'
+      position: 'inline'
     },
     stickyCfg: {
       header: true,
@@ -50,11 +50,11 @@ export class TableWithStickyHeaderComponent {
         valueConverter: v => v.age
       },
     ],
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20,
       style: 'background-color: gray',
-      position: 'bottom'
+      position: 'sticky'
     },
     stickyCfg: {
       header: true,

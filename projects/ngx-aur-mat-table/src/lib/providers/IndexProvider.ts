@@ -1,5 +1,6 @@
 import {ColumnSize, ColumnView, IndexConfig, TableConfig} from "../model/ColumnConfig";
 import {AbstractProvider} from "./AbstractProvider";
+import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 /**
  * Provides functionality to manage the index column in a table.
@@ -51,7 +52,7 @@ export class IndexProvider extends AbstractProvider {
   }
 
   private static canCreate<T>(tableConfig: TableConfig<T>): boolean {
-    return (tableConfig.indexCfg && tableConfig.indexCfg.enable) || false;
+    return isFeatureEnabled(tableConfig.indexCfg);
   }
 }
 

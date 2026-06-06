@@ -1,28 +1,29 @@
 import {PaginationConfig, TableConfig} from "../model/ColumnConfig";
 import {EmptyValue} from "../model/EmptyValue";
 import {AbstractProvider} from "./AbstractProvider";
+import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 export class PaginationProvider extends AbstractProvider {
 
   public readonly isEnabled: boolean = true;
   public sizes: number[];
   public size: number;
-  public position: 'under' | 'bottom';
+  public position: 'inline' | 'sticky';
 
   constructor(config: PaginationConfig) {
     super();
     this.sizes = config.sizes || [5, 10, 15, 25, 50]
     this.size = config.size || this.sizes[1];
-    this.position = config.position || 'bottom';
+    this.position = config.position || 'sticky';
   }
 
   public static canEnable<T>(tableConfig: TableConfig<T>): boolean {
-    return (tableConfig.pageableCfg && tableConfig.pageableCfg.enable) || false;
+    return isFeatureEnabled(tableConfig.paginationCfg);
   }
 
   public static create<T>(tableConfig: TableConfig<T>): PaginationProvider {
-    if (this.canEnable(tableConfig) && tableConfig.pageableCfg) {
-      return new PaginationProvider(tableConfig.pageableCfg)
+    if (this.canEnable(tableConfig) && tableConfig.paginationCfg) {
+      return new PaginationProvider(tableConfig.paginationCfg)
     }
     return new PaginationProviderDummy()
   }

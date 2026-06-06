@@ -2,6 +2,14 @@ import {TableRow} from "./TableRow";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 import {StyleBuilder} from "../style-builder/style-builder";
 
+/**
+ * Maps the leaf-type generic `T` to a resolved value:
+ * - when `T` is a plain value (e.g. `string`), resolves to `R`;
+ * - when `T` is a `(value) => string` resolver, resolves to `(value) => R`.
+ * Used for control fields whose value type must be `boolean`, not the leaf string.
+ */
+export type Resolvable<T, R> = T extends (arg: infer A) => any ? (arg: A) => R : R;
+
 export interface TableConfig<T> {
 
   /**
@@ -37,11 +45,11 @@ export interface TableConfig<T> {
   /**
    * Настройка пагинации таблицы
    */
-  pageableCfg?: PaginationConfig,
+  paginationCfg?: PaginationConfig,
   stickyCfg?: StickyConfig,
-  tableView?: TableView,
-  tableHeaderButtonCfg?: TableHeaderButtonConfig,
-  dragCfg?: DragDropConfig,
+  tableViewCfg?: TableViewConfig,
+  headerButtonCfg?: HeaderButtonConfig,
+  dragDropCfg?: DragDropConfig,
   totalRowCfg?: TotalRowConfig<T>,
   timelineCfg?: TimelineConfig<T>,
   headerRowCfg?: HeaderRowConfig,
@@ -133,14 +141,10 @@ export interface IconView<T> {
   /** icon tooltip if null disabled */
   tooltip?: T;
 
-  position?: 'right' | 'left';
-
   wrapper?: IconWrapper<T>;
 
-  // принимает значения 'show' | 'none'
-  // 'show' или не указан -  показать иконку
-  //
-  display?: T;
+  /** Show the icon. `undefined`/`true` → shown, `false` → hidden. */
+  visible?: Resolvable<T, boolean>;
 }
 
 export interface IconWrapper<T> {
@@ -172,8 +176,9 @@ export interface ColumnView<T> {
 }
 
 export interface SortConfig<T> {
-  enable: boolean;
-  position?: 'right' | 'left';
+  /** Enable sorting on this column. Default on when `sort` is set; `false` disables. */
+  enable?: boolean;
+  position?: 'start' | 'end';
 
   /**
    * column key
@@ -182,7 +187,8 @@ export interface SortConfig<T> {
 }
 
 export interface IndexConfig {
-  enable: boolean,
+  /** Show the index column. Default on when `indexCfg` is set; `false` disables. */
+  enable?: boolean,
 
   /** смещение для первого индекса например 1 чтобы нумерация началась с 1 по умолчанию от нуля */
   offset?: number,
@@ -195,7 +201,8 @@ export interface IndexConfig {
 }
 
 export interface FilterConfig {
-  enable: boolean;
+  /** Show the filter row. Default on when `filterCfg` is set; `false` disables. */
+  enable?: boolean;
   label?: string;
   placeholder?: string;
 }
@@ -210,21 +217,22 @@ export interface ActionConfig<T> {
 export interface Action<T> {
   action: T;
   icon: IconView<T>;
-  display?: T;
+  /** Show the action. `undefined`/`true` → shown, `false` → hidden. */
+  visible?: Resolvable<T, boolean>;
   menu?: MenuItem<T>[];
 }
 
 export interface MenuItem<T> {
-  /** action code emitted via onRowAction */
+  /** action code emitted via rowAction */
   action: T;
   /** menu item label text */
   text: T;
   /** optional leading icon */
   icon?: IconView<T>;
-  /** 'show' | 'none' — conditionally hide the item */
-  display?: T;
-  /** 'true' | 'false' — conditionally disable the item */
-  disabled?: T;
+  /** Show the item. `undefined`/`true` → shown, `false` → hidden. */
+  visible?: Resolvable<T, boolean>;
+  /** Disable the item. `undefined`/`false` → enabled, `true` → disabled. */
+  disabled?: Resolvable<T, boolean>;
 }
 
 export interface SelectionConfig<T> {
@@ -234,17 +242,19 @@ export interface SelectionConfig<T> {
   compareWith?: (o1: T, o2: T) => boolean
   // default: true, показывать
   showTotalCount?: boolean;
-  enable: boolean;
+  /** Enable selection. Default on when `selectionCfg` is set; `false` disables. */
+  enable?: boolean;
   actions?: Action<string>[];
   size?: ColumnSize;
 }
 
 export interface PaginationConfig {
-  enable: boolean;
+  /** Enable pagination. Default on when `paginationCfg` is set; `false` disables. */
+  enable?: boolean;
   size: number;
   sizes?: number[];
   style?: string;
-  position?: 'under' | 'bottom';
+  position?: 'inline' | 'sticky';
   /** 'client' (default) lets MatTableDataSource slice in memory; 'server' uses pageSource / paginatorState. */
   mode?: 'client' | 'server';
 }
@@ -255,7 +265,7 @@ export interface StickyConfig {
   subFooter?: boolean;
 }
 
-export interface TableView {
+export interface TableViewConfig {
   height?: string;
   minHeight?: string;
   maxHeight?: string;
@@ -267,15 +277,17 @@ export interface ColumnSize {
   maxWidth?: string;
 }
 
-export interface TableHeaderButtonConfig {
-  enable: boolean;
+export interface HeaderButtonConfig {
+  /** Show the header button. Default on when `headerButtonCfg` is set; `false` disables. */
+  enable?: boolean;
   icon?: string;
   color?: string;
   background?: string;
 }
 
 export interface DragDropConfig {
-  enable: boolean;
+  /** Enable drag & drop. Default on when `dragDropCfg` is set; `false` disables. */
+  enable?: boolean;
   manager: AurDragDropManager;
   multiple?: boolean;
   dragIcon?: IconView<string>;
@@ -283,7 +295,8 @@ export interface DragDropConfig {
 }
 
 export interface TotalRowConfig<T> {
-  enable: boolean;
+  /** Show the total row. Default on when any column defines `totalConverter`; `false` disables. */
+  enable?: boolean;
   styleCfg?: TotalStyleConfig<T>;
 }
 
@@ -295,7 +308,8 @@ export interface TimelineLineConfig {
 }
 
 export interface TimelineConfig<T = any> {
-  enable: boolean;
+  /** Enable the timeline column. Default on when `timelineCfg` is set; `false` disables. */
+  enable?: boolean;
   markerColor?: string;
   line?: TimelineLineConfig;
   segmentColor?: (prev: TableRow<T>, next: TableRow<T>) => string;

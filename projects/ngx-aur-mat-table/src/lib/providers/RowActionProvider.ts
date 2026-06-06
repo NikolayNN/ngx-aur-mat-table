@@ -3,6 +3,7 @@ import {TableRow} from "../model/TableRow";
 import {ActionViewFactory} from "../factories/ActionViewFactory";
 import {EmptyValue} from "../model/EmptyValue";
 import {AbstractProvider} from "./AbstractProvider";
+import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 export interface ActionEvent<T> {
   action: string;
@@ -59,7 +60,7 @@ export class RowActionProvider<T> extends AbstractProvider {
   }
 
   private static canEnabled<T>(tableConfig: TableConfig<T>): boolean {
-    return (tableConfig.actionCfg && (tableConfig.actionCfg.enable === undefined || tableConfig.actionCfg.enable === null || tableConfig.actionCfg.enable)) || false
+    return isFeatureEnabled(tableConfig.actionCfg);
   }
 
   public static create<T>(tableConfig: TableConfig<T>): RowActionProvider<T> {

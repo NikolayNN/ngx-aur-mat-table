@@ -48,6 +48,7 @@ import {PaginatorState} from './model/PaginatorState';
 export {PaginatorState} from './model/PaginatorState';
 import {AurPageSource} from './model/AurPage';
 import {ServerPageController} from './providers/ServerPageController';
+import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.util';
 import {Subscription} from 'rxjs';
 
 export interface HighlightContainer<T> {
@@ -160,20 +161,20 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() pageChange = new EventEmitter<PageEvent>();
 
   // events if enabled actions
-  @Output() onRowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
+  @Output() rowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
   // -----------------------
 
   // events if enabled select event
-  @Output() selected = new EventEmitter<T[]>();
-  @Output() onSelect = new EventEmitter<T[]>();
-  @Output() onDeselect = new EventEmitter<T[]>();
+  @Output() selectChange = new EventEmitter<T[]>();
+  @Output() selectAdded = new EventEmitter<T[]>();
+  @Output() selectRemoved = new EventEmitter<T[]>();
 
-  @Output() onSelectedRowsAction = new EventEmitter<ActionEvent<T[]>>();
+  @Output() selectedRowsAction = new EventEmitter<ActionEvent<T[]>>();
 
   @Output() selectionModel = new EventEmitter<SelectionModel<T>>();
   //------------------------
 
-  @Output() onRowClick = new EventEmitter<T>();
+  @Output() rowClick = new EventEmitter<T>();
 
   @Output() loadingChange = new EventEmitter<boolean>();
   @Output() pageError = new EventEmitter<unknown>();
@@ -181,14 +182,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   /**
    * return filtered rows
    */
-  @Output() onFilter = new EventEmitter<T[]>();
+  @Output() filterChange = new EventEmitter<T[]>();
 
   /** @deprecated use extraHeaderCellTopTemplate or extraHeaderCellBottomTemplate */
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
 
   headerButtonProvider = new HeaderButtonProviderDummy();
-  @Output() onHeaderButton = new EventEmitter<MouseEvent>();
+  @Output() headerButton = new EventEmitter<MouseEvent>();
 
   // @ts-ignore
   private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
@@ -380,7 +381,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
     this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource, initSelection)
       .addCheckboxColumn(this._displayColumns)
-      .bindEventEmitters(this.selected, this.onSelect, this.onDeselect, this.selectionModel);
+      .bindEventEmitters(this.selectChange, this.selectAdded, this.selectRemoved, this.selectionModel);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
 
@@ -393,7 +394,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this._totalStyle = this.toCss(this.resolveTotal(_sc?.style, _totals, _data) ?? null);
     this._totalClass = this.resolveTotal(_sc?.class, _totals, _data) ?? null;
 
-    this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.tableHeaderButtonCfg)
+    this.headerButtonProvider = new HeaderButtonProvider(this.tableConfig.headerButtonCfg)
 
     this.dragDropProvider = DragDropProvider.create(this.viewContainerRef, this.tableConfig)
       .addColumn(this._displayColumns);
@@ -415,7 +416,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private initCustomSortFunctionsMap() {
     this.tableConfig.columnsCfg
-      .filter(c => c.sort && c.sort.enable && c.sort.customSort)
+      .filter(c => c.sort != null && isFeatureEnabledFn(c.sort) && c.sort.customSort)
       .forEach(c => this.customSortFunctions.set(c.key, c.sort!.customSort!))
   }
 
@@ -476,7 +477,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private emitFilteredValues(): void {
-    this.onFilter.emit(this.tableDataSource.filteredData.map(f => f.rowSrc));
+    this.filterChange.emit(this.tableDataSource.filteredData.map(f => f.rowSrc));
     this.updateTimelineBounds();
   }
 
@@ -553,12 +554,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   emitSelectedRowsAction(action: string, rows: T[]) {
-    this.onSelectedRowsAction.emit({action, value: rows});
+    this.selectedRowsAction.emit({action, value: rows});
   }
 
   emitRowAction(action: string, row: T, $event: MouseEvent) {
     $event.stopPropagation();
-    this.onRowAction.emit({action, value: row});
+    this.rowAction.emit({action, value: row});
   }
 
   /**
@@ -571,7 +572,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
    * row-click to suppress here.
    */
   emitMenuAction(action: string, row: T) {
-    this.onRowAction.emit({action, value: row});
+    this.rowAction.emit({action, value: row});
   }
 
   masterToggle() {
@@ -613,6 +614,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return typeof v === 'function' ? (v as any)(totals, data) : v;
   }
 
+  /** Template helper: a feature is on when its config is present unless `enable: false`. */
+  isFeatureEnabled(cfg: { enable?: boolean } | null | undefined): boolean {
+    return isFeatureEnabledFn(cfg);
+  }
+
   private hoverActive(row: TableRow<T>): boolean {
     const h = this.tableConfig.bodyRowCfg?.hoverCfg;
     return this.hovered === row && h?.enable !== false;
@@ -648,12 +654,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return cls;
   }
 
-  rowClick(row: TableRow<T>) {
+  handleRowClick(row: TableRow<T>) {
     if (row.rowSrc !== this.highlighted || (row.rowSrc === this.highlighted && !this.tableConfig.bodyRowCfg?.clickCfg?.cancelable)) {
-      this.onRowClick.emit(row.rowSrc);
+      this.rowClick.emit(row.rowSrc);
       this.highlighted = row.rowSrc;
     } else {
-      this.onRowClick.emit(undefined);
+      this.rowClick.emit(undefined);
       this.highlighted = undefined;
     }
   }
@@ -667,7 +673,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private isServerWiring(): boolean {
-    return !!this.pageSource || this.tableConfig?.pageableCfg?.mode === 'server';
+    return !!this.pageSource || this.tableConfig?.paginationCfg?.mode === 'server';
   }
 
   private startServerController(): void {
@@ -696,7 +702,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
     this.serverPageController.start({
       // provider may not be initialized yet (no tableData binding in server mode) — read from config
-      pageSize: this.tableConfig.pageableCfg?.size ?? 20,
+      pageSize: this.tableConfig.paginationCfg?.size ?? 20,
       sort: initialSort,
     });
   }

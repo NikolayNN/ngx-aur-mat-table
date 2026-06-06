@@ -2,6 +2,7 @@ import {ColumnSize, TableConfig, TimelineConfig, TimelineLineConfig} from "../mo
 import {AbstractProvider} from "./AbstractProvider";
 import {TableRow} from "../model/TableRow";
 import {EmptyValue} from "../model/EmptyValue";
+import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 export class TimelineProvider<T> extends AbstractProvider {
   public static readonly COLUMN_NAME = 'tbl_timeline';
@@ -45,7 +46,7 @@ export class TimelineProvider<T> extends AbstractProvider {
   }
 
   private static canCreate<T>(tableConfig: TableConfig<T>): boolean {
-    return tableConfig.timelineCfg?.enable ?? false;
+    return isFeatureEnabled(tableConfig.timelineCfg);
   }
 }
 

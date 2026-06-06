@@ -8,7 +8,7 @@ export class NgxAurTablePageEventUtils {
    */
   public static createEmpty(tableConfig: TableConfig<any>): PageEvent {
     return {
-      pageSize: tableConfig.pageableCfg!.size,
+      pageSize: tableConfig.paginationCfg!.size,
       pageIndex: 0,
       previousPageIndex: 0,
       length: 0

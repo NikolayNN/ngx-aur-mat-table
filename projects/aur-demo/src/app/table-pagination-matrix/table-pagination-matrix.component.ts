@@ -19,9 +19,9 @@ export class TablePaginationMatrixComponent {
 
   // Full client-side data
   fullData: Customer[] = CustomerGenerator.generate(100);
-  clientCfg: TableConfig<Customer> = { columnsCfg: this.columns, pageableCfg: { enable: true, size: 5 } };
+  clientCfg: TableConfig<Customer> = { columnsCfg: this.columns, paginationCfg: { enable: true, size: 5 } };
 
   // Server-side data (pageSource owns the fetch loop)
-  serverCfg: TableConfig<Customer> = { columnsCfg: this.columns, pageableCfg: { enable: true, size: 5, mode: 'server' } };
+  serverCfg: TableConfig<Customer> = { columnsCfg: this.columns, paginationCfg: { enable: true, size: 5, mode: 'server' } };
   loadPage: AurPageSource<Customer> = req => this.svc.page(req.pageIndex, req.pageSize);
 }

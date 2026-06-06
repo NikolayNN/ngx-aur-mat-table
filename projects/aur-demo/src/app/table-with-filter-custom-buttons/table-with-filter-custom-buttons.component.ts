@@ -28,7 +28,7 @@ export class TableWithFilterCustomButtonsComponent {
         valueConverter: v => v.age
       }
     ],
-    tableHeaderButtonCfg: {
+    headerButtonCfg: {
       enable: true,
       color: 'white',
       background: 'blue'

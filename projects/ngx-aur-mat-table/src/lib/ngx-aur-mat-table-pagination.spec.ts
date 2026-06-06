@@ -22,7 +22,7 @@ class HostComponent {
   calls: AurPageRequest[] = [];
   cfg: TableConfig<Row> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
-    pageableCfg: { enable: true, size: 10, mode: 'server' },
+    paginationCfg: { enable: true, size: 10, mode: 'server' },
   };
   source: AurPageSource<Row> = (req) => {
     this.calls.push(req);
@@ -81,7 +81,7 @@ class ExternalHostComponent {
   @ViewChild('pg') pg!: MatPaginator;
   cfg: TableConfig<Row> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
-    pageableCfg: { enable: true, size: 10, mode: 'server' },
+    paginationCfg: { enable: true, size: 10, mode: 'server' },
   };
   source: AurPageSource<Row> = (req) =>
     of({ content: [{ name: 'a' }], totalElements: 99, number: req.pageIndex } as AurPage<Row>);
@@ -139,7 +139,7 @@ class ExternalClientHostComponent {
   @ViewChild('pg') pg!: MatPaginator;
   cfg: TableConfig<Row> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
-    pageableCfg: { enable: true, size: 5 }, // client data, no mode/pageSource
+    paginationCfg: { enable: true, size: 5 }, // client data, no mode/pageSource
   };
   data: Row[] = Array.from({ length: 12 }, (_, i) => ({ name: 'r' + i }));
 }

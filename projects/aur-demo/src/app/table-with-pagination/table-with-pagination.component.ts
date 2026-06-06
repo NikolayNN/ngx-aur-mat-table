@@ -25,7 +25,7 @@ export class TableWithPaginationComponent {
       }
     ],
 
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20
     }

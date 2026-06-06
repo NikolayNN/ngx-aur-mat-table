@@ -7,7 +7,7 @@
 <aur-mat-table #table
                [tableData]="tableData"
                [tableConfig]="tableConfig"
-               (onFilter)="filtered = $event"
+               (filterChange)="filtered = $event"
 ></aur-mat-table>
 
 

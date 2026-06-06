@@ -25,7 +25,7 @@ export class TableWithServerPaginationComponent {
         valueConverter: v => v.age
       }
     ],
-    pageableCfg: {
+    paginationCfg: {
       enable: true,
       size: 20,
       mode: 'server'
