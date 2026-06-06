@@ -141,8 +141,6 @@ export interface IconView<T> {
   /** icon tooltip if null disabled */
   tooltip?: T;
 
-  position?: 'right' | 'left';
-
   wrapper?: IconWrapper<T>;
 
   /** Show the icon. `undefined`/`true` → shown, `false` → hidden. */
