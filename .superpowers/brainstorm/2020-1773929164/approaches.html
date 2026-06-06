@@ -1,0 +1,75 @@
+<h2>Подходы к стилизации таблицы</h2>
+<p class="subtitle">Все варианты: скругление 8-12px, граница #bdbdbd, padding 12px, жирная шапка с фоном</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>CSS-only в SCSS компонента</h3>
+      <p>Все стили добавляются напрямую в <code>ngx-aur-mat-table.component.scss</code>. Используем <code>border-collapse: separate</code> + <code>border-spacing: 0</code> и скругляем через <code>border-radius</code> на обёртке <code>.table-container</code>.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Плюсы</h4>
+          <ul>
+            <li>Простейшая реализация — только CSS изменения</li>
+            <li>Не ломает существующую конфигурацию</li>
+            <li>Все пользователи библиотеки получают обновлённый стиль</li>
+          </ul>
+        </div>
+        <div class="cons"><h4>Минусы</h4>
+          <ul>
+            <li>Нет возможности отключить новые стили — breaking change для тех, кто привык к старому виду</li>
+            <li>Сложно кастомизировать (радиус, цвет границы)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>CSS-only + CSS-переменные</h3>
+      <p>Те же CSS изменения, но ключевые значения вынесены в CSS custom properties с дефолтами. Пользователи могут переопределять через <code>:host</code> или родительский элемент.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Плюсы</h4>
+          <ul>
+            <li>Простая реализация — только CSS</li>
+            <li>Кастомизируемо: <code>--aur-table-border-radius</code>, <code>--aur-table-border-color</code>, <code>--aur-table-cell-padding</code></li>
+            <li>Можно "отключить" скругление, задав переменную в 0</li>
+          </ul>
+        </div>
+        <div class="cons"><h4>Минусы</h4>
+          <ul>
+            <li>Всё равно меняет дефолтный вид (но это и есть цель)</li>
+            <li>Чуть больше CSS кода</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Конфигурация через TableConfig</h3>
+      <p>Добавляем новое поле <code>styleCfg</code> в <code>TableConfig</code> с параметрами <code>borderRadius</code>, <code>borderColor</code>, <code>cellPadding</code>, <code>headerBackground</code>. Стили применяются через <code>[ngStyle]</code> в шаблоне.</p>
+      <div class="pros-cons">
+        <div class="pros"><h4>Плюсы</h4>
+          <ul>
+            <li>Полностью контролируемо из TypeScript</li>
+            <li>Вписывается в существующий подход конфигурации</li>
+          </ul>
+        </div>
+        <div class="cons"><h4>Минусы</h4>
+          <ul>
+            <li>Избыточно для чисто визуальных свойств — CSS-переменные делают то же проще</li>
+            <li>Больше кода: интерфейс, дефолты, шаблонные привязки</li>
+            <li>Смешивает стилевые и логические настройки</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p style="margin-top: 24px; color: #666; font-size: 14px;"><strong>Рекомендация:</strong> Вариант <strong>B</strong> — CSS-переменные дают баланс между простотой и гибкостью. Это чисто стилевые изменения, и CSS custom properties — идиоматический способ кастомизации в Angular компонентах.</p>

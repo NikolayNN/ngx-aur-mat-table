@@ -2,7 +2,17 @@
 
 **Date:** 2026-06-06
 **Target version:** 19.3.0 (own branch `refactor/type-safe-converters`; not bundled with the 19.2.0 cleanup)
-**Status:** Approved
+**Status:** Deferred (2026-06-06) — low ROI; kept as analysis.
+
+> **Why deferred:** On review, #8's value is marginal in this architecture.
+> `valueConverter: (T) => unknown` is cosmetic — the cell value is written, not
+> read, and round-trips through `TableRow`'s `[key: string]: any` index signature,
+> so no typed position consumes it. The only genuine benefit is anti-leak hygiene on
+> the **totals map** (`any → unknown` stops the library leaking `any` into consumer
+> code), but that is a single cold corner with ~3 narrowing sites. Real per-cell
+> safety (`row['age']: number`) needs the full keyed-schema rewrite (Option 3),
+> which was rejected as disproportionate. Deferred in favor of higher-ROI work
+> (#2/#7 or features). This document is retained as the design analysis.
 
 ## Problem
 
