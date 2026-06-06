@@ -254,7 +254,7 @@ export interface PaginationConfig {
   size: number;
   sizes?: number[];
   style?: string;
-  position?: 'under' | 'bottom';
+  position?: 'inline' | 'sticky';
   /** 'client' (default) lets MatTableDataSource slice in memory; 'server' uses pageSource / paginatorState. */
   mode?: 'client' | 'server';
 }
