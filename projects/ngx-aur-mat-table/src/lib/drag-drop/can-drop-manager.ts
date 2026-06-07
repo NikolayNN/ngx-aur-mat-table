@@ -3,7 +3,7 @@ import {AurDragDropMapping} from "./model/aur-drag-drop-mapping";
 
 export class CanDropManager {
 
-  //can drop [key from table, value to table name]
+  //можно сбросить [ключ из таблицы-источника, значение - имя таблицы-цели]
   private canDropStorage = new Map<string, Set<string>>();
 
   constructor(mappings: AurDragDropMapping<any, any>[]) {
