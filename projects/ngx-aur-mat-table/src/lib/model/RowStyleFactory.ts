@@ -10,9 +10,9 @@ export interface ResolvedRowStyle {
 export class RowStyleFactory {
 
   /**
-   * Resolves bodyRowCfg.styleCfg into a per-row array indexed by row.id.
-   * Returns an empty array when the hook is not configured. Styles are kept raw
-   * (un-built StyleBuilder.Row | string) so the component can overrideWith()/build() at render time.
+   * Разрешает `bodyRowCfg.styleCfg` в массив по строкам, индексированный по `row.id`.
+   * Возвращает пустой массив, когда хук не сконфигурирован. Стили хранятся в сыром виде
+   * (не собранные `StyleBuilder.Row | string`), чтобы компонент мог вызвать `overrideWith()`/`build()` во время отрисовки.
    */
   public static toRowStyles<T>(rows: TableRow<T>[], tableConfig: TableConfig<T>): ResolvedRowStyle[] {
     const cfg = tableConfig.bodyRowCfg?.styleCfg;

@@ -3,10 +3,10 @@ import {TableRow} from "../model/TableRow";
 
 export class ActionViewFactory {
   /**
-   * Convert rows and actions to a view format.
-   * @param rows - The data rows to be converted.
-   * @param actionConfig - Configuration for actions on rows.
-   * @return Map of row IDs to their associated action views.
+   * Преобразует строки и действия в формат представления.
+   * @param rows - Строки данных для преобразования.
+   * @param actionConfig - Конфигурация действий над строками.
+   * @return Map идентификаторов строк к связанным с ними представлениям действий.
    */
   public static create<T>(rows: TableRow<T>[], actionConfig: ActionConfig<T>): Map<number, Action<string>[]> {
     const result = new Map<number, Action<string>[]>();
@@ -17,10 +17,10 @@ export class ActionViewFactory {
   }
 
   /**
-   * Prepare the actions for a specific row based on the action configuration.
-   * @param row - The data row for which actions need to be prepared.
-   * @param actionConfig - Configuration for actions on rows.
-   * @return Array of actions for the row.
+   * Подготавливает действия для конкретной строки на основе конфигурации действий.
+   * @param row - Строка данных, для которой нужно подготовить действия.
+   * @param actionConfig - Конфигурация действий над строками.
+   * @return Массив действий для строки.
    */
   private static prepareActionsForRow<T>(row: TableRow<T>, actionConfig: ActionConfig<T>): Action<string>[] {
     return actionConfig.actions.map(action => ({
