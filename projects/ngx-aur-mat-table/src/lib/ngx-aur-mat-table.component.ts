@@ -137,11 +137,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
   @Input() paginatorState: PaginatorState | undefined;
 
-  // Server-mode declarative loader. When set, the table owns the fetch loop.
+  // Декларативный загрузчик в серверном режиме. Если задан, таблица сама управляет циклом загрузки.
   // @ts-ignore
   @Input() pageSource?: AurPageSource<T>;
 
-  // Optional host-owned paginator placed elsewhere in the host layout.
+  // Опциональный пагинатор, которым владеет хост и который размещён в другом месте разметки хоста.
   // @ts-ignore
   @Input() externalPaginator?: MatPaginator;
 
@@ -160,11 +160,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   @Output() pageChange = new EventEmitter<PageEvent>();
 
-  // events if enabled actions
+  // события, если действия включены
   @Output() rowAction: EventEmitter<ActionEvent<T>> = new EventEmitter<ActionEvent<T>>();
   // -----------------------
 
-  // events if enabled select event
+  // события, если включено событие выделения
   @Output() selectChange = new EventEmitter<T[]>();
   @Output() selectAdded = new EventEmitter<T[]>();
   @Output() selectRemoved = new EventEmitter<T[]>();
@@ -180,11 +180,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   @Output() pageError = new EventEmitter<unknown>();
 
   /**
-   * return filtered rows
+   * возвращает отфильтрованные строки
    */
   @Output() filterChange = new EventEmitter<T[]>();
 
-  /** @deprecated use extraHeaderCellTopTemplate or extraHeaderCellBottomTemplate */
+  /** @deprecated используйте extraHeaderCellTopTemplate или extraHeaderCellBottomTemplate */
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
 
@@ -216,8 +216,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   highlighted: T | undefined;
 
-  // Hover state. Compares TableRow object identity (the same instance the template iterates),
-  // unlike `highlighted`, which compares row.rowSrc (an external @Input value, not a TableRow).
+  // Состояние наведения. Сравнивает идентичность объекта TableRow (тот же экземпляр, по которому итерирует шаблон),
+  // в отличие от `highlighted`, который сравнивает row.rowSrc (внешнее @Input-значение, а не TableRow).
   hovered: TableRow<T> | null = null;
 
   private customSortFunctions = new Map<string, (data: TableRow<T>, key: string) => any>();
@@ -226,7 +226,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   private _searchText = '';
   private _defaultFilterPredicate!: (data: TableRow<T>, filter: string) => boolean;
 
-  //значение передается в контейнере иначе OnChange не видит изменений когда передаются одинаковые значение и подсветка строки не отключается
+  //Значение передаётся в контейнере, иначе OnChange не видит изменений, когда передаются одинаковые значения, и подсветка строки не отключается
   // @ts-ignore
   @Input() highlight: HighlightContainer<T> | undefined;
 
@@ -244,9 +244,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (changes['externalPaginator']) {
       if (this.externalPaginator) {
         if (this.isServerMode()) {
-          // Server mode: do NOT bind dataSource.paginator (would slice the loaded page).
-          // Only (re)wire once the controller exists; a first-change arriving before
-          // ngAfterViewInit is handled by startServerController().
+          // Серверный режим: НЕ привязываем dataSource.paginator (он порезал бы загруженную страницу).
+          // (Пере)подключаем только после того, как контроллер создан; первое изменение, пришедшее до
+          // ngAfterViewInit, обрабатывается в startServerController().
           if (this.serverPageController) {
             this.subscribeExternalPaginator();
             if (this.paginatorState) {
@@ -254,15 +254,15 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
             }
           }
         } else if (!changes['externalPaginator'].firstChange) {
-          // Client mode: bind the external paginator so MatTableDataSource slices through it.
-          // Guard firstChange so we don't call initPaginator() before ngAfterViewInit.
+          // Клиентский режим: привязываем внешний пагинатор, чтобы MatTableDataSource резал данные через него.
+          // Защищаемся от firstChange, чтобы не вызвать initPaginator() до ngAfterViewInit.
           this.initPaginator();
         }
       } else {
-        // External paginator removed: tear down its page subscription to avoid a leak.
+        // Внешний пагинатор удалён: отписываемся от его событий страницы, чтобы избежать утечки.
         this.externalPaginatorSub?.unsubscribe();
         this.externalPaginatorSub = undefined;
-        // Client mode falls back to the (now-rendered) built-in paginator.
+        // Клиентский режим откатывается к (теперь отрисованному) встроенному пагинатору.
         if (!this.isServerMode() && !changes['externalPaginator'].firstChange) {
           this.initPaginator();
         }
@@ -308,10 +308,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     }
   }
 
-  // we need this, in order to make pagination work with *ngIf
+  // нам это нужно, чтобы пагинация работала с *ngIf
   ngAfterViewInit(): void {
-    // Must remain unconditional — also covers the externalPaginator first-change case
-    // for client mode (ngOnChanges defers initPaginator() on firstChange).
+    // Должно оставаться безусловным — также покрывает случай первого изменения externalPaginator
+    // для клиентского режима (ngOnChanges откладывает initPaginator() при firstChange).
     this.initPaginator()
     this.initSortingDataAccessor();
     this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
@@ -324,9 +324,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private initPaginator(): void {
     if (this.tableDataSource) {
-      // In server mode, do NOT bind the paginator to the data source — MatTableDataSource
-      // would call _updatePaginator(filteredDataLength) and overwrite the server-supplied length.
-      // Pagination is driven by ServerPageController instead.
+      // В серверном режиме НЕ привязываем пагинатор к источнику данных — MatTableDataSource
+      // вызвал бы _updatePaginator(filteredDataLength) и перезаписал бы переданную сервером длину.
+      // Вместо этого пагинацией управляет ServerPageController.
       if (this.isServerMode()) {
         this.tableDataSource.paginator = null;
       } else {
@@ -367,7 +367,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.initCustomSortFunctionsMap();
     this.removeWrongKeysFromDisplayColumns();
     if (!this.paginatorState) {
-      // если пагинатор не серверный то его я здесь инициализирую иначе при обновлении данных пагинатор ломается и отображаются все элементы
+      // Если пагинатор не серверный, то я инициализирую его здесь, иначе при обновлении данных пагинатор ломается и отображаются все элементы
       this.initPaginator();
     }
     this.initSortingDataAccessor();
@@ -563,13 +563,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   /**
-   * Emit an action triggered from a mat-menu item.
+   * Отправляет действие, инициированное элементом mat-menu.
    *
-   * Unlike {@link emitRowAction} this must NOT call $event.stopPropagation():
-   * mat-menu closes when the click bubbles up to its panel
-   * ((click)="closed.emit('click')"), so stopping propagation would keep the
-   * menu open. The menu renders in an overlay outside the row, so there is no
-   * row-click to suppress here.
+   * В отличие от {@link emitRowAction}, здесь НЕ нужно вызывать $event.stopPropagation():
+   * mat-menu закрывается, когда клик всплывает до его панели
+   * ((click)="closed.emit('click')"), поэтому остановка всплытия оставила бы
+   * меню открытым. Меню рендерится в overlay вне строки, так что здесь нет
+   * клика по строке, который нужно подавлять.
    */
   emitMenuAction(action: string, row: T) {
     this.rowAction.emit({action, value: row});
@@ -587,13 +587,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return row;
   }
 
-  /** StyleBuilder.Row | string | null -> CSS string | null. */
+  /** StyleBuilder.Row | string | null -> CSS-строка | null. */
   private toCss(s?: StyleBuilder.Row | string | null): string | null {
     if (s == null) return null;
     return typeof s === 'string' ? s : s.build();
   }
 
-  /** base with `overlay` on top. Builders -> field override; any string -> concat (CSS last-wins). */
+  /** `base` с `overlay` поверх. Builder-ы -> переопределение полей; любая строка -> конкатенация (в CSS побеждает последнее). */
   private mergeStyle(
     base?: StyleBuilder.Row | string | null,
     overlay?: StyleBuilder.Row | string | null,
@@ -606,7 +606,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return `${this.toCss(base) ?? ''} ${this.toCss(overlay) ?? ''}`.trim();
   }
 
-  /** total hook: static value or (totals, data) => value. */
+  /** хук итога: статическое значение или (totals, data) => значение. */
   private resolveTotal<R>(
     v: R | ((t: Map<string, any>, d: TableRow<T>[]) => R) | undefined,
     totals: Map<string, any>, data: TableRow<T>[],
@@ -614,7 +614,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return typeof v === 'function' ? (v as any)(totals, data) : v;
   }
 
-  /** Template helper: a feature is on when its config is present unless `enable: false`. */
+  /** Хелпер для шаблона: функция активна, когда её конфигурация присутствует, если только не задано `enable: false`. */
   isFeatureEnabled(cfg: { enable?: boolean } | null | undefined): boolean {
     return isFeatureEnabledFn(cfg);
   }
@@ -627,7 +627,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   onRowEnter(row: TableRow<T>) { this.hovered = row; }
   onRowLeave(row: TableRow<T>) { if (this.hovered === row) this.hovered = null; }
 
-  /** [style] for the body <tr>: base -> hover overlay -> highlight overlay (highlight wins). */
+  /** [style] для <tr> тела: base -> overlay наведения -> overlay подсветки (побеждает подсветка). */
   rowStyle(row: TableRow<T>): string | null {
     let acc: StyleBuilder.Row | string | null = this.rowStyles[row.id]?.style ?? null;
     if (this.hoverActive(row)) {
@@ -701,7 +701,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       this.matSort?.active ? { active: this.matSort.active, direction: this.matSort.direction } : undefined;
 
     this.serverPageController.start({
-      // provider may not be initialized yet (no tableData binding in server mode) — read from config
+      // провайдер может быть ещё не инициализирован (в серверном режиме нет привязки tableData) — читаем из конфигурации
       pageSize: this.tableConfig.paginationCfg?.size ?? 20,
       sort: initialSort,
     });
@@ -718,19 +718,19 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private applyExternalPaginatorState(state: PaginatorState): void {
     if (this.externalPaginator) {
-      // RISK (spec approach C): OnPush MatPaginator needs CD to reflect imperative changes.
+      // РИСК (подход C из спецификации): OnPush MatPaginator требует CD, чтобы отразить императивные изменения.
       this.externalPaginator.length = state.length;
       this.externalPaginator.pageIndex = state.pageIndex;
       this.cdr.markForCheck();
     }
   }
 
-  /** Re-invoke pageSource (server mode). resetPageIndex defaults to true (e.g. external filter changed). */
+  /** Повторно вызывает pageSource (серверный режим). resetPageIndex по умолчанию true (например, изменился внешний фильтр). */
   public reload(opts?: { resetPageIndex?: boolean }): void {
     if (this.isServerMode() && this.serverPageController) {
       this.serverPageController.reload(opts);
     } else {
-      // Client mode: re-apply current data/filters.
+      // Клиентский режим: повторно применяем текущие данные/фильтры.
       this.refreshTable();
     }
   }
