@@ -14,7 +14,7 @@ export class NgxAurTableConfigUtil {
   }
 
   /**
-   * @return Map where the key is 'key' and the value is 'name'
+   * @return Map, где ключ — это 'key', а значение — это 'name'
    */
   public static keyNameMap(config: TableConfig<any>): Map<string, string> {
     return new Map(this.columnCfgs(config).map(cfg => [cfg.key, cfg.name]));

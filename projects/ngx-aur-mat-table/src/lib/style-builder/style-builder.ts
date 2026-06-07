@@ -32,7 +32,7 @@ export namespace StyleBuilder {
       return this;
     }
 
-    /** configured text color ('' if unset) — used to toggle `.new-color` */
+    /** настроенный цвет текста ('' если не задан) — используется для переключения `.new-color` */
     get colorValue(): string {
       return this._color;
     }
