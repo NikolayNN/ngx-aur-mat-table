@@ -38,10 +38,10 @@ export class DragDropProvider<T> extends AbstractProvider {
   }
 
   /**
-   * Factory method to create an instance of IndexProvider based on table configuration.
-   * Returns a dummy provider if the index is not enabled in the configuration.
-   * @param tableConfig The configuration of the table.
-   * @returns An instance of IndexProvider or IndexProviderDummy.
+   * Фабричный метод для создания экземпляра IndexProvider на основе настройки таблицы.
+   * Возвращает заглушку-провайдер, если индекс не включён в настройке.
+   * @param tableConfig Настройка таблицы.
+   * @returns Экземпляр IndexProvider или IndexProviderDummy.
    */
   public static create<T>(viewContainerRef: ViewContainerRef, tableConfig: TableConfig<T>): DragDropProvider<T> {
     if (DragDropProvider.canCreate(tableConfig)) {
@@ -66,7 +66,7 @@ export class DragProviderDummy extends DragDropProvider<any> {
   }
 
   public override addColumn(columns: string[]): DragProviderDummy {
-    // No operation performed as the index is not enabled.
+    // Операция не выполняется, так как индекс не включён.
     return this;
   }
 }

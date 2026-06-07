@@ -3,8 +3,8 @@ import {AbstractProvider} from "./AbstractProvider";
 import { isFeatureEnabled } from "../utils/feature-enabled.util";
 
 /**
- * Provides functionality to manage the index column in a table.
- * The class can handle index configurations and modify the column array to include an index column.
+ * Предоставляет функциональность для управления колонкой индекса в таблице.
+ * Класс может обрабатывать настройки индекса и изменять массив колонок, добавляя в него колонку индекса.
  */
 export class IndexProvider extends AbstractProvider {
   public readonly isEnabled: boolean = true;
@@ -27,9 +27,9 @@ export class IndexProvider extends AbstractProvider {
   }
 
   /**
-   * Adds the index column to the beginning of the columns array.
-   * @param columns The array of column names to which the index column should be added.
-   * @returns The instance of IndexProvider for method chaining.
+   * Добавляет колонку индекса в начало массива колонок.
+   * @param columns Массив имён колонок, в который должна быть добавлена колонка индекса.
+   * @returns Экземпляр IndexProvider для цепочки вызовов.
    */
   public addIndexColumn(columns: string[]): IndexProvider {
     if (this.notHasKey(this.COLUMN_NAME, columns)) {
@@ -39,10 +39,10 @@ export class IndexProvider extends AbstractProvider {
   }
 
   /**
-   * Factory method to create an instance of IndexProvider based on table configuration.
-   * Returns a dummy provider if the index is not enabled in the configuration.
-   * @param tableConfig The configuration of the table.
-   * @returns An instance of IndexProvider or IndexProviderDummy.
+   * Фабричный метод для создания экземпляра IndexProvider на основе настройки таблицы.
+   * Возвращает заглушку-провайдер, если индекс не включён в настройке.
+   * @param tableConfig Настройка таблицы.
+   * @returns Экземпляр IndexProvider или IndexProviderDummy.
    */
   public static create<T>(tableConfig: TableConfig<T>): IndexProvider {
     if (IndexProvider.canCreate(tableConfig)) {
@@ -58,19 +58,19 @@ export class IndexProvider extends AbstractProvider {
 
 
 /**
- * A dummy implementation of IndexProvider that is used when index functionality is not enabled.
- * This class overrides certain methods to provide no-operation implementations.
+ * Заглушка-реализация IndexProvider, которая используется, когда функциональность индекса не включена.
+ * Этот класс переопределяет некоторые методы, предоставляя пустые реализации.
  */
 export class IndexProviderDummy extends IndexProvider {
   public override readonly isEnabled = false;
 
   /**
-   * Overrides the addIndexColumn method to return itself without modifying the columns array.
-   * @param columns The array of column names.
-   * @returns The instance of IndexProviderDummy for method chaining.
+   * Переопределяет метод addIndexColumn, возвращая себя без изменения массива колонок.
+   * @param columns Массив имён колонок.
+   * @returns Экземпляр IndexProviderDummy для цепочки вызовов.
    */
   public override addIndexColumn(columns: string[]): IndexProviderDummy {
-    // No operation performed as the index is not enabled.
+    // Операция не выполняется, так как индекс не включён.
     return this;
   }
 }
