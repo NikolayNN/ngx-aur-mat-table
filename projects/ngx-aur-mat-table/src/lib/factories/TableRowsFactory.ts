@@ -4,10 +4,10 @@ import {TableRow} from "../model/TableRow";
 export class TableRowsFactory {
 
   /**
-   * Converts an array of data objects into an array of TableRow objects.
-   * @param data Array of data objects to be converted.
-   * @param config Configuration settings for each column.
-   * @returns An array of TableRow objects.
+   * Преобразует массив объектов данных в массив объектов TableRow.
+   * @param data Массив объектов данных для преобразования.
+   * @param config Настройки конфигурации для каждой колонки.
+   * @returns Массив объектов TableRow.
    */
   public static convert<T>(data: T[], config: ColumnConfig<T>[]): TableRow<T>[] {
     return data.map((obj, index) => this.createTableRow(index, obj, config));

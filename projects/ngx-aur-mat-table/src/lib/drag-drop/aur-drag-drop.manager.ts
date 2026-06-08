@@ -21,38 +21,38 @@ interface DropEvent {
 }
 
 /**
- * Manages the drag-and-drop process, including start, drop, and end events.
- * Handles drag previews, drop validation, and dataset updates after a successful drop.
+ * Управляет процессом drag & drop, включая события начала, сброса и завершения.
+ * Обрабатывает превью перетаскивания, проверку возможности сброса и обновление набора данных после успешного сброса.
  */
 export class AurDragDropManager {
   /**
-   *  Manages drop validation logic
+   *  Управляет логикой проверки возможности сброса
    */
   private readonly canDropManager: CanDropManager;
 
   /**
-   * Manages drag preview rendering
+   * Управляет отрисовкой превью перетаскивания
    */
   private readonly previewManager: DragPreviewManager;
 
   /**
-   * Manages source-target mappings
+   * Управляет сопоставлениями источник-цель
    */
   private readonly mappingManager: DragDropMappingManager;
 
   /**
-   * Holds info about the current drag operation
+   * Хранит информацию о текущей операции перетаскивания
    */
   private startDragEvent?: StartDragEvent;
 
   /**
-   * Holds info about the current drop operation
+   * Хранит информацию о текущей операции сброса
    */
   private dropEvent?: DropEvent;
 
   /**
-   * Creates an empty instance of AurDragDropManager.
-   * @returns {AurDragDropManager} - An empty manager with no initialized references.
+   * Создаёт пустой экземпляр AurDragDropManager.
+   * @returns {AurDragDropManager} - Пустой менеджер без инициализированных ссылок.
    */
   public static empty(): AurDragDropManager {
     return new AurDragDropManager(undefined!, [], []);
@@ -67,19 +67,19 @@ export class AurDragDropManager {
   }
 
   /**
-   * Returns the list of all available draggable source names.
-   * @returns {string[]} - Array of source names.
+   * Возвращает список всех доступных имён источников перетаскивания.
+   * @returns {string[]} - Массив имён источников.
    */
   get draggableSourceNames(): string[] {
     return this.mappings?.map(mapping => mapping.sourceName) || [];
   }
 
   /**
-   * Initiates a drag operation, saving the context and showing a drag preview.
-   * @param {string} sourceName - The name of the drag source.
-   * @param {unknown[]} draggedData - The data being dragged.
-   * @param {DragEvent} event - The drag event.
-   * @throws Error if a drag is already in progress.
+   * Инициирует операцию перетаскивания, сохраняя контекст и показывая превью перетаскивания.
+   * @param {string} sourceName - Имя источника перетаскивания.
+   * @param {unknown[]} draggedData - Перетаскиваемые данные.
+   * @param {DragEvent} event - Событие перетаскивания.
+   * @throws Error если перетаскивание уже выполняется.
    */
   public startDrag(sourceName: string, draggedData: unknown[], event: DragEvent): void {
     this.startDragEvent = {sourceName, draggedData};
@@ -87,9 +87,9 @@ export class AurDragDropManager {
   }
 
   /**
-   * Validates whether a drop is allowed on the target element by calling preventDefault.
-   * @param {string} targetName - The name of the target element.
-   * @param {DragEvent} event - The drag event.
+   * Проверяет, разрешён ли сброс на целевой элемент, вызывая preventDefault.
+   * @param {string} targetName - Имя целевого элемента.
+   * @param {DragEvent} event - Событие перетаскивания.
    */
   public canDropPreventDefault(targetName: string, event: DragEvent): void {
     if (!this.startDragEvent) {
@@ -100,16 +100,16 @@ export class AurDragDropManager {
   }
 
   /**
-   * Executes the drop operation on the specified target.
-   * @param {string} targetName - The name of the target element.
-   * @param {any} targetData - The data for the target element.
+   * Выполняет операцию сброса на указанную цель.
+   * @param {string} targetName - Имя целевого элемента.
+   * @param {any} targetData - Данные для целевого элемента.
    */
   public drop(targetName: string, targetData: any): void {
     this.dropEvent = {targetName, targetData}
   }
 
   /**
-   * Ends the drag operation and updates the dataset if the drop was successful.
+   * Завершает операцию перетаскивания и обновляет набор данных, если сброс был успешным.
    */
   public endDrag(): void {
     this.previewManager.removePreview();

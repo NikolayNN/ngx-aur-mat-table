@@ -17,7 +17,7 @@ export class RowActionProvider<T> extends AbstractProvider {
   private readonly config: ActionConfig<T>;
   public readonly size: ColumnSize | undefined;
 
-  // key is rowId
+  // ключ — это rowId
   public actionView: Map<number, Action<string>[]> = new Map();
 
   constructor(tableConfig: TableConfig<T>) {
@@ -46,10 +46,10 @@ export class RowActionProvider<T> extends AbstractProvider {
   }
 
   /**
-   * Convert rows and actions to a view format.
-   * @param rows - The data rows to be converted.
-   * @param actionConfig - Configuration for actions on rows.
-   * @return Map of row IDs to their associated action views.
+   * Преобразует строки и действия в формат представления.
+   * @param rows - Строки данных для преобразования.
+   * @param actionConfig - Настройка действий над строками.
+   * @return Соответствие идентификаторов строк связанным с ними представлениям действий.
    */
   public setView(rows: TableRow<T>[]): RowActionProvider<T> {
     if (!this.config) {

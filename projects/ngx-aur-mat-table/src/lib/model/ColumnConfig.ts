@@ -3,17 +3,17 @@ import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 import {StyleBuilder} from "../style-builder/style-builder";
 
 /**
- * Maps the leaf-type generic `T` to a resolved value:
- * - when `T` is a plain value (e.g. `string`), resolves to `R`;
- * - when `T` is a `(value) => string` resolver, resolves to `(value) => R`.
- * Used for control fields whose value type must be `boolean`, not the leaf string.
+ * Сопоставляет дженерик листового типа `T` с разрешённым значением:
+ * - когда `T` — простое значение (например, `string`), разрешается в `R`;
+ * - когда `T` — резолвер `(value) => string`, разрешается в `(value) => R`.
+ * Используется для управляющих полей, тип значения которых должен быть `boolean`, а не листовая строка.
  */
 export type Resolvable<T, R> = T extends (arg: infer A) => any ? (arg: A) => R : R;
 
 export interface TableConfig<T> {
 
   /**
-   * имя таблицы используется в drag & drop
+   * Имя таблицы, используется в drag & drop
    */
   name?: string,
 
@@ -33,7 +33,7 @@ export interface TableConfig<T> {
   filterCfg?: FilterConfig,
 
   /**
-   * Настройка отображения кнопок для совершения действий с объктом в строке
+   * Настройка отображения кнопок для совершения действий с объектом в строке
    */
   actionCfg?: ActionConfig<T>,
 
@@ -58,23 +58,23 @@ export interface TableConfig<T> {
 }
 
 export interface ClickConfig {
-  /** highlight style applied to the clicked/highlighted row; pointer moved to HoverConfig */
+  /** Стиль подсветки, применяемый к кликнутой/подсвеченной строке; pointer перенесён в HoverConfig */
   highlightClicked?: StyleBuilder.Row | string;
 
   /**
-   * default false
-   * false: first and second click both emit this row; selection is not cleared.
-   * true: first click emits this row, second click emits undefined; first selects, second deselects.
+   * По умолчанию false
+   * false: и первый, и второй клик испускают эту строку; выделение не сбрасывается.
+   * true: первый клик испускает эту строку, второй клик испускает undefined; первый выделяет, второй снимает выделение.
    */
   cancelable?: boolean;
 }
 
 export interface HoverConfig {
-  /** master switch for the hover overlay; treated as true when hoverCfg is present and this is not false */
+  /** Главный переключатель оверлея наведения; считается true, когда hoverCfg задан и это значение не false */
   enable?: boolean;
-  /** show cursor: pointer on the body row */
+  /** Показывать cursor: pointer на строке тела */
   pointer?: boolean;
-  /** style/class applied while the row is hovered (overlay, like highlight) */
+  /** Стиль/класс, применяемый при наведении на строку (оверлей, как подсветка) */
   styleCfg?: HoverStyleConfig;
 }
 
@@ -94,20 +94,20 @@ export interface BodyRowConfig<T> {
 }
 
 export interface HeaderStyleConfig {
-  /** CSS class(es) on the main header <tr>. */
+  /** CSS-класс(ы) на основном <tr> заголовка. */
   class?: string;
-  /** Inline style; a StyleBuilder.Row (built/un-built) or a raw CSS string. */
+  /** Инлайн-стиль; StyleBuilder.Row (собранный/несобранный) или сырая CSS-строка. */
   style?: StyleBuilder.Row | string;
 }
 
 export interface BodyStyleConfig<T> {
-  /** CSS class(es) on the body <tr mat-row>; space-separated allowed, e.g. 'total not-hover'. */
+  /** CSS-класс(ы) на <tr mat-row> тела; допускается разделение пробелами, например 'total not-hover'. */
   class?: (row: TableRow<T>) => string | null;
-  /** Inline style for the body <tr>; a StyleBuilder.Row or a raw CSS string. */
+  /** Инлайн-стиль для <tr> тела; StyleBuilder.Row или сырая CSS-строка. */
   style?: (row: TableRow<T>) => StyleBuilder.Row | string;
 }
 
-/** static value OR a function of the computed totals + source rows */
+/** Статичное значение ИЛИ функция от вычисленных итогов + исходных строк */
 export type TotalHook<T, R> = R | ((totals: Map<string, any>, data: TableRow<T>[]) => R);
 
 export interface TotalStyleConfig<T> {
@@ -116,13 +116,13 @@ export interface TotalStyleConfig<T> {
 }
 
 export interface ColumnConfig<T> {
-  /** column title text */
+  /** Текст заголовка колонки */
   name: string;
 
-  /** column key in data source */
+  /** Ключ колонки в источнике данных */
   key: string;
 
-  /** return value to save in MatTableDataSource */
+  /** Значение для сохранения в MatTableDataSource */
   valueConverter: (value: T) => any;
   sort?: SortConfig<T>;
   headerView?: ColumnView<string>;
@@ -132,18 +132,18 @@ export interface ColumnConfig<T> {
 }
 
 export interface IconView<T> {
-  /** icon name */
+  /** Имя иконки */
   name: T;
 
-  /** icon color default black */
+  /** Цвет иконки, по умолчанию black */
   color?: T;
 
-  /** icon tooltip if null disabled */
+  /** Подсказка иконки, если null — выключена */
   tooltip?: T;
 
   wrapper?: IconWrapper<T>;
 
-  /** Show the icon. `undefined`/`true` → shown, `false` → hidden. */
+  /** Показать иконку. `undefined`/`true` → показана, `false` → скрыта. */
   visible?: Resolvable<T, boolean>;
 }
 
@@ -158,16 +158,16 @@ export interface ImageView<T> {
 }
 
 export interface TextView<T> {
-  /** default true*/
+  /** По умолчанию true*/
   show?: boolean;
-  /** tooltip */
+  /** Подсказка */
   tooltip?: T;
   color?: T;
 }
 
 export interface ColumnView<T> {
 
-  /** settings for icon in column */
+  /** Настройка иконки в колонке */
   icon?: IconView<T>;
 
   image?: ImageView<T>
@@ -176,32 +176,32 @@ export interface ColumnView<T> {
 }
 
 export interface SortConfig<T> {
-  /** Enable sorting on this column. Default on when `sort` is set; `false` disables. */
+  /** Включить сортировку на этой колонке. По умолчанию включено, когда задан `sort`; `false` выключает. */
   enable?: boolean;
   position?: 'start' | 'end';
 
   /**
-   * column key
+   * Ключ колонки
    */
   customSort?: (data: TableRow<T>, key: string) => any;
 }
 
 export interface IndexConfig {
-  /** Show the index column. Default on when `indexCfg` is set; `false` disables. */
+  /** Показать колонку индекса. По умолчанию включено, когда задан `indexCfg`; `false` выключает. */
   enable?: boolean,
 
-  /** смещение для первого индекса например 1 чтобы нумерация началась с 1 по умолчанию от нуля */
+  /** Смещение для первого индекса, например 1, чтобы нумерация началась с 1, по умолчанию от нуля */
   offset?: number,
 
   headerColumn?: ColumnView<string>
 
-  /** название для колонки, по умолчанию ''*/
+  /** Название для колонки, по умолчанию ''*/
   name?: string;
   size?: ColumnSize;
 }
 
 export interface FilterConfig {
-  /** Show the filter row. Default on when `filterCfg` is set; `false` disables. */
+  /** Показать строку фильтра. По умолчанию включено, когда задан `filterCfg`; `false` выключает. */
   enable?: boolean;
   label?: string;
   placeholder?: string;
@@ -217,21 +217,21 @@ export interface ActionConfig<T> {
 export interface Action<T> {
   action: T;
   icon: IconView<T>;
-  /** Show the action. `undefined`/`true` → shown, `false` → hidden. */
+  /** Показать действие. `undefined`/`true` → показано, `false` → скрыто. */
   visible?: Resolvable<T, boolean>;
   menu?: MenuItem<T>[];
 }
 
 export interface MenuItem<T> {
-  /** action code emitted via rowAction */
+  /** Код действия, испускаемый через rowAction */
   action: T;
-  /** menu item label text */
+  /** Текст подписи пункта меню */
   text: T;
-  /** optional leading icon */
+  /** Необязательная ведущая иконка */
   icon?: IconView<T>;
-  /** Show the item. `undefined`/`true` → shown, `false` → hidden. */
+  /** Показать пункт. `undefined`/`true` → показан, `false` → скрыт. */
   visible?: Resolvable<T, boolean>;
-  /** Disable the item. `undefined`/`false` → enabled, `true` → disabled. */
+  /** Выключить пункт. `undefined`/`false` → включён, `true` → выключен. */
   disabled?: Resolvable<T, boolean>;
 }
 
@@ -240,22 +240,22 @@ export interface SelectionConfig<T> {
   multiple?: boolean;
   showSelectedCount?: boolean;
   compareWith?: (o1: T, o2: T) => boolean
-  // default: true, показывать
+  // по умолчанию: true, показывать
   showTotalCount?: boolean;
-  /** Enable selection. Default on when `selectionCfg` is set; `false` disables. */
+  /** Включить выделение. По умолчанию включено, когда задан `selectionCfg`; `false` выключает. */
   enable?: boolean;
   actions?: Action<string>[];
   size?: ColumnSize;
 }
 
 export interface PaginationConfig {
-  /** Enable pagination. Default on when `paginationCfg` is set; `false` disables. */
+  /** Включить пагинацию. По умолчанию включено, когда задан `paginationCfg`; `false` выключает. */
   enable?: boolean;
   size: number;
   sizes?: number[];
   style?: string;
   position?: 'inline' | 'sticky';
-  /** 'client' (default) lets MatTableDataSource slice in memory; 'server' uses pageSource / paginatorState. */
+  /** 'client' (по умолчанию) позволяет MatTableDataSource нарезать в памяти; 'server' использует pageSource / paginatorState. */
   mode?: 'client' | 'server';
 }
 
@@ -278,7 +278,7 @@ export interface ColumnSize {
 }
 
 export interface HeaderButtonConfig {
-  /** Show the header button. Default on when `headerButtonCfg` is set; `false` disables. */
+  /** Показать кнопку заголовка. По умолчанию включено, когда задан `headerButtonCfg`; `false` выключает. */
   enable?: boolean;
   icon?: string;
   color?: string;
@@ -286,7 +286,7 @@ export interface HeaderButtonConfig {
 }
 
 export interface DragDropConfig {
-  /** Enable drag & drop. Default on when `dragDropCfg` is set; `false` disables. */
+  /** Включить drag & drop. По умолчанию включено, когда задан `dragDropCfg`; `false` выключает. */
   enable?: boolean;
   manager: AurDragDropManager;
   multiple?: boolean;
@@ -295,7 +295,7 @@ export interface DragDropConfig {
 }
 
 export interface TotalRowConfig<T> {
-  /** Show the total row. Default on when any column defines `totalConverter`; `false` disables. */
+  /** Показать строку итогов. По умолчанию включено, когда какая-либо колонка определяет `totalConverter`; `false` выключает. */
   enable?: boolean;
   styleCfg?: TotalStyleConfig<T>;
 }
@@ -308,7 +308,7 @@ export interface TimelineLineConfig {
 }
 
 export interface TimelineConfig<T = any> {
-  /** Enable the timeline column. Default on when `timelineCfg` is set; `false` disables. */
+  /** Включить колонку таймлайна. По умолчанию включено, когда задан `timelineCfg`; `false` выключает. */
   enable?: boolean;
   markerColor?: string;
   line?: TimelineLineConfig;

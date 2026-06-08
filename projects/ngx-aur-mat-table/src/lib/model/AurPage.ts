@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { Sort } from '@angular/material/sort';
 
-/** What the table asks for when it needs a page (server mode). */
+/** Что запрашивает таблица, когда ей нужна страница (серверный режим). */
 export interface AurPageRequest {
   pageIndex: number;
   pageSize: number;
@@ -9,15 +9,15 @@ export interface AurPageRequest {
 }
 
 /**
- * A page of server data. Field names mirror Spring Data `Page<T>` so a backend
- * `Page<T>` is structurally assignable with no mapping. Only this subset is required;
- * extra `Page` fields (empty/first/last/totalPages/...) are allowed by structural typing.
+ * Страница серверных данных. Имена полей повторяют Spring Data `Page<T>`, поэтому серверный
+ * `Page<T>` структурно совместим по присваиванию без маппинга. Требуется только это подмножество;
+ * дополнительные поля `Page` (empty/first/last/totalPages/...) допускаются структурной типизацией.
  */
 export interface AurPage<T> {
   content: T[];
   totalElements: number;
-  number?: number; // page index; falls back to request.pageIndex when omitted
+  number?: number; // индекс страницы; при отсутствии используется request.pageIndex
 }
 
-/** Host-supplied loader: given a request, return the matching page. */
+/** Загрузчик, предоставляемый хостом: по запросу возвращает соответствующую страницу. */
 export type AurPageSource<T> = (request: AurPageRequest) => Observable<AurPage<T>>;

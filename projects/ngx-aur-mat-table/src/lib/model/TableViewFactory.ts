@@ -4,10 +4,10 @@ import {ColumnView, IconView, TextView, TableConfig, ImageView} from "./ColumnCo
 export class TableViewFactory {
 
   /**
-   * Converts rows into a view format based on table configuration.
-   * @param rows The rows of the table.
-   * @param tableConfig The configuration of the table.
-   * @returns An array of maps representing the view for each row.
+   * Преобразует строки в формат представления на основе конфигурации таблицы.
+   * @param rows Строки таблицы.
+   * @param tableConfig Конфигурация таблицы.
+   * @returns Массив map, представляющих представление для каждой строки.
    */
   public static toView<T>(rows: TableRow<T>[], tableConfig: TableConfig<T>): Map<string, ColumnView<string>>[] {
     const columnViewMap = new Map<string, ColumnView<(value: TableRow<T>) => string>>();

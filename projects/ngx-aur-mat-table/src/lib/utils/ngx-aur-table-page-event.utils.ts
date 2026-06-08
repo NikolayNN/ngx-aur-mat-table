@@ -3,8 +3,8 @@ import {PageEvent} from "@angular/material/paginator";
 
 export class NgxAurTablePageEventUtils {
   /**
-   * @deprecated Not needed with the `pageSource` API — the table performs the initial
-   * load itself. Kept for the legacy manual server-pagination path.
+   * @deprecated Не нужно с API `pageSource` — таблица сама выполняет начальную
+   * загрузку. Сохранено для устаревшего пути ручной серверной пагинации.
    */
   public static createEmpty(tableConfig: TableConfig<any>): PageEvent {
     return {

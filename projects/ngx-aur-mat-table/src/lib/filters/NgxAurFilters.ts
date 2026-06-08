@@ -3,9 +3,9 @@ import {TableRow} from "../model/TableRow";
 export namespace NgxAurFilters {
 
   /**
-   * Base abstract class for filter.
-   * Defines a common interface for all filters.
-   * @template T The type of data to be filtered.
+   * Базовый абстрактный класс фильтра.
+   * Определяет общий интерфейс для всех фильтров.
+   * @template T Тип данных, подлежащих фильтрации.
    */
   export abstract class Base<T> {
 
@@ -13,33 +13,33 @@ export namespace NgxAurFilters {
     }
 
     /**
-     * Abstract method to create a filter function for use with Angular Material's MatTable.
-     * This function is used as the filtering logic applied to the data displayed in the table.
-     * It must be overridden in subclasses to provide custom filter criteria.
+     * Абстрактный метод для создания функции фильтрации для использования с MatTable из Angular Material.
+     * Эта функция используется как логика фильтрации, применяемая к данным, отображаемым в таблице.
+     * Должна быть переопределена в подклассах для предоставления собственных критериев фильтрации.
      *
-     * @returns A filter function that takes a single parameter:
-     *    - `data`: An individual data item from the MatTable data source. This represents
-     *      a single row of data in the table. The type of `data` is defined by the generic
-     *      type parameter 'T'.
+     * @returns Функция фильтрации, принимающая единственный параметр:
+     *    - `data`: Отдельный элемент данных из источника данных MatTable. Представляет
+     *      одну строку данных в таблице. Тип `data` определяется обобщённым
+     *      параметром типа 'T'.
      *
-     * The function should return a boolean value indicating whether the `data` item
-     * satisfies the filter criteria. The specific implementation of the filter logic
-     * will vary depending on the application's requirements and the nature of the data.
+     * Функция должна возвращать булево значение, указывающее, удовлетворяет ли элемент `data`
+     * критериям фильтрации. Конкретная реализация логики фильтрации
+     * будет различаться в зависимости от требований приложения и характера данных.
      */
     public abstract filterFn(): (data: TableRow<T>) => boolean;
 
     /**
-     * Determines whether the current filter is equivalent to another filter.
-     * This method is used to compare the current applied filter with a new filter.
-     * If the filters are equivalent, the method should return `true`, indicating that
-     * the data table does not need to be rebuilt. If they are not equivalent, it should
-     * return `false`, indicating that the table should be updated to reflect the new filter.
+     * Определяет, эквивалентен ли текущий фильтр другому фильтру.
+     * Этот метод используется для сравнения текущего применённого фильтра с новым фильтром.
+     * Если фильтры эквивалентны, метод должен вернуть `true`, указывая, что
+     * таблицу данных не нужно перестраивать. Если они не эквивалентны, он должен
+     * вернуть `false`, указывая, что таблицу следует обновить, чтобы отразить новый фильтр.
      *
-     * Implementing this method in subclasses allows for optimized rendering by avoiding
-     * unnecessary table updates when the filter criteria have not actually changed.
+     * Реализация этого метода в подклассах позволяет оптимизировать отрисовку, избегая
+     * ненужных обновлений таблицы, когда критерии фильтрации фактически не изменились.
      *
-     * @param other The filter to compare with the current filter.
-     * @returns `true` if the current filter and the `other` filter are equivalent, otherwise `false`.
+     * @param other Фильтр для сравнения с текущим фильтром.
+     * @returns `true`, если текущий фильтр и фильтр `other` эквивалентны, иначе `false`.
      */
     public abstract equals(other: Base<T>): boolean;
   }
@@ -50,9 +50,9 @@ export namespace NgxAurFilters {
 
 
   /**
-   * Class for filtering data based on a single value.
-   * @template T The type of data to be filtered.
-   * @template V The type of the value used for filtering.
+   * Класс для фильтрации данных на основе одного значения.
+   * @template T Тип данных, подлежащих фильтрации.
+   * @template V Тип значения, используемого для фильтрации.
    */
   export abstract class ValueSingle<T, V> extends ExtractableProperty<T, V> {
 
@@ -66,9 +66,9 @@ export namespace NgxAurFilters {
   }
 
   /**
-   * Class for filtering data based on an array of values.
-   * @template T The type of data to be filtered.
-   * @template V The type of the values used for filtering.
+   * Класс для фильтрации данных на основе массива значений.
+   * @template T Тип данных, подлежащих фильтрации.
+   * @template V Тип значений, используемых для фильтрации.
    */
   export abstract class ValueArray<T, V> extends ExtractableProperty<T, V> {
 
@@ -78,9 +78,9 @@ export namespace NgxAurFilters {
   }
 
   /**
-   * Class for filtering data based on a set of values.
-   * @template T The type of data to be filtered.
-   * @template V The type of the values used for filtering.
+   * Класс для фильтрации данных на основе множества значений.
+   * @template T Тип данных, подлежащих фильтрации.
+   * @template V Тип значений, используемых для фильтрации.
    */
   export abstract class ValueSet<T, V> extends ExtractableProperty<T, V> {
 
@@ -90,9 +90,9 @@ export namespace NgxAurFilters {
   }
 
   /**
-   * Class for filtering data within a min-max range.
-   * @template T The type of data to be filtered.
-   * @template V The type of the values defining the range.
+   * Класс для фильтрации данных в диапазоне min-max.
+   * @template T Тип данных, подлежащих фильтрации.
+   * @template V Тип значений, определяющих диапазон.
    */
   export abstract class ValueMinMax<T, V> extends ExtractableProperty<T, V> {
     constructor(protected _min: V,
@@ -115,9 +115,9 @@ export namespace NgxAurFilters {
   }
 
   /**
-   * Class for filtering data within a min-max range.
-   * @template T The type of data to be filtered.
-   * @template V The type of the values defining the range.
+   * Класс для фильтрации данных в диапазоне min-max.
+   * @template T Тип данных, подлежащих фильтрации.
+   * @template V Тип значений, определяющих диапазон.
    */
   export abstract class ValueMinMaxNumber<T> extends ValueMinMax<T, number> {
     constructor(min: number,
@@ -135,10 +135,10 @@ export namespace NgxAurFilters {
   }
 
   /**
-   * Abstract class for filtering data based on whether a specific property
-   * of the data, when trimmed and converted to lower case, contains a specified
-   * substring, also trimmed and converted to lower case.
-   * @template T The type of data to be filtered.
+   * Абстрактный класс для фильтрации данных по тому, содержит ли определённое свойство
+   * данных, после обрезки и приведения к нижнему регистру, заданную
+   * подстроку, также обрезанную и приведённую к нижнему регистру.
+   * @template T Тип данных, подлежащих фильтрации.
    */
   export abstract class ContainsStringIgnoreCase<T> extends ValueSingle<T, string> {
 
@@ -272,8 +272,8 @@ export namespace NgxAurFilters {
   }
 
   /**
-   * Composite filter class that combines multiple filters using logical AND.
-   * @template T The type of data to be filtered.
+   * Класс составного фильтра, объединяющий несколько фильтров с помощью логического AND.
+   * @template T Тип данных, подлежащих фильтрации.
    */
   export abstract class CompositeAndFilter<T> extends Base<T> {
     private filters: Base<T>[];
@@ -284,15 +284,15 @@ export namespace NgxAurFilters {
     }
 
     /**
-     * Creates a filter function that combines the filter functions of all
-     * filters in the composite using logical AND.
+     * Создаёт функцию фильтрации, объединяющую функции фильтрации всех
+     * фильтров составного фильтра с помощью логического AND.
      *
-     * @returns A filter function that takes a single parameter:
-     *    - `data`: An individual data item from the MatTable data source.
-     *      The type of `data` is defined by the generic type parameter 'T'.
+     * @returns Функция фильтрации, принимающая единственный параметр:
+     *    - `data`: Отдельный элемент данных из источника данных MatTable.
+     *      Тип `data` определяется обобщённым параметром типа 'T'.
      *
-     * The function returns `true` if all filters in the composite return `true`
-     * for the `data` item, otherwise `false`.
+     * Функция возвращает `true`, если все фильтры составного фильтра возвращают `true`
+     * для элемента `data`, иначе `false`.
      */
     public override filterFn(): (data: TableRow<T>) => boolean {
       return (data) => {
@@ -301,11 +301,11 @@ export namespace NgxAurFilters {
     }
 
     /**
-     * Determines whether the current composite filter is equivalent to another filter.
-     * This method is used to compare the current applied composite filter with a new filter.
+     * Определяет, эквивалентен ли текущий составной фильтр другому фильтру.
+     * Этот метод используется для сравнения текущего применённого составного фильтра с новым фильтром.
      *
-     * @param other The filter to compare with the current filter.
-     * @returns `true` if the current filter and the `other` filter are equivalent, otherwise `false`.
+     * @param other Фильтр для сравнения с текущим фильтром.
+     * @returns `true`, если текущий фильтр и фильтр `other` эквивалентны, иначе `false`.
      */
     public override equals(other: Base<T>): boolean {
       if (!(other instanceof CompositeAndFilter)) {

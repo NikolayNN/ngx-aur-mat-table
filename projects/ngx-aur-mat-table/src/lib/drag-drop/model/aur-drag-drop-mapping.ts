@@ -7,35 +7,35 @@ export interface AurDragPreviewMappings<SOURCE> {
 }
 
 /**
- * Interface representing the mapping configuration for drag-and-drop functionality
- * between components. It defines the source component (from where data is grabbed)
- * and the target component (where data is dropped), as well as the functions that handle
- * the grabbing and dropping of data.
+ * Интерфейс, представляющий конфигурацию сопоставления для функциональности drag & drop
+ * между компонентами. Он определяет компонент-источник (откуда захватываются данные)
+ * и компонент-цель (куда сбрасываются данные), а также функции, которые обрабатывают
+ * захват и сброс данных.
  *
- * @template SOURCE - The type of data used by the source component.
- * @template TARGET - The type of data used by the target component.
+ * @template SOURCE - Тип данных, используемых компонентом-источником.
+ * @template TARGET - Тип данных, используемых компонентом-целью.
  */
 export interface AurDragDropMapping<SOURCE, TARGET> {
 
   /**
-   * The name of the source component from which data can be grabbed.
-   * This represents the component that allows a user to initiate a grab action.
+   * Имя компонента-источника, из которого могут захватываться данные.
+   * Представляет компонент, позволяющий пользователю инициировать действие захвата.
    */
   readonly sourceName: string,
 
   /**
-   * The name of the target component where the data can be dropped.
-   * This represents the component that accepts the drop action.
+   * Имя компонента-цели, куда могут сбрасываться данные.
+   * Представляет компонент, который принимает действие сброса.
    */
   readonly targetName: string,
 
   /**
-   * Function called to handle the drop action in the target component.
-   * It is invoked when the drop event occurs, and it describes how to process
-   * the data into the target component.
+   * Функция, вызываемая для обработки действия сброса в компоненте-цели.
+   * Она вызывается при возникновении события сброса и описывает, как обработать
+   * данные в компоненте-цели.
    *
-   * @param ctx - The drop context containing information about the source and target.
-   * @returns An array of data elements of type TARGET.
+   * @param ctx - Контекст сброса, содержащий информацию об источнике и цели.
+   * @returns Массив элементов данных типа TARGET.
    */
   readonly afterDropFn: (ctx: DropContext<SOURCE, TARGET>) => Observable<AurDropResult>,
 }

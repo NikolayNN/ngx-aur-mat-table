@@ -5,9 +5,9 @@ import {TableRowsFactory} from "./TableRowsFactory";
 
 export class MatTableDataSourceFactory {
   /**
-   * Converts an array of data objects into MatTableDataSource.
-   * @param data Array of data objects to be converted.
-   * @param config Configuration settings for each column.
+   * Преобразует массив объектов данных в MatTableDataSource.
+   * @param data Массив объектов данных для преобразования.
+   * @param config Настройки конфигурации для каждой колонки.
    * @returns MatTableDataSource.
    */
   public static convert<T>(data: T[], config: ColumnConfig<T>[]): MatTableDataSource<TableRow<T>> {
