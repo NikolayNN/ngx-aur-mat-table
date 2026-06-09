@@ -380,7 +380,8 @@
 
         <ng-container *ngIf="totalRowProvider.isEnabled">
           <tr mat-footer-row *matFooterRowDef="_displayColumns; sticky: this.tableConfig.stickyCfg?.total"
-              [style]="_totalStyle" [ngClass]="_totalClass"></tr>
+              [style]="_totalStyle" [ngClass]="_totalClass"
+              [style.display]="isTotalRowVisible() ? null : 'none'"></tr>
         </ng-container>
 
         <!--sub-footer-row-->

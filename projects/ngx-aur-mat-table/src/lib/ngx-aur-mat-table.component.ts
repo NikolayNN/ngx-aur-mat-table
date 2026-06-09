@@ -500,6 +500,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (this.isServerMode() && this.serverPageController) {
       this.serverPageController.onPage({ pageIndex: event.pageIndex, pageSize: event.pageSize });
     }
+    this.cdr.markForCheck();
   }
 
   private updateTimelineBounds(): void {
@@ -617,6 +618,39 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   /** Хелпер для шаблона: функция активна, когда её конфигурация присутствует, если только не задано `enable: false`. */
   isFeatureEnabled(cfg: { enable?: boolean } | null | undefined): boolean {
     return isFeatureEnabledFn(cfg);
+  }
+
+  /**
+   * Видна ли строка итогов на текущей странице.
+   * По умолчанию итоги показываются только на последней странице пагинации;
+   * `totalRowCfg.showOnEveryPage: true` возвращает показ на каждой странице.
+   * Когда пагинация выключена — итоги показываются всегда.
+   */
+  isTotalRowVisible(): boolean {
+    if (this.tableConfig.totalRowCfg?.showOnEveryPage) return true;
+    if (!this.paginationProvider.isEnabled) return true;
+    const { pageIndex, lastPageIndex } = this.currentPaging();
+    return pageIndex >= lastPageIndex;
+  }
+
+  /**
+   * Текущий индекс страницы и индекс последней страницы.
+   * Серверный режим читает их из paginatorState (как getTimelineVisibleData),
+   * клиентский — из активного пагинатора и числа отфильтрованных строк.
+   */
+  private currentPaging(): { pageIndex: number; lastPageIndex: number } {
+    let total: number, pageIndex: number, pageSize: number;
+    if (this.paginatorState) {
+      total = this.paginatorState.length;
+      pageIndex = this.paginatorState.pageIndex;
+      pageSize = this.activePaginator?.pageSize ?? this.paginationProvider.size;
+    } else {
+      total = this.tableDataSource.filteredData.length;
+      pageIndex = this.activePaginator?.pageIndex ?? 0;
+      pageSize = this.activePaginator?.pageSize ?? this.paginationProvider.size;
+    }
+    const lastPageIndex = pageSize > 0 ? Math.max(0, Math.ceil(total / pageSize) - 1) : 0;
+    return { pageIndex, lastPageIndex };
   }
 
   private hoverActive(row: TableRow<T>): boolean {
