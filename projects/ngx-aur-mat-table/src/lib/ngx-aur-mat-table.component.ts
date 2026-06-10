@@ -366,6 +366,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private prepareTableData(initSelection: T[] = []) {
+    // карту кастомных сортировок обновляем ДО initTable(): sorting accessor читает её
+    // синхронно во время sort-прохода пайплайна, который запускает присваивание .data=
     this.initCustomSortFunctionsMap();
     this.initTable();
     this.removeWrongKeysFromDisplayColumns();

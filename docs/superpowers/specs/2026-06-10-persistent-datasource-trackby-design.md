@@ -112,6 +112,10 @@ private initCustomSortFunctionsMap() {
 }
 ```
 
+Порядок в `prepareTableData()`: `initCustomSortFunctionsMap()` вызывается ДО `initTable()` —
+sorting accessor читает карту синхронно во время sort-прохода, который запускает `.data=`
+(выяснено на код-ревью Task 2: раньше окно маскировалось лишним присваиванием `.sort=`).
+
 Фильтры при обновлении данных: **ничего дополнительно не делаем**. На персистентном
 инстансе `filter` и `filterPredicate` сохраняются, поэтому `.data = rows` синхронно
 прогоняет новые данные через активные фильтры (пайплайн на BehaviorSubject —
