@@ -161,4 +161,29 @@ describe('NgxAurMatTableComponent persistent datasource', () => {
     const row = component.tableDataSource.data[0];
     expect(component.trackByRow(0, row)).toBe('Alice');
   });
+
+  it('master toggle selects only filtered rows after data update', () => {
+    component.tableConfig = {
+      columnsCfg: [
+        {name: 'Name', key: 'name', valueConverter: (v) => v.name},
+        {name: 'Age', key: 'age', valueConverter: (v) => v.age},
+      ],
+      selectionCfg: {enable: true, multiple: true}
+    };
+    component.refreshTable();
+
+    component.applyFilter('age', new AgeGreaterFilter(26));
+    component.tableData = [
+      {name: 'Dave', age: 20},
+      {name: 'Eve', age: 50},
+      {name: 'Frank', age: 60},
+    ];
+    component.refreshTable();
+
+    component.masterToggle();
+
+    const selected = component.getSelectionModel().selected.map(s => s.name).sort();
+    expect(selected).toEqual(['Eve', 'Frank']);
+    expect(component.isAllSelected()).toBeTrue();
+  });
 });
