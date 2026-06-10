@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {ChangeDetectionStrategy, Component, Input} from '@angular/core';
 import { IconView } from '../../model/ColumnConfig';
 
 
@@ -6,6 +6,7 @@ import { IconView } from '../../model/ColumnConfig';
     selector: 'lib-icon-view',
     templateUrl: './icon-view.component.html',
     styleUrl: './icon-view.component.css',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: false
 })
 export class IconViewComponent {
