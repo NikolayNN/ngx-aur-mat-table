@@ -224,7 +224,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private filterStorage = new Map<string, NgxAurFilters.Base<T>>();
   private _searchText = '';
-  private _defaultFilterPredicate!: (data: TableRow<T>, filter: string) => boolean;
+  private _defaultFilterPredicate: (data: TableRow<T>, filter: string) => boolean;
 
   //Значение передаётся в контейнере, иначе OnChange не видит изменений, когда передаются одинаковые значения, и подсветка строки не отключается
   // @ts-ignore
@@ -325,26 +325,27 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
 
   private initPaginator(): void {
-    if (this.tableDataSource) {
-      // В серверном режиме НЕ привязываем пагинатор к источнику данных — MatTableDataSource
-      // вызвал бы _updatePaginator(filteredDataLength) и перезаписал бы переданную сервером длину.
-      // Вместо этого пагинацией управляет ServerPageController.
-      if (this.isServerMode()) {
-        this.tableDataSource.paginator = null;
-      } else {
-        this.tableDataSource.paginator = this.activePaginator;
-      }
+    // В серверном режиме держим null — MatTableDataSource вызвал бы
+    // _updatePaginator(filteredDataLength) и перезаписал бы длину, присланную сервером.
+    // ?? null нормализует undefined (пагинатор не отрендерен), чтобы гвард был точным.
+    const target = this.isServerMode() ? null : (this.activePaginator ?? null);
+    if (this.tableDataSource.paginator !== target) {
+      // сеттер пересоздаёт внутреннюю подписку — присваиваем только при реальном изменении
+      this.tableDataSource.paginator = target;
     }
   }
 
   private initSortingDataAccessor(): void {
-    if (this.tableDataSource) {
-      this.tableDataSource.sort = this.matSort;
-      this.tableDataSource.sortingDataAccessor = (data, key) => {
-        const customSortFunction = this.customSortFunctions.get(key);
-        return customSortFunction ? customSortFunction(data, key) : data[key];
-      };
+    const sort = this.matSort ?? null;
+    if (this.tableDataSource.sort !== sort) {
+      // тот же гвард: сеттер .sort тоже пересоздаёт подписку
+      this.tableDataSource.sort = sort;
     }
+    // обычное свойство, подписку не трогает — присваиваем без гварда
+    this.tableDataSource.sortingDataAccessor = (data, key) => {
+      const customSortFunction = this.customSortFunctions.get(key);
+      return customSortFunction ? customSortFunction(data, key) : data[key];
+    };
   }
 
   private updateColumnOffsets() {

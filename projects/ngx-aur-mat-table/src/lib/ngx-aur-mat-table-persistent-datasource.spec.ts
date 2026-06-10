@@ -105,4 +105,15 @@ describe('NgxAurMatTableComponent persistent datasource', () => {
     expect(emitted.length).toBeGreaterThan(0);
     expect(emitted[emitted.length - 1].map(r => r.name)).toEqual(['Eve']);
   });
+
+  it('does not rebuild the datasource pipeline on repeated refreshes', () => {
+    // _updateChangeSubscription дёргается сеттерами .paginator/.sort —
+    // на повторных refresh с теми же значениями вызовов быть не должно
+    const rebuildSpy = spyOn(component.tableDataSource as any, '_updateChangeSubscription').and.callThrough();
+
+    component.refreshTable();
+    component.refreshTable();
+
+    expect(rebuildSpy).not.toHaveBeenCalled();
+  });
 });
