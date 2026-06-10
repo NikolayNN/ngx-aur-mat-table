@@ -15,7 +15,7 @@ class AlignHostComponent {
   @ViewChild('t') table!: NgxAurMatTableComponent<R>;
   cfg: TableConfig<R> = {
     columnsCfg: [
-      { key: 'name', name: 'Name', valueConverter: v => v.name },                  // без align
+      { key: 'name', name: 'Name', valueConverter: v => v.name, align: 'left' },        // явный left = как без align
       { key: 'age', name: 'Age', valueConverter: v => v.age, align: 'right',
         sort: {}, totalConverter: rows => rows.length },                            // right + sortable + total
       { key: 'mid', name: 'Mid', valueConverter: v => v.name, align: 'center' },
@@ -60,7 +60,7 @@ describe('NgxAurMatTable column align', () => {
     expect(footerCells()[3].classList.contains('aur-align-center')).toBeTrue();
   });
 
-  it('колонка без align не получает классов выравнивания', () => {
+  it('left/не задан — классов выравнивания нет', () => {
     expect(headerCells()[1].classList.contains('aur-align-center')).toBeFalse();
     expect(headerCells()[1].classList.contains('aur-align-right')).toBeFalse();
     expect(bodyCells()[1].classList.contains('aur-align-center')).toBeFalse();
@@ -70,5 +70,6 @@ describe('NgxAurMatTable column align', () => {
   it('индексная колонка выравнивается из indexCfg.align', () => {
     expect(headerCells()[0].classList.contains('aur-align-center')).toBeTrue();
     expect(bodyCells()[0].classList.contains('aur-align-center')).toBeTrue();
+    expect(footerCells()[0].classList.contains('aur-align-center')).toBeTrue();
   });
 });

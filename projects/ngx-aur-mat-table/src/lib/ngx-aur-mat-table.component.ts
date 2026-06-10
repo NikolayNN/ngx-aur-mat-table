@@ -111,7 +111,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   _totalStyle: string | null = null;
   _totalClass: string | null = null;
 
-  /** Классы выравнивания по ключу колонки; 'left'/не задан → undefined (без класса). */
+  /**
+   * Классы выравнивания по ключу колонки; 'left'/не задан → undefined (без класса).
+   * Пересобирается в initTable() — как и _headerStyle/_headerClass/rowStyles, реагирует
+   * на смену [tableData]/[displayColumns]; смена ОДНОГО лишь [tableConfig] (существующее
+   * ограничение компонента) пересборку не запускает.
+   */
   _alignClass: Record<string, 'aur-align-center' | 'aur-align-right' | undefined> = {};
 
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
