@@ -15,7 +15,6 @@ import {CommonModule} from "@angular/common";
 import {NgxTableSubFooterRowDirective} from './directive/ngx-table-sub-footer-row.directive';
 import {NgxAurTableSearchPrefixDirective} from "./directive/ngx-aur-table-search-prefix.directive";
 import {NgxAurTableSearchSuffixDirective} from "./directive/ngx-aur-table-search-suffix.directive";
-import {DragDropModule} from "@angular/cdk/drag-drop";
 import {MatMenuModule} from "@angular/material/menu";
 import {IconViewComponent} from "./components/icon-view/icon-view.component";
 
@@ -41,7 +40,6 @@ import {IconViewComponent} from "./components/icon-view/icon-view.component";
     MatTooltipModule,
     MatCheckboxModule,
     MatFormFieldModule,
-    DragDropModule,
     MatMenuModule,
   ],
   exports: [
