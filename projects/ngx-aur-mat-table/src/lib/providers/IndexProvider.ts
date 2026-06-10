@@ -13,6 +13,7 @@ export class IndexProvider extends AbstractProvider {
   public name: string;
   public offset: number;
   public size: ColumnSize | undefined;
+  public formatter: ((index: number) => string) | undefined;
 
   constructor(private indexConfig?: IndexConfig) {
     super();
@@ -20,10 +21,17 @@ export class IndexProvider extends AbstractProvider {
     this.name = indexConfig?.name || '';
     this.offset = indexConfig?.offset || 0;
     this.size = indexConfig?.size;
+    this.formatter = indexConfig?.formatter;
   }
 
   get COLUMN_NAME() {
     return IndexProvider.COLUMN_NAME;
+  }
+
+  /** Отображаемое значение индекса для строки с данным id: offset применён, затем форматтер. */
+  public format(id: number): string {
+    const index = id + this.offset;
+    return this.formatter ? this.formatter(index) : String(index);
   }
 
   /**

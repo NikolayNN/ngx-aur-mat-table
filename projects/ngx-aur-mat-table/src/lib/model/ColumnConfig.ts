@@ -228,6 +228,8 @@ export interface IndexConfig {
   size?: ColumnSize;
   /** Выравнивание колонки индекса. По умолчанию 'left'. */
   align?: ColumnAlign;
+  /** Форматирует отображаемый индекс (offset уже применён), например i => `${i}.` */
+  formatter?: (index: number) => string;
 }
 
 export interface FilterConfig {

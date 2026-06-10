@@ -133,7 +133,7 @@
               [style.min-width]="indexProvider.size?.minWidth"
               [style.max-width]="indexProvider.size?.maxWidth"
               [ngClass]="_alignClass[indexProvider.COLUMN_NAME]">
-            {{ element.id + indexProvider.offset }}
+            {{ indexProvider.format(element.id) }}
           </td>
 
           <td mat-footer-cell *matFooterCellDef
