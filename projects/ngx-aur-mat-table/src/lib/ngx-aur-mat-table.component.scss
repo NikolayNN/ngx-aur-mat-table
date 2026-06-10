@@ -155,3 +155,9 @@
   margin-left: 20px;
   flex-shrink: 0;
 }
+
+/* видимый фокус клавиатурной навигации по кликабельным строкам (WCAG 2.4.7) */
+.aur-mat-table tr.mat-mdc-row:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -2px;
+}

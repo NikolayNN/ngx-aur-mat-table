@@ -119,6 +119,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
    */
   _alignClass: Record<string, 'aur-align-center' | 'aur-align-right' | undefined> = {};
 
+  /** Строки интерактивны (clickCfg задан) → tabindex/клавиатурная активация. */
+  _rowsInteractive = false;
+
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
 
   // @ts-ignore
@@ -456,6 +459,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this._headerStyle = this.toCss(this.tableConfig.headerRowCfg?.styleCfg?.style);
     this._headerClass = this.tableConfig.headerRowCfg?.styleCfg?.class ?? null;
     this._alignClass = this.buildAlignClassMap();
+    this._rowsInteractive = !!this.tableConfig.bodyRowCfg?.clickCfg;
     if (!this._customDisplayColumnsEnabled) {
       this._displayColumns = DisplayColumnsFactory.create(this.tableConfig);
     }
@@ -741,6 +745,20 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     } else {
       this.rowClick.emit(undefined);
       this.highlighted = undefined;
+    }
+  }
+
+  /**
+   * Клавиатурная активация строки: Enter/Space ведут себя как клик.
+   * Обрабатываются только события самой строки — Enter/Space на вложенных
+   * интерактивных элементах (чекбокс, кнопки действий) всплывают и не должны
+   * дублировать клик по строке. preventDefault у Space подавляет скролл страницы.
+   */
+  handleRowKeydown(event: KeyboardEvent, row: TableRow<T>) {
+    if (event.target !== event.currentTarget) return;
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      this.handleRowClick(row);
     }
   }
 
