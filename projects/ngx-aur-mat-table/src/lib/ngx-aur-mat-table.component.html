@@ -122,8 +122,8 @@
               [style.width]="indexProvider.size?.width"
               [style.min-width]="indexProvider.size?.minWidth"
               [style.max-width]="indexProvider.size?.maxWidth">
-            <lib-column-view [config]="indexProvider.headerView">
-              {{ indexProvider.name }}
+            <!-- имя передаётся через [value]: у lib-column-view нет ng-content, проекция гасится -->
+            <lib-column-view [config]="indexProvider.headerView" [value]="indexProvider.name">
             </lib-column-view>
           </th>
 

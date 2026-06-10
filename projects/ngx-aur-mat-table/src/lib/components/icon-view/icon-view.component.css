@@ -1,0 +1,10 @@
+/* круглая подложка иконки (icon.wrapper); правило живёт здесь, потому что div.circle
+   рендерится в шаблоне icon-view — из css других компонентов оно не применяется */
+.circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+}
