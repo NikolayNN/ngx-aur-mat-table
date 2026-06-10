@@ -109,11 +109,37 @@ describe('NgxAurMatTableComponent persistent datasource', () => {
   it('does not rebuild the datasource pipeline on repeated refreshes', () => {
     // _updateChangeSubscription дёргается сеттерами .paginator/.sort —
     // на повторных refresh с теми же значениями вызовов быть не должно
+    expect(component.tableDataSource.paginator).toBeNull();
     const rebuildSpy = spyOn(component.tableDataSource as any, '_updateChangeSubscription').and.callThrough();
 
     component.refreshTable();
     component.refreshTable();
 
     expect(rebuildSpy).not.toHaveBeenCalled();
+  });
+
+  it('drops stale custom sort functions when config changes', () => {
+    component.tableConfig = {
+      columnsCfg: [
+        {
+          name: 'Name', key: 'name', valueConverter: (v) => v.name,
+          sort: {enable: true, customSort: () => 0}
+        },
+        {name: 'Age', key: 'age', valueConverter: (v) => v.age},
+      ]
+    };
+    component.refreshTable();
+    const rowAlice = component.tableDataSource.data[0];
+    expect(component.tableDataSource.sortingDataAccessor(rowAlice, 'name')).toBe(0);
+
+    // конфиг без customSort: старая функция не должна применяться
+    component.tableConfig = {
+      columnsCfg: [
+        {name: 'Name', key: 'name', valueConverter: (v) => v.name},
+        {name: 'Age', key: 'age', valueConverter: (v) => v.age},
+      ]
+    };
+    component.refreshTable();
+    expect(component.tableDataSource.sortingDataAccessor(rowAlice, 'name')).toBe('Alice');
   });
 });

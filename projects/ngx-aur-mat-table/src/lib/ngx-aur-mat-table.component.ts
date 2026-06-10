@@ -366,8 +366,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private prepareTableData(initSelection: T[] = []) {
-    this.initTable();
     this.initCustomSortFunctionsMap();
+    this.initTable();
     this.removeWrongKeysFromDisplayColumns();
     if (!this.paginatorState) {
       // Если пагинатор не серверный, то я инициализирую его здесь, иначе при обновлении данных пагинатор ломается и отображаются все элементы
@@ -418,6 +418,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private initCustomSortFunctionsMap() {
+    this.customSortFunctions.clear();
     this.tableConfig.columnsCfg
       .filter(c => c.sort != null && isFeatureEnabledFn(c.sort) && c.sort.customSort)
       .forEach(c => this.customSortFunctions.set(c.key, c.sort!.customSort!))
