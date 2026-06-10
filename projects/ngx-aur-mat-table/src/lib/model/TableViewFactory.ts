@@ -16,6 +16,10 @@ export class TableViewFactory {
         columnViewMap .set(c.key, c.valueView)
       }
     })
+    // ни одна колонка не определяет valueView — не создаём пустую Map на каждую строку
+    if (columnViewMap.size === 0) {
+      return [];
+    }
     return TableViewFactory.toViewInternal(rows, columnViewMap );
   }
 
