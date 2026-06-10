@@ -20,9 +20,9 @@
   }
 }
 
-.aur-mat-table th, td {
-  padding-right: 4px !important;
-  padding-left: 4px !important;
+.aur-mat-table th, .aur-mat-table td {
+  padding-right: var(--aur-cell-padding-right, 4px) !important;
+  padding-left: var(--aur-cell-padding-left, 4px) !important;
 }
 
 .aur-mat-table .new-color td.mat-mdc-cell,
@@ -90,8 +90,9 @@
   z-index: 9999999999;
 }
 
-.mat-mdc-header-row th:last-child {
-  padding-right: 25px !important;
+/* зазор под абсолютную кнопку настроек (headerButtonCfg) — только когда она есть */
+.aur-mat-table table.aur-has-header-button .mat-mdc-header-row th:last-child {
+  padding-right: var(--aur-last-header-padding-right, 25px) !important;
 }
 
 .aur-mat-table .search-container {

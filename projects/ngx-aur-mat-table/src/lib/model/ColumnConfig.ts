@@ -301,6 +301,10 @@ export interface TableViewConfig {
   height?: string;
   minHeight?: string;
   maxHeight?: string;
+  /** Левый отступ ячеек всей таблицы (CSS-значение), по умолчанию 4px. */
+  cellPaddingLeft?: string;
+  /** Правый отступ ячеек всей таблицы (CSS-значение), по умолчанию 4px. */
+  cellPaddingRight?: string;
 }
 
 export interface ColumnSize {
@@ -312,6 +316,10 @@ export interface ColumnSize {
    * При одновременно заданном width инлайновая ширина побеждает — не сочетать.
    */
   fit?: boolean;
+  /** Левый отступ ячеек этой колонки; приоритетнее табличного cellPaddingLeft. */
+  paddingLeft?: string;
+  /** Правый отступ ячеек этой колонки; приоритетнее табличного cellPaddingRight. */
+  paddingRight?: string;
 }
 
 export interface HeaderButtonConfig {

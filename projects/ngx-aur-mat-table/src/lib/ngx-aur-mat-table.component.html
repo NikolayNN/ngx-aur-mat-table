@@ -40,6 +40,9 @@
              [style.height]="tableConfig.tableViewCfg?.height"
              [style.max-height]="tableConfig.tableViewCfg?.maxHeight"
              [style.min-height]="tableConfig.tableViewCfg?.minHeight"
+             [class.aur-has-header-button]="headerButtonProvider.isEnabled"
+             [style.--aur-cell-padding-left]="tableConfig.tableViewCfg?.cellPaddingLeft"
+             [style.--aur-cell-padding-right]="tableConfig.tableViewCfg?.cellPaddingRight"
              [ngClass]="{'hide-table-body': isTableBodyHide}">
 
 
@@ -49,12 +52,16 @@
               [style.width]="timelineProvider.size?.width"
               [style.min-width]="timelineProvider.size?.minWidth"
               [style.max-width]="timelineProvider.size?.maxWidth"
-              [class.aur-col-fit]="timelineProvider.size?.fit"></th>
+              [class.aur-col-fit]="timelineProvider.size?.fit"
+              [style.--aur-cell-padding-left]="timelineProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="timelineProvider.size?.paddingRight"></th>
           <td mat-cell *matCellDef="let element" class="aur-timeline-cell"
               [style.width]="timelineProvider.size?.width"
               [style.min-width]="timelineProvider.size?.minWidth"
               [style.max-width]="timelineProvider.size?.maxWidth"
-              [class.aur-col-fit]="timelineProvider.size?.fit">
+              [class.aur-col-fit]="timelineProvider.size?.fit"
+              [style.--aur-cell-padding-left]="timelineProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="timelineProvider.size?.paddingRight">
             <div class="aur-timeline-marker-container">
 
               <div class="aur-timeline-line"
@@ -86,7 +93,9 @@
               [style.width]="timelineProvider.size?.width"
               [style.min-width]="timelineProvider.size?.minWidth"
               [style.max-width]="timelineProvider.size?.maxWidth"
-              [class.aur-col-fit]="timelineProvider.size?.fit"></td>
+              [class.aur-col-fit]="timelineProvider.size?.fit"
+              [style.--aur-cell-padding-left]="timelineProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="timelineProvider.size?.paddingRight"></td>
         </ng-container>
 
         <!--        drag-column-->
@@ -96,14 +105,18 @@
               [style.width]="dragDropProvider.size?.width"
               [style.min-width]="dragDropProvider.size?.minWidth"
               [style.max-width]="dragDropProvider.size?.maxWidth"
-              [class.aur-col-fit]="dragDropProvider.size?.fit">
+              [class.aur-col-fit]="dragDropProvider.size?.fit"
+              [style.--aur-cell-padding-left]="dragDropProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="dragDropProvider.size?.paddingRight">
           </th>
 
           <td mat-cell *matCellDef="let element;" class="drag-column"
               [style.width]="dragDropProvider.size?.width"
               [style.min-width]="dragDropProvider.size?.minWidth"
               [style.max-width]="dragDropProvider.size?.maxWidth"
-              [class.aur-col-fit]="dragDropProvider.size?.fit">
+              [class.aur-col-fit]="dragDropProvider.size?.fit"
+              [style.--aur-cell-padding-left]="dragDropProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="dragDropProvider.size?.paddingRight">
             <lib-icon-view  draggable="true"
                             class="drag-icon"
                             [view]="dragDropProvider.dragIconView"
@@ -117,7 +130,9 @@
               [style.width]="dragDropProvider.size?.width"
               [style.min-width]="dragDropProvider.size?.minWidth"
               [style.max-width]="dragDropProvider.size?.maxWidth"
-              [class.aur-col-fit]="dragDropProvider.size?.fit">
+              [class.aur-col-fit]="dragDropProvider.size?.fit"
+              [style.--aur-cell-padding-left]="dragDropProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="dragDropProvider.size?.paddingRight">
           </td>
         </ng-container>
 
@@ -129,6 +144,8 @@
               [style.min-width]="indexProvider.size?.minWidth"
               [style.max-width]="indexProvider.size?.maxWidth"
               [class.aur-col-fit]="indexProvider.size?.fit"
+              [style.--aur-cell-padding-left]="indexProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="indexProvider.size?.paddingRight"
               [ngClass]="_alignClass[indexProvider.COLUMN_NAME]">
             <!-- имя передаётся через [value]: у lib-column-view нет ng-content, проекция гасится -->
             <lib-column-view [config]="indexProvider.headerView" [value]="indexProvider.name">
@@ -140,6 +157,8 @@
               [style.min-width]="indexProvider.size?.minWidth"
               [style.max-width]="indexProvider.size?.maxWidth"
               [class.aur-col-fit]="indexProvider.size?.fit"
+              [style.--aur-cell-padding-left]="indexProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="indexProvider.size?.paddingRight"
               [ngClass]="_alignClass[indexProvider.COLUMN_NAME]">
             {{ indexProvider.format(element.id) }}
           </td>
@@ -149,6 +168,8 @@
               [style.min-width]="indexProvider.size?.minWidth"
               [style.max-width]="indexProvider.size?.maxWidth"
               [class.aur-col-fit]="indexProvider.size?.fit"
+              [style.--aur-cell-padding-left]="indexProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="indexProvider.size?.paddingRight"
               [ngClass]="_alignClass[indexProvider.COLUMN_NAME]">
             {{ totalRowProvider.totals.get(indexProvider.COLUMN_NAME) ?? '' }}
           </td>
@@ -160,7 +181,9 @@
               [style.width]="selectionProvider.size?.width"
               [style.min-width]="selectionProvider.size?.minWidth"
               [style.max-width]="selectionProvider.size?.maxWidth"
-              [class.aur-col-fit]="selectionProvider.size?.fit">
+              [class.aur-col-fit]="selectionProvider.size?.fit"
+              [style.--aur-cell-padding-left]="selectionProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="selectionProvider.size?.paddingRight">
             <div class="flex-container">
               <mat-checkbox (change)="$event ? masterToggle() : null"
                             [checked]="selectionProvider.selection.hasValue() && isAllSelected()"
@@ -193,7 +216,9 @@
               [style.width]="selectionProvider.size?.width"
               [style.min-width]="selectionProvider.size?.minWidth"
               [style.max-width]="selectionProvider.size?.maxWidth"
-              [class.aur-col-fit]="selectionProvider.size?.fit">
+              [class.aur-col-fit]="selectionProvider.size?.fit"
+              [style.--aur-cell-padding-left]="selectionProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="selectionProvider.size?.paddingRight">
             <mat-checkbox (click)="$event.stopPropagation()"
                           (change)="$event ? selectionProvider.selection.toggle(castSrc(row).rowSrc) : null"
                           [checked]="selectionProvider.selection.isSelected(castSrc(row).rowSrc)">
@@ -204,7 +229,9 @@
               [style.width]="selectionProvider.size?.width"
               [style.min-width]="selectionProvider.size?.minWidth"
               [style.max-width]="selectionProvider.size?.maxWidth"
-              [class.aur-col-fit]="selectionProvider.size?.fit">
+              [class.aur-col-fit]="selectionProvider.size?.fit"
+              [style.--aur-cell-padding-left]="selectionProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="selectionProvider.size?.paddingRight">
           </td>
         </ng-container>
 
@@ -214,12 +241,16 @@
               [style.width]="rowActionsProvider.size?.width"
               [style.min-width]="rowActionsProvider.size?.minWidth"
               [style.max-width]="rowActionsProvider.size?.maxWidth"
-              [class.aur-col-fit]="rowActionsProvider.size?.fit"></th>
+              [class.aur-col-fit]="rowActionsProvider.size?.fit"
+              [style.--aur-cell-padding-left]="rowActionsProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="rowActionsProvider.size?.paddingRight"></th>
           <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()" style="cursor: default"
               [style.width]="rowActionsProvider.size?.width"
               [style.min-width]="rowActionsProvider.size?.minWidth"
               [style.max-width]="rowActionsProvider.size?.maxWidth"
-              [class.aur-col-fit]="rowActionsProvider.size?.fit">
+              [class.aur-col-fit]="rowActionsProvider.size?.fit"
+              [style.--aur-cell-padding-left]="rowActionsProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="rowActionsProvider.size?.paddingRight">
             <ng-container *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
               <!-- action with dropdown menu -->
               <ng-container *ngIf="action.menu; else directAction">
@@ -281,7 +312,9 @@
               [style.width]="rowActionsProvider.size?.width"
               [style.min-width]="rowActionsProvider.size?.minWidth"
               [style.max-width]="rowActionsProvider.size?.maxWidth"
-              [class.aur-col-fit]="rowActionsProvider.size?.fit">
+              [class.aur-col-fit]="rowActionsProvider.size?.fit"
+              [style.--aur-cell-padding-left]="rowActionsProvider.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="rowActionsProvider.size?.paddingRight">
             {{ totalRowProvider.totals.get(rowActionsProvider.COLUMN_NAME) ?? '' }}
           </td>
         </ng-container>
@@ -297,6 +330,8 @@
                 [style.min-width]="columnConfig.size?.minWidth"
                 [style.max-width]="columnConfig.size?.maxWidth"
                 [class.aur-col-fit]="columnConfig.size?.fit"
+                [style.--aur-cell-padding-left]="columnConfig.size?.paddingLeft"
+                [style.--aur-cell-padding-right]="columnConfig.size?.paddingRight"
                 [ngClass]="_alignClass[columnConfig.key]">
               <ng-container *ngTemplateOutlet="headerValue"></ng-container>
             </th>
@@ -309,6 +344,8 @@
                 [style.min-width]="columnConfig.size?.minWidth"
                 [style.max-width]="columnConfig.size?.maxWidth"
                 [class.aur-col-fit]="columnConfig.size?.fit"
+                [style.--aur-cell-padding-left]="columnConfig.size?.paddingLeft"
+                [style.--aur-cell-padding-right]="columnConfig.size?.paddingRight"
                 [ngClass]="_alignClass[columnConfig.key]">
               <ng-container *ngTemplateOutlet="headerValue"></ng-container>
             </th>
@@ -328,6 +365,8 @@
               [style.min-width]="columnConfig.size?.minWidth"
               [style.max-width]="columnConfig.size?.maxWidth"
               [class.aur-col-fit]="columnConfig.size?.fit"
+              [style.--aur-cell-padding-left]="columnConfig.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="columnConfig.size?.paddingRight"
               [ngClass]="_alignClass[columnConfig.key]">
             <!-- колонки без valueView минуют компоненты ячейки: лёгкий span дешевле пары компонентов с обёртками -->
             <lib-column-view *ngIf="columnConfig.valueView; else plainCell"
@@ -344,6 +383,8 @@
               [style.min-width]="columnConfig.size?.minWidth"
               [style.max-width]="columnConfig.size?.maxWidth"
               [class.aur-col-fit]="columnConfig.size?.fit"
+              [style.--aur-cell-padding-left]="columnConfig.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="columnConfig.size?.paddingRight"
               [ngClass]="_alignClass[columnConfig.key]">
             {{ totalRowProvider.totals.get(columnConfig.key) ?? '' }}
           </td>
