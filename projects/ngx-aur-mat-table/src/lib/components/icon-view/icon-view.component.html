@@ -1,15 +1,17 @@
-<div [ngClass]="{'circle': view?.wrapper}"
-     [style.background-color]="view?.wrapper?.color">
+<!-- без view не рендерим ничего — пустых div-обёрток в ячейках быть не должно -->
+<div *ngIf="view"
+     [ngClass]="{'circle': view.wrapper}"
+     [style.background-color]="view.wrapper?.color">
   <!-- MatTooltip создаётся только когда тултип задан -->
-  <ng-container *ngIf="view && view?.visible !== false">
-    <mat-icon *ngIf="view?.tooltip as tooltip; else plainIcon"
+  <ng-container *ngIf="view.visible !== false">
+    <mat-icon *ngIf="view.tooltip as tooltip; else plainIcon"
               [matTooltip]="tooltip"
-              [style.color]="view?.color">
-      {{ view?.name }}
+              [style.color]="view.color">
+      {{ view.name }}
     </mat-icon>
     <ng-template #plainIcon>
-      <mat-icon [style.color]="view?.color">
-        {{ view?.name }}
+      <mat-icon [style.color]="view.color">
+        {{ view.name }}
       </mat-icon>
     </ng-template>
   </ng-container>

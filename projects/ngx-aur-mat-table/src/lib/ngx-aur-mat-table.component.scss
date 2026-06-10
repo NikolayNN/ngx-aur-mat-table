@@ -47,6 +47,12 @@
   align-items: center;
 }
 
+/* тот же отступ 4px, что у span внутри lib-column-view, — пиксельная совместимость
+   простых ячеек с заголовками (они рендерятся через lib-column-view) */
+.aur-mat-table .aur-plain-cell {
+  margin-left: 4px;
+}
+
 .aur-mat-table .expanded-row {
   height: 0;
 

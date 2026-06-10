@@ -305,10 +305,14 @@
               [style.width]="columnConfig.size?.width"
               [style.min-width]="columnConfig.size?.minWidth"
               [style.max-width]="columnConfig.size?.maxWidth">
-            <lib-column-view
-              [config]="tableView[element.id]?.get(columnConfig.key)"
-              [value]="element | dataPropertyGetter: columnConfig.key">
+            <!-- колонки без valueView минуют компоненты ячейки: лёгкий span дешевле пары компонентов с обёртками -->
+            <lib-column-view *ngIf="columnConfig.valueView; else plainCell"
+                             [config]="tableView[element.id]?.get(columnConfig.key)"
+                             [value]="element | dataPropertyGetter: columnConfig.key">
             </lib-column-view>
+            <ng-template #plainCell>
+              <span class="aur-plain-cell">{{ element | dataPropertyGetter: columnConfig.key }}</span>
+            </ng-template>
           </td>
 
           <td mat-footer-cell *matFooterCellDef
