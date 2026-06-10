@@ -30,7 +30,7 @@ import {TableViewFactory} from "./model/TableViewFactory";
 import {ResolvedRowStyle, RowStyleFactory} from "./model/RowStyleFactory";
 import {IndexProvider, IndexProviderDummy} from "./providers/IndexProvider";
 import {PaginationProvider, PaginationProviderDummy} from "./providers/PaginationProvider";
-import {MatTableDataSourceFactory} from "./factories/MatTableDataSourceFactory";
+import {TableRowsFactory} from "./factories/TableRowsFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
 import {EmptyValue} from "./model/EmptyValue";
 import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvider";
@@ -232,6 +232,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   constructor(private viewContainerRef: ViewContainerRef,
               private cdr: ChangeDetectorRef) {
+    // дефолтный предикат персистентного инстанса — захватывается один раз на жизнь компонента
+    this._defaultFilterPredicate = this.tableDataSource.filterPredicate;
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -422,8 +424,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   private initTable() {
     this._tableName = this.tableConfig.name ?? 'unknown-table-name';
-    this.tableDataSource = MatTableDataSourceFactory.convert(this.tableData, this.tableConfig.columnsCfg);
-    this._defaultFilterPredicate = this.tableDataSource.filterPredicate;
+    this.tableDataSource.data = TableRowsFactory.convert(this.tableData, this.tableConfig.columnsCfg);
     this.tableView = TableViewFactory.toView(this.tableDataSource.data, this.tableConfig)
     this.rowStyles = RowStyleFactory.toRowStyles(this.tableDataSource.data, this.tableConfig)
     this._headerStyle = this.toCss(this.tableConfig.headerRowCfg?.styleCfg?.style);
