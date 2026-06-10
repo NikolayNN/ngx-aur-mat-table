@@ -41,6 +41,11 @@
 .aur-mat-table th.aur-align-center ::ng-deep .mat-sort-header-container { justify-content: center; }
 .aur-mat-table th.aur-align-right ::ng-deep .mat-sort-header-container { justify-content: flex-end; }
 
+.aur-mat-table .aur-col-fit {
+  width: 1%;
+  white-space: nowrap;
+}
+
 .aur-mat-table .pointer {
   cursor: pointer;
 }

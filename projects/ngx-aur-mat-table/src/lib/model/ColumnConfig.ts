@@ -307,6 +307,11 @@ export interface ColumnSize {
   width?: string;
   minWidth?: string;
   maxWidth?: string;
+  /**
+   * Сжать колонку по содержимому (width: 1% + white-space: nowrap — семантическая замена хака width: '1%').
+   * При одновременно заданном width инлайновая ширина побеждает — не сочетать.
+   */
+  fit?: boolean;
 }
 
 export interface HeaderButtonConfig {
