@@ -18,7 +18,7 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-import {ColumnView, TableConfig} from './model/ColumnConfig';
+import {ColumnAlign, ColumnView, TableConfig} from './model/ColumnConfig';
 import {StyleBuilder} from './style-builder/style-builder';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -110,6 +110,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   _headerClass: string | null = null;
   _totalStyle: string | null = null;
   _totalClass: string | null = null;
+
+  /** Классы выравнивания по ключу колонки; 'left'/не задан → undefined (без класса). */
+  _alignClass: Record<string, 'aur-align-center' | 'aur-align-right' | undefined> = {};
 
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
 
@@ -447,9 +450,21 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.rowStyles = RowStyleFactory.toRowStyles(this.tableDataSource.data, this.tableConfig)
     this._headerStyle = this.toCss(this.tableConfig.headerRowCfg?.styleCfg?.style);
     this._headerClass = this.tableConfig.headerRowCfg?.styleCfg?.class ?? null;
+    this._alignClass = this.buildAlignClassMap();
     if (!this._customDisplayColumnsEnabled) {
       this._displayColumns = DisplayColumnsFactory.create(this.tableConfig);
     }
+  }
+
+  private buildAlignClassMap(): Record<string, 'aur-align-center' | 'aur-align-right' | undefined> {
+    const toClass = (a?: ColumnAlign) =>
+      a === 'center' ? 'aur-align-center' as const
+        : a === 'right' ? 'aur-align-right' as const
+          : undefined;
+    const map: Record<string, 'aur-align-center' | 'aur-align-right' | undefined> = {};
+    this.tableConfig.columnsCfg.forEach(c => map[c.key] = toClass(c.align));
+    map[IndexProvider.COLUMN_NAME] = toClass(this.tableConfig.indexCfg?.align);
+    return map;
   }
 
   applySearchFilter(event: Event) {

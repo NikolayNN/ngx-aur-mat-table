@@ -6,3 +6,6 @@
 span {
   margin-left: 4px;
 }
+
+:host-context(.aur-align-center) .align-container { justify-content: center; }
+:host-context(.aur-align-right) .align-container { justify-content: flex-end; }

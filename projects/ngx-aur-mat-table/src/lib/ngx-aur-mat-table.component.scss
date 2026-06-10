@@ -34,9 +34,12 @@
   width: 100%;
 }
 
-.aur-mat-table .text-right {
-  text-align: right !important;
-}
+.aur-mat-table th.aur-align-center, .aur-mat-table td.aur-align-center { text-align: center; }
+.aur-mat-table th.aur-align-right,  .aur-mat-table td.aur-align-right  { text-align: right; }
+
+/* контейнер Material внутри сортируемого заголовка — flex, text-align его не двигает */
+.aur-mat-table th.aur-align-center ::ng-deep .mat-sort-header-container { justify-content: center; }
+.aur-mat-table th.aur-align-right ::ng-deep .mat-sort-header-container { justify-content: flex-end; }
 
 .aur-mat-table .pointer {
   cursor: pointer;

@@ -127,6 +127,9 @@ export interface TotalStyleConfig<T> {
   style?: TotalHook<T, StyleBuilder.Row | string>;
 }
 
+/** Горизонтальное выравнивание контента колонки. */
+export type ColumnAlign = 'left' | 'center' | 'right';
+
 export interface ColumnConfig<T> {
   /** Текст заголовка колонки */
   name: string;
@@ -141,6 +144,8 @@ export interface ColumnConfig<T> {
   valueView?: ColumnView<(value: TableRow<T>) => string>;
   totalConverter?: (value: TableRow<T>[]) => any;
   size?: ColumnSize;
+  /** Выравнивание заголовка, ячеек и итога колонки. По умолчанию 'left'. */
+  align?: ColumnAlign;
 }
 
 export interface IconView<T> {
@@ -210,6 +215,8 @@ export interface IndexConfig {
   /** Название для колонки, по умолчанию ''*/
   name?: string;
   size?: ColumnSize;
+  /** Выравнивание колонки индекса. По умолчанию 'left'. */
+  align?: ColumnAlign;
 }
 
 export interface FilterConfig {
