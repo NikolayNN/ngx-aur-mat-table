@@ -96,6 +96,8 @@ export class TableWithCustomColumnsComponent implements OnInit {
   }
 
   applyColumns() {
-    this.displayColumns = this.show;
+    // новая ссылка на массив обязательна: ngOnChanges не реагирует на мутацию того же массива,
+    // поэтому без копии таблица обновляется только при первом перетаскивании
+    this.displayColumns = [...this.show];
   }
 }

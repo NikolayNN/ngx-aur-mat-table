@@ -52,6 +52,8 @@ export class CustomerDragDropManagerService {
         afterDropFn: ctx => {
           return of({})
             .pipe(
+              // имитация медленного ответа сервера: перетянутая строка появится
+              // в целевой таблице (и исчезнет из исходной) только через 2 секунды
               delay(2000),
               tap(() => {
                   this._deleteFromFirstTableEvent.next(ctx.sourceData);
