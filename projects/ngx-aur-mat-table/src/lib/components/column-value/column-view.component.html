@@ -1,6 +1,7 @@
 <div class="align-container">
 
-  <lib-icon-view *ngIf="config?.icon" [view]="config?.icon">
+  <lib-icon-view *ngIf="config?.icon" [view]="config?.icon"
+                 [class.icon-end]="config?.icon?.position === 'end'">
   </lib-icon-view>
 
   <img *ngIf="config?.image?.src"

@@ -2,3 +2,9 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* демо #8: кастомный класс тултипа иконки */
+.demo-tooltip .mdc-tooltip__surface {
+  background-color: #7b1fa2 !important;
+  font-style: italic;
+}

@@ -30,6 +30,8 @@ export class TableWithIconsComponent {
         valueView: {
           icon: {
             tooltip: () => 'подсказка для иконки',
+            tooltipClass: () => 'demo-tooltip',
+            position: 'end',
             name: (v) => {
               if (v['age'] <= 25) {
                 return "sentiment_very_satisfied"

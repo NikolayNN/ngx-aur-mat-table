@@ -270,7 +270,8 @@
                   </mat-menu>
                   <button *ngIf="action.icon.tooltip; else menuBtnPlain" mat-icon-button
                           [matMenuTriggerFor]="actionMenu"
-                          [matTooltip]="action.icon.tooltip">
+                          [matTooltip]="action.icon.tooltip"
+                          [matTooltipClass]="action.icon.tooltipClass || ''">
                     <mat-icon [style.color]="action.icon.color">
                       {{ action.icon.name }}
                     </mat-icon>
@@ -290,7 +291,8 @@
                 <ng-container *ngIf="action.visible !== false">
                   <button *ngIf="action.icon.tooltip; else directBtnPlain" mat-icon-button
                           (click)="emitRowAction(action.action, element.rowSrc, $event)"
-                          [matTooltip]="action.icon.tooltip">
+                          [matTooltip]="action.icon.tooltip"
+                          [matTooltipClass]="action.icon.tooltipClass || ''">
                     <mat-icon [style.color]="action.icon.color">
                       {{ action.icon.name }}
                     </mat-icon>

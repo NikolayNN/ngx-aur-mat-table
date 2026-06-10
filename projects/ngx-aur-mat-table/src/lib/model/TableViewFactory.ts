@@ -46,6 +46,8 @@ export class TableViewFactory {
       name: iconSource.name(row),
       color: iconSource.color ? iconSource.color(row) : undefined,
       tooltip: iconSource.tooltip ? iconSource.tooltip(row) : undefined,
+      tooltipClass: iconSource.tooltipClass ? iconSource.tooltipClass(row) : undefined,
+      position: iconSource.position,
       wrapper: iconSource.wrapper? {color: iconSource.wrapper.color(row)}: undefined,
       visible: iconSource.visible? iconSource.visible(row): true
     }

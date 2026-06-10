@@ -9,3 +9,9 @@ span {
 
 :host-context(.aur-align-center) .align-container { justify-content: center; }
 :host-context(.aur-align-right) .align-container { justify-content: flex-end; }
+
+/* иконка после текста: flex order; зеркальный отступ (зазор start-иконки даёт margin-left у span) */
+lib-icon-view.icon-end {
+  order: 1;
+  margin-left: 4px;
+}

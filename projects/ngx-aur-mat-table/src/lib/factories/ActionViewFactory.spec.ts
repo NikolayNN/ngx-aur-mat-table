@@ -16,7 +16,7 @@ describe('ActionViewFactory menu resolution', () => {
       actions: [
         {
           action: () => 'more',
-          icon: {name: () => 'more_vert'},
+          icon: {name: () => 'more_vert', tooltipClass: () => 'tt-danger', position: 'end'},
           menu: [
             {
               action: () => 'edit',
@@ -40,6 +40,8 @@ describe('ActionViewFactory menu resolution', () => {
     const action = view.get(old.id)![0];
 
     expect(action.action).toBe('more');
+    expect(action.icon.tooltipClass).toBe('tt-danger');
+    expect(action.icon.position).toBe('end');
     expect(action.menu).toBeDefined();
     expect(action.menu!.length).toBe(2);
 

@@ -6,6 +6,7 @@
   <ng-container *ngIf="view.visible !== false">
     <mat-icon *ngIf="view.tooltip as tooltip; else plainIcon"
               [matTooltip]="tooltip"
+              [matTooltipClass]="view.tooltipClass || ''"
               [style.color]="view.color">
       {{ view.name }}
     </mat-icon>

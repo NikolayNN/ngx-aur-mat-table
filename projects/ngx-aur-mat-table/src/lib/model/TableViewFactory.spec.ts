@@ -43,3 +43,26 @@ describe('TableViewFactory', () => {
     expect(view[1].get('name')?.icon?.name).toBe('icon-n1');
   });
 });
+
+describe('TableViewFactory icon tooltipClass/position', () => {
+  it('резолвит tooltipClass per-row и переносит position как есть', () => {
+    const row = new TableRow<{sev: string}>(0, {sev: 'high'});
+    const cfg: TableConfig<{sev: string}> = {
+      columnsCfg: [{
+        key: 'sev', name: 'Severity', valueConverter: v => v.sev,
+        valueView: {
+          icon: {
+            name: () => 'warning',
+            tooltip: () => 'hint',
+            tooltipClass: r => `tt-${r.rowSrc.sev}`,
+            position: 'end',
+          },
+        },
+      }],
+    };
+    const view = TableViewFactory.toView([row], cfg);
+    const icon = view[0].get('sev')!.icon!;
+    expect(icon.tooltipClass).toBe('tt-high');
+    expect(icon.position).toBe('end');
+  });
+});
