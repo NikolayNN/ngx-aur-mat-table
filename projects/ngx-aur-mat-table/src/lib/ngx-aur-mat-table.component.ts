@@ -32,7 +32,6 @@ import {IndexProvider, IndexProviderDummy} from "./providers/IndexProvider";
 import {PaginationProvider, PaginationProviderDummy} from "./providers/PaginationProvider";
 import {TableRowsFactory} from "./factories/TableRowsFactory";
 import {DisplayColumnsFactory} from "./factories/DisplayColumnsFactory";
-import {EmptyValue} from "./model/EmptyValue";
 import {TotalRowProvider, TotalRowProviderDummy} from "./providers/TotalRowProvider";
 import {NgxAurFilters} from "./filters/NgxAurFilters";
 import {NgxAurMatTablePublic} from "./ngx-aur-mat-table-public";
@@ -191,8 +190,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   headerButtonProvider = new HeaderButtonProviderDummy();
   @Output() headerButton = new EventEmitter<MouseEvent>();
 
-  // @ts-ignore
-  private resizeColumnOffsetsObserver: ResizeObserver = EmptyValue.RESIZE_OBSERVER;
+  private resizeColumnOffsetsObserver?: ResizeObserver;
 
   dragDropProvider: DragDropProvider<T> = new DragProviderDummy();
 
@@ -316,8 +314,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     // для клиентского режима (ngOnChanges откладывает initPaginator() при firstChange).
     this.initPaginator()
     this.initSortingDataAccessor();
-    this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
-    this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
+    // SSR: на сервере ResizeObserver не определён — фича columnOffsets работает только в браузере
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
+      this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
+    }
     if (this.isServerMode()) {
       this.startServerController();
     }
@@ -349,19 +350,21 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private updateColumnOffsets() {
-    if (this.table?.nativeElement?.querySelectorAll('th')) {
-      const offsets: ColumnOffset[] = Array.from(this.table.nativeElement.querySelectorAll('th'))
-        .slice(0, this._displayColumns.length)
-        .map((c) => (c as HTMLElement))
-        .map((c, index) => ({
-          left: c.offsetLeft,
-          width: c.offsetWidth,
-          key: this._displayColumns[index]
-        }));
-      if (OffsetUtil.areNotEqual(this.prevColumnOffsets, offsets)) {
-        this.prevColumnOffsets = offsets;
-        this.columnOffsets.emit(offsets);
-      }
+    const tableEl: HTMLElement | undefined = this.table?.nativeElement;
+    if (!tableEl) {
+      return;
+    }
+    const offsets: ColumnOffset[] = Array.from(tableEl.querySelectorAll('th'))
+      .slice(0, this._displayColumns.length)
+      .map((c) => (c as HTMLElement))
+      .map((c, index) => ({
+        left: c.offsetLeft,
+        width: c.offsetWidth,
+        key: this._displayColumns[index]
+      }));
+    if (OffsetUtil.areNotEqual(this.prevColumnOffsets, offsets)) {
+      this.prevColumnOffsets = offsets;
+      this.columnOffsets.emit(offsets);
     }
   }
 
@@ -779,7 +782,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   ngOnDestroy() {
-    this.resizeColumnOffsetsObserver.disconnect();
+    this.resizeColumnOffsetsObserver?.disconnect();
     this.serverPageController?.stop();
     this.externalPaginatorSub?.unsubscribe();
   }
