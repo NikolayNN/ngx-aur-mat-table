@@ -19,7 +19,7 @@ class HostComponent {
   cfg: TableConfig<R> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
     bodyRowCfg: {
-      clickCfg: { highlightClicked: Row.builder().background('yellow') },
+      clickCfg: { styleCfg: { style: Row.builder().background('yellow'), class: 'row-selected' }, cancelable: true },
       hoverCfg: { pointer: true, styleCfg: { style: Row.builder().background('#eee'), class: 'hovering' } },
       styleCfg: {
         style: r => r.rowSrc.bold ? Row.builder().fontWeight(FontWeight.BOLD).color('black') : '',
@@ -63,7 +63,7 @@ describe('NgxAurMatTable bodyRowCfg', () => {
     const [boldRow] = host.table.tableDataSource.data;
     host.table.highlighted = boldRow.rowSrc;
     const style = host.table.rowStyle(boldRow)!;
-    expect(style).toContain('background: yellow;'); // from highlightClicked
+    expect(style).toContain('background: yellow;'); // from clickCfg.styleCfg.style
     expect(style).toContain('font-weight: bold;');  // base preserved
   });
 
@@ -86,6 +86,24 @@ describe('NgxAurMatTable bodyRowCfg', () => {
     expect(rowEls.length).toBe(2);
     expect(rowEls[0].style.fontWeight).toBe('bold');
     expect(rowEls[1].style.fontWeight).toBe('');
+  });
+
+  it('добавляет styleCfg.class только подсвеченной строке', () => {
+    const [boldRow, plainRow] = host.table.tableDataSource.data;
+    expect(host.table.rowNgClass(boldRow)['row-selected']).toBeUndefined();
+
+    host.table.handleRowClick(boldRow);
+    expect(host.table.rowNgClass(boldRow)['row-selected']).toBeTrue();
+    expect(host.table.rowNgClass(plainRow)['row-selected']).toBeUndefined();
+  });
+
+  it('повторный клик при cancelable снимает класс подсветки', () => {
+    const [boldRow] = host.table.tableDataSource.data;
+    host.table.handleRowClick(boldRow);
+    expect(host.table.rowNgClass(boldRow)['row-selected']).toBeTrue();
+
+    host.table.handleRowClick(boldRow);
+    expect(host.table.rowNgClass(boldRow)['row-selected']).toBeUndefined();
   });
 });
 

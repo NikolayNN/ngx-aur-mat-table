@@ -11,9 +11,11 @@
 <pre>
   bodyRowCfg: &#123;
     clickCfg: &#123;
-      highlightClicked: StyleBuilder.Row.builder()
-        .background('blue').color('red')
-        .border(b =&gt; b.allBorders('2px', StyleBuilder.BorderStyle.SOLID, 'green')),
+      styleCfg: &#123;
+        style: StyleBuilder.Row.builder()
+          .background('blue').color('red')
+          .border(b =&gt; b.allBorders('2px', StyleBuilder.BorderStyle.SOLID, 'green')),
+      &#125;,
       cancelable: true
     &#125;,
     hoverCfg: &#123; pointer: true &#125;

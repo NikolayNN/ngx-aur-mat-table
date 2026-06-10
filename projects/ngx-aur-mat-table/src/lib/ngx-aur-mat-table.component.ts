@@ -711,23 +711,26 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style ?? null);
     }
     if (this.highlighted === row.rowSrc) {
-      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.clickCfg?.highlightClicked ?? null);
+      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg?.style ?? null);
     }
     return this.toCss(acc);
   }
 
   rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
     const hover = this.tableConfig.bodyRowCfg?.hoverCfg;
-    const hl = this.tableConfig.bodyRowCfg?.clickCfg?.highlightClicked;
+    const click = this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg;
+    const hl = click?.style;
     const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
+    const isHighlighted = this.highlighted === row.rowSrc;
     const cls: { [klass: string]: boolean } = {
       'pointer': hover?.pointer || false,
-      'new-color': this.highlighted === row.rowSrc && hlHasColor,
+      'new-color': isHighlighted && hlHasColor,
     };
     const custom = this.rowStyles[row.id]?.class;
     if (custom) cls[custom] = true;
     const hcls = this.hoverActive(row) ? hover?.styleCfg?.class : null;
     if (hcls) cls[hcls] = true;
+    if (isHighlighted && click?.class) cls[click.class] = true;
     return cls;
   }
 

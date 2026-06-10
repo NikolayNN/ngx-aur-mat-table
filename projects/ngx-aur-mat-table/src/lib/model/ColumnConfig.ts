@@ -70,8 +70,12 @@ export interface TableConfig<T> {
 }
 
 export interface ClickConfig {
-  /** Стиль подсветки, применяемый к кликнутой/подсвеченной строке; pointer перенесён в HoverConfig */
-  highlightClicked?: StyleBuilder.Row | string;
+  /**
+   * Стиль/класс, применяемый к кликнутой/подсвеченной строке.
+   * Цвет текста ячеек при class задаётся селектором потребителя,
+   * например `tr.my-highlight td { color: white; }`.
+   */
+  styleCfg?: ClickStyleConfig;
 
   /**
    * По умолчанию false
@@ -79,6 +83,13 @@ export interface ClickConfig {
    * true: первый клик испускает эту строку, второй клик испускает undefined; первый выделяет, второй снимает выделение.
    */
   cancelable?: boolean;
+}
+
+export interface ClickStyleConfig {
+  /** CSS-класс(ы) на подсвеченном <tr>; допускается несколько через пробел. */
+  class?: string;
+  /** Инлайн-стиль; StyleBuilder.Row или сырая CSS-строка. */
+  style?: StyleBuilder.Row | string;
 }
 
 export interface HoverConfig {

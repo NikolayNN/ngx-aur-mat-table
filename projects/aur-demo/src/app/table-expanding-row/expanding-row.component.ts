@@ -26,9 +26,11 @@ export class ExpandingRowComponent {
     ],
     bodyRowCfg: {
       clickCfg: {
-        highlightClicked: StyleBuilder.Row.builder()
-          .background('blue').color('red')
-          .border(b => b.allBorders('2px', StyleBuilder.BorderStyle.SOLID, 'green')),
+        styleCfg: {
+          style: StyleBuilder.Row.builder()
+            .background('blue').color('red')
+            .border(b => b.allBorders('2px', StyleBuilder.BorderStyle.SOLID, 'green')),
+        },
         cancelable: true,
       },
       hoverCfg: { pointer: true },
