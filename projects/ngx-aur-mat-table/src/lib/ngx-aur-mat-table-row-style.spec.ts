@@ -186,3 +186,40 @@ describe('NgxAurMatTable no row cfg (back-compat)', () => {
     expect(host.table._totalStyle).toBeNull();
   });
 });
+
+@Component({
+  standalone: false,
+  template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class ClassOnlyHighlightHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    bodyRowCfg: { clickCfg: { styleCfg: { class: 'row-selected' } } },
+  };
+  data: R[] = [{ name: 'a' }];
+}
+
+describe('NgxAurMatTable clickCfg class-only (без style)', () => {
+  let fixture: ComponentFixture<ClassOnlyHighlightHostComponent>;
+  let host: ClassOnlyHighlightHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [ClassOnlyHighlightHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(ClassOnlyHighlightHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('класс ставится, new-color — нет (new-color привязан только к style)', () => {
+    const [row] = host.table.tableDataSource.data;
+    host.table.handleRowClick(row);
+    const cls = host.table.rowNgClass(row);
+    expect(cls['row-selected']).toBeTrue();
+    expect(cls['new-color']).toBeFalse();
+    expect(host.table.rowStyle(row)).toBeNull();
+  });
+});

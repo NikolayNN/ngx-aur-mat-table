@@ -1,5 +1,8 @@
 # Migration Guide — 19.1.0 (Row config & styling)
 
+> **Примечание (19.6.0):** поле `highlightClicked`, упоминаемое ниже как целевое API, удалено в 19.6.0 —
+> используйте `clickCfg.styleCfg.style` (стиль) и `clickCfg.styleCfg.class` (CSS-класс). Документ сохранён как исторический.
+
 **This is a BREAKING release.** Row configuration and styling were unified onto a single primitive (`StyleBuilder.Row`) and a uniform per‑row‑kind config trio. This guide maps every old option to its replacement with before/after examples.
 
 If you only used `columnsCfg` (no row styling, no `clickCfg`), **nothing changes** — you can upgrade without edits.

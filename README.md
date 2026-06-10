@@ -144,7 +144,7 @@ tableConfig: TableConfig<ReportRow> = {
   // body rows — per-row style/class hooks + click highlight + configurable hover overlay
   bodyRowCfg: {
     clickCfg: {
-      highlightClicked: StyleBuilder.Row.builder().background('blue').color('red'),
+      styleCfg: { style: StyleBuilder.Row.builder().background('blue').color('red') },
       cancelable: true,           // second click deselects
     },
     hoverCfg: {
@@ -171,7 +171,7 @@ tableConfig: TableConfig<ReportRow> = {
 ```
 
 - `bodyRowCfg.styleCfg.style` / `class` are per-row hooks called once per data refresh (OnPush-friendly).
-- `bodyRowCfg.clickCfg.highlightClicked` overlays the clicked row; `overrideWith` merges builder fields so base styles survive.
+- `bodyRowCfg.clickCfg.styleCfg.style` задаёт стиль подсветки кликнутой строки; `styleCfg.class` задаёт CSS-класс подсвеченной строки; `overrideWith` merges builder fields so base styles survive.
 - `bodyRowCfg.hoverCfg` drives a mouse-enter/leave overlay; the `#f2f2f2` hardcoded hover background is gone — configure it via `hoverCfg.styleCfg` or suppress hover entirely by omitting `hoverCfg`.
 - `totalRowCfg.styleCfg.style` / `class` can be a **static value** or a **function of `(totals: Map<string,any>, data: TableRow<T>[])`** — value-driven total styling.
 - For per-row **text color** prefer a `class` over the `style` hook, since Material cells set their own `color` and can override a `color` inherited from the row.
@@ -186,7 +186,7 @@ totalRowCfg: { enable: true, totalRowView: { style: StyleBuilder.Row.builder().c
 
 // after
 bodyRowCfg: {
-  clickCfg: { highlightClicked: StyleBuilder.Row.builder().background('blue').color('red'), cancelable: true },
+  clickCfg: { styleCfg: { style: StyleBuilder.Row.builder().background('blue').color('red') }, cancelable: true },
   hoverCfg: { pointer: true },
   styleCfg: { style: r => r.rowSrc.bold ? StyleBuilder.Row.builder().fontWeight(StyleBuilder.FontWeight.BOLD) : '' },
 },
