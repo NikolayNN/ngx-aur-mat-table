@@ -220,26 +220,42 @@
                       </button>
                     </ng-container>
                   </mat-menu>
-                  <button mat-icon-button
+                  <button *ngIf="action.icon.tooltip; else menuBtnPlain" mat-icon-button
                           [matMenuTriggerFor]="actionMenu"
-                          [matTooltip]="action.icon.tooltip || ''">
+                          [matTooltip]="action.icon.tooltip">
                     <mat-icon [style.color]="action.icon.color">
                       {{ action.icon.name }}
                     </mat-icon>
                   </button>
+                  <ng-template #menuBtnPlain>
+                    <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+                      <mat-icon [style.color]="action.icon.color">
+                        {{ action.icon.name }}
+                      </mat-icon>
+                    </button>
+                  </ng-template>
                 </ng-container>
               </ng-container>
 
               <!-- direct action (existing behavior) -->
               <ng-template #directAction>
-                <button mat-icon-button
-                        (click)="emitRowAction(action.action, element.rowSrc, $event)"
-                        [matTooltip]="action.icon.tooltip || ''"
-                        *ngIf="action.visible !== false">
-                  <mat-icon [style.color]="action.icon.color">
-                    {{ action.icon.name }}
-                  </mat-icon>
-                </button>
+                <ng-container *ngIf="action.visible !== false">
+                  <button *ngIf="action.icon.tooltip; else directBtnPlain" mat-icon-button
+                          (click)="emitRowAction(action.action, element.rowSrc, $event)"
+                          [matTooltip]="action.icon.tooltip">
+                    <mat-icon [style.color]="action.icon.color">
+                      {{ action.icon.name }}
+                    </mat-icon>
+                  </button>
+                  <ng-template #directBtnPlain>
+                    <button mat-icon-button
+                            (click)="emitRowAction(action.action, element.rowSrc, $event)">
+                      <mat-icon [style.color]="action.icon.color">
+                        {{ action.icon.name }}
+                      </mat-icon>
+                    </button>
+                  </ng-template>
+                </ng-container>
               </ng-template>
             </ng-container>
           </td>

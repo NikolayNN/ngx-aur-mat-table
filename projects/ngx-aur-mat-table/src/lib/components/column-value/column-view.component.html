@@ -9,9 +9,17 @@
        [style.width]="config?.image?.width"
        alt="img">
 
-  <span *ngIf="config?.text?.show != false"
-        [matTooltip]="config?.text?.tooltip?.toString() || ''"
-        [style.color]="config?.text?.color">
+  <!-- MatTooltip создаётся только когда тултип задан: пустая директива на каждой ячейке слишком дорога -->
+  <ng-container *ngIf="config?.text?.show != false">
+    <span *ngIf="config?.text?.tooltip as tooltip; else plainText"
+          [matTooltip]="tooltip"
+          [style.color]="config?.text?.color">
        {{ value }}
-  </span>
+    </span>
+    <ng-template #plainText>
+      <span [style.color]="config?.text?.color">
+       {{ value }}
+      </span>
+    </ng-template>
+  </ng-container>
 </div>

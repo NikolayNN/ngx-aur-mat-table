@@ -1,8 +1,16 @@
 <div [ngClass]="{'circle': view?.wrapper}"
      [style.background-color]="view?.wrapper?.color">
-  <mat-icon *ngIf="view && view?.visible !== false"
-            [matTooltip]="view?.tooltip?.toString() || ''"
-            [style.color]="view?.color">
-    {{ view?.name }}
-  </mat-icon>
+  <!-- MatTooltip создаётся только когда тултип задан -->
+  <ng-container *ngIf="view && view?.visible !== false">
+    <mat-icon *ngIf="view?.tooltip as tooltip; else plainIcon"
+              [matTooltip]="tooltip"
+              [style.color]="view?.color">
+      {{ view?.name }}
+    </mat-icon>
+    <ng-template #plainIcon>
+      <mat-icon [style.color]="view?.color">
+        {{ view?.name }}
+      </mat-icon>
+    </ng-template>
+  </ng-container>
 </div>
