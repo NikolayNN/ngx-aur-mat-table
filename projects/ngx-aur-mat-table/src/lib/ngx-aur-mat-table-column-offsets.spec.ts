@@ -33,4 +33,15 @@ describe('NgxAurMatTableComponent updateColumnOffsets', () => {
     expect(emitted!.map(o => o.key)).toEqual(['col1', 'col2', 'col3']);
     expect(emitted!.every(o => o.key !== undefined)).toBeTrue();
   });
+
+  it('does nothing when the table element is not available', () => {
+    component.table = undefined as any;
+
+    let emitted: ColumnOffset[] | undefined;
+    component.columnOffsets.subscribe(v => emitted = v);
+
+    (component as any).updateColumnOffsets();
+
+    expect(emitted).toBeUndefined();
+  });
 });

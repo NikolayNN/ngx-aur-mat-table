@@ -324,23 +324,27 @@
 
         </ng-container>
 
-        <!--        extra header top cell-->
-        <ng-container *ngFor="let extraTopCell of _displayExtraHeaderTopCell; let index = index"
-                      [matColumnDef]="extraTopCell">
-          <th mat-header-cell *matHeaderCellDef>
-            <ng-container
-              *ngTemplateOutlet="extraHeaderCellTopTemplate; context: {key: extraTopCell.replace(EXTRA_HEADER_CELL_TOP_SUFFIX, ''), index: index}"></ng-container>
-          </th>
+        <!--        extra header top cell (дефы регистрируем только при наличии шаблона)-->
+        <ng-container *ngIf="extraHeaderCellTopTemplate">
+          <ng-container *ngFor="let extraTopCell of _displayExtraHeaderTopCell; let index = index"
+                        [matColumnDef]="extraTopCell">
+            <th mat-header-cell *matHeaderCellDef>
+              <ng-container
+                *ngTemplateOutlet="extraHeaderCellTopTemplate; context: {key: extraTopCell.replace(EXTRA_HEADER_CELL_TOP_SUFFIX, ''), index: index}"></ng-container>
+            </th>
+          </ng-container>
         </ng-container>
 
 
-        <!--        extra header bottom cell-->
-        <ng-container *ngFor="let extraBottomCell  of _displayExtraHeaderBottomCell; let index = index"
-                      [matColumnDef]="extraBottomCell">
-          <th mat-header-cell *matHeaderCellDef>
-            <ng-container
-              *ngTemplateOutlet="extraHeaderCellBottomTemplate; context: {key: extraBottomCell.replace(EXTRA_HEADER_CELL_BOTTOM_SUFFIX, ''), index: index}"></ng-container>
-          </th>
+        <!--        extra header bottom cell (дефы регистрируем только при наличии шаблона)-->
+        <ng-container *ngIf="extraHeaderCellBottomTemplate">
+          <ng-container *ngFor="let extraBottomCell  of _displayExtraHeaderBottomCell; let index = index"
+                        [matColumnDef]="extraBottomCell">
+            <th mat-header-cell *matHeaderCellDef>
+              <ng-container
+                *ngTemplateOutlet="extraHeaderCellBottomTemplate; context: {key: extraBottomCell.replace(EXTRA_HEADER_CELL_BOTTOM_SUFFIX, ''), index: index}"></ng-container>
+            </th>
+          </ng-container>
         </ng-container>
 
         <!--        extra header top row-->
@@ -373,25 +377,27 @@
             [style]="rowStyle(row)">
         </tr>
 
-        <!--expanded-row-->
-        <ng-container matColumnDef="expandedRow">
-          <td mat-cell class="expanded-cell" *matCellDef="let element" [attr.colspan]="_displayColumns.length"
-              style="padding-right: 0!important;">
-            <div class="row-detail"
-                 [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
-              <!-- timeline continuation -->
-              <div *ngIf="timelineProvider.isEnabled"
-                   class="aur-timeline-continuation"
-                   [style.border-left-width.px]="timelineProvider.line.width"
-                   [style.border-left-color]="_timelineGaps.get(element.id)?.bottomColor ?? timelineProvider.line.color"
-                   [style.border-left-style]="_timelineGaps.get(element.id)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+        <!--expanded-row (деф регистрируем только при наличии шаблона)-->
+        <ng-container *ngIf="extendedRowTemplate">
+          <ng-container matColumnDef="expandedRow">
+            <td mat-cell class="expanded-cell" *matCellDef="let element" [attr.colspan]="_displayColumns.length"
+                style="padding-right: 0!important;">
+              <div class="row-detail"
+                   [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
+                <!-- timeline continuation -->
+                <div *ngIf="timelineProvider.isEnabled"
+                     class="aur-timeline-continuation"
+                     [style.border-left-width.px]="timelineProvider.line.width"
+                     [style.border-left-color]="_timelineGaps.get(element.id)?.bottomColor ?? timelineProvider.line.color"
+                     [style.border-left-style]="_timelineGaps.get(element.id)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+                </div>
+                <!-- lazy-load of details -->
+                <ng-container *ngIf="element.rowSrc === highlighted">
+                  <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
+                </ng-container>
               </div>
-              <!-- lazy-load of details -->
-              <ng-container *ngIf="element.rowSrc === highlighted">
-                <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
-              </ng-container>
-            </div>
-          </td>
+            </td>
+          </ng-container>
         </ng-container>
 
         <ng-container *ngIf="extendedRowTemplate">
@@ -405,13 +411,15 @@
               [style.display]="isTotalRowVisible() ? null : 'none'"></tr>
         </ng-container>
 
-        <!--sub-footer-row-->
-        <ng-container matColumnDef="subFooterRow">
-          <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
-            <ng-container>
-              <ng-content select="[ngxAurTableSubFooterRow]"></ng-content>
-            </ng-container>
-          </td>
+        <!--sub-footer-row (деф регистрируем только при наличии контента)-->
+        <ng-container *ngIf="subFooterRowTemplate">
+          <ng-container matColumnDef="subFooterRow">
+            <td mat-footer-cell *matFooterCellDef [attr.colspan]="_displayColumns.length">
+              <ng-container>
+                <ng-content select="[ngxAurTableSubFooterRow]"></ng-content>
+              </ng-container>
+            </td>
+          </ng-container>
         </ng-container>
 
         <ng-container *ngIf="subFooterRowTemplate">
