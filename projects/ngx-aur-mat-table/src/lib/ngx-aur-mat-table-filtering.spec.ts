@@ -80,4 +80,25 @@ describe('NgxAurMatTableComponent filtering', () => {
     // Bug: all filters lost → ['Alice', 'Bob', 'Charlie']. Fix: search stays → ['Alice']
     expect(filteredNames()).toEqual(['Alice']);
   });
+
+  // Поиск должен идти ТОЛЬКО по значениям колонок — не по служебным полям TableRow
+  it('search does not match the internal row id', () => {
+    // '1' встречается только во внутреннем id строки Bob (id=1); в значениях колонок цифры 1 нет
+    component.applySearchFilter(searchEvent('1'));
+    expect(filteredNames()).toEqual([]);
+  });
+
+  it('search does not match the rowSrc object placeholder', () => {
+    // дефолтный предикат Material конкатенирует rowSrc как "[object Object]"
+    component.applySearchFilter(searchEvent('object'));
+    expect(filteredNames()).toEqual([]);
+  });
+
+  it('search still matches values across all configured columns', () => {
+    component.applySearchFilter(searchEvent('25'));
+    expect(filteredNames()).toEqual(['Bob']);
+
+    component.applySearchFilter(searchEvent('ali'));
+    expect(filteredNames()).toEqual(['Alice']);
+  });
 });

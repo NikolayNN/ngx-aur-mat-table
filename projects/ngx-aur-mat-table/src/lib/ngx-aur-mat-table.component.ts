@@ -230,8 +230,19 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   constructor(private viewContainerRef: ViewContainerRef,
               private cdr: ChangeDetectorRef) {
-    // дефолтный предикат персистентного инстанса — захватывается один раз на жизнь компонента
-    this._defaultFilterPredicate = this.tableDataSource.filterPredicate;
+    // поиск только по значениям колонок (valueConverter) — дефолтный предикат Material
+    // конкатенирует ВСЕ поля TableRow, включая служебные id и rowSrc ("[object Object]")
+    this._defaultFilterPredicate = (data, filter) => this.searchPredicate(data, filter);
+  }
+
+  /** Предикат строки поиска: значения сконфигурированных колонок, без служебных полей. */
+  private searchPredicate(data: TableRow<T>, filter: string): boolean {
+    const needle = filter.trim().toLowerCase();
+    const haystack = this.tableConfig.columnsCfg
+      .map(c => data[c.key] ?? '')
+      .join('◬')
+      .toLowerCase();
+    return haystack.includes(needle);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
