@@ -142,4 +142,23 @@ describe('NgxAurMatTableComponent persistent datasource', () => {
     component.refreshTable();
     expect(component.tableDataSource.sortingDataAccessor(rowAlice, 'name')).toBe('Alice');
   });
+
+  it('trackByRow returns rowSrc by default', () => {
+    const row = component.tableDataSource.data[0];
+    expect(component.trackByRow(0, row)).toBe(row.rowSrc);
+  });
+
+  it('trackByRow uses tableConfig.trackBy when provided', () => {
+    component.tableConfig = {
+      trackBy: item => item.name,
+      columnsCfg: [
+        {name: 'Name', key: 'name', valueConverter: (v) => v.name},
+        {name: 'Age', key: 'age', valueConverter: (v) => v.age},
+      ]
+    };
+    component.refreshTable();
+
+    const row = component.tableDataSource.data[0];
+    expect(component.trackByRow(0, row)).toBe('Alice');
+  });
 });

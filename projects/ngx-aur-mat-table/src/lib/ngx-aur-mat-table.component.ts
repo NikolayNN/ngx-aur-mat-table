@@ -593,6 +593,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return row;
   }
 
+  /** trackBy для всех строковых дефов таблицы: бизнес-ключ из конфига или ссылка на rowSrc. */
+  trackByRow = (_: number, row: TableRow<T>): unknown =>
+    this.tableConfig.trackBy ? this.tableConfig.trackBy(row.rowSrc) : row.rowSrc;
+
   /** StyleBuilder.Row | string | null -> CSS-строка | null. */
   private toCss(s?: StyleBuilder.Row | string | null): string | null {
     if (s == null) return null;

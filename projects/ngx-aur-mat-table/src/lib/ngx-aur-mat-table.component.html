@@ -33,6 +33,7 @@
 
       <!-- Table -->
       <table #table mat-table matSort
+             [trackBy]="trackByRow"
              [multiTemplateDataRows]="extendedRowTemplate !== null"
              [dataSource]="tableDataSource"
              (matSortChange)="sortTable($event)"
