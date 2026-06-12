@@ -58,6 +58,9 @@ export interface TableConfig<T> {
    * Настройка пагинации таблицы
    */
   paginationCfg?: PaginationConfig,
+
+  /** Начальная сортировка. Не задан — без начальной сортировки (текущее поведение). */
+  sortCfg?: TableSortConfig,
   stickyCfg?: StickyConfig,
   tableViewCfg?: TableViewConfig,
   headerButtonCfg?: HeaderButtonConfig,
@@ -223,6 +226,22 @@ export interface SortConfig<T> {
    * не применяется — порядок строк определяет сервер.
    */
   customSort?: (data: TableRow<T>, key: string) => any;
+}
+
+/**
+ * Начальная сортировка таблицы: стрелка в заголовке + начальный порядок.
+ * Это начальное состояние, а не реактивный контрол: смена значения в рантайме
+ * передвинет стрелку, но не пересортирует данные и не вызовет серверный запрос.
+ */
+export interface TableSortConfig {
+  /**
+   * Ключ колонки из `columnsCfg`, у которой включён `sort`.
+   * Ключ колонки без `sort` (или несуществующий) стрелку не покажет,
+   * но в клиентском режиме данные по нему всё равно отсортируются.
+   */
+  active: string;
+  /** Направление начальной сортировки. */
+  direction: 'asc' | 'desc';
 }
 
 export interface IndexConfig {

@@ -106,7 +106,7 @@ onFilterChange() { this.rebuildFilters(); this.table.reload(); }
 
 `AurPage<T>` requires `content` + `totalElements` (+ optional `number`), matching Spring Data `Page<T>`, so a backend `Page<T>` is returned with no mapping.
 
-**Sorting:** a click on a sortable header issues a new `pageSource` request (`req.sort = { active, direction }`, page reset to 0). The page is rendered exactly in the order the server returned it — the table never re-sorts a server page locally, and `ColumnConfig.sort.customSort` is ignored in server mode.
+**Sorting:** a click on a sortable header issues a new `pageSource` request (`req.sort = { active, direction }`, page reset to 0). The page is rendered exactly in the order the server returned it — the table never re-sorts a server page locally, and `ColumnConfig.sort.customSort` is ignored in server mode. **Initial state:** `sortCfg: { active: 'name', direction: 'desc' }` in the table config lights the header arrow immediately and makes the first `pageSource` request carry this sort.
 
 > The legacy manual wiring (`[paginatorState]` + `(pageChange)` + `NgxAurTablePageEventUtils.createEmpty`) still works but is deprecated in favour of `pageSource`.
 

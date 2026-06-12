@@ -33,6 +33,8 @@
 
       <!-- Table -->
       <table #table mat-table matSort
+             [matSortActive]="tableConfig.sortCfg?.active ?? ''"
+             [matSortDirection]="tableConfig.sortCfg?.direction ?? ''"
              [trackBy]="trackByRow"
              [multiTemplateDataRows]="extendedRowTemplate !== null"
              [dataSource]="tableDataSource"
