@@ -19,5 +19,12 @@ export interface AurPage<T> {
   number?: number; // индекс страницы; при отсутствии используется request.pageIndex
 }
 
+/** Данные применённой серверной страницы (pageSource-режим) — для счётчиков/графиков родителя. */
+export interface AurPageLoadedEvent<T> {
+  content: T[];
+  totalElements: number;
+  pageIndex: number;
+}
+
 /** Загрузчик, предоставляемый хостом: по запросу возвращает соответствующую страницу. */
 export type AurPageSource<T> = (request: AurPageRequest) => Observable<AurPage<T>>;

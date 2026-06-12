@@ -45,7 +45,7 @@ import {TimelineProvider, TimelineProviderDummy} from "./providers/TimelineProvi
 import {AurDragDropComponent} from "./drag-drop/aur-drag-drop-component";
 import {PaginatorState} from './model/PaginatorState';
 export {PaginatorState} from './model/PaginatorState';
-import {AurPageSource} from './model/AurPage';
+import {AurPageLoadedEvent, AurPageSource} from './model/AurPage';
 import {ServerPageController} from './providers/ServerPageController';
 import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.util';
 import {Subscription} from 'rxjs';
@@ -188,6 +188,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   @Output() loadingChange = new EventEmitter<boolean>();
   @Output() pageError = new EventEmitter<unknown>();
+
+  /**
+   * Успешно загруженная и УЖЕ применённая серверная страница (pageSource-режим).
+   * Эмитится на каждую успешную загрузку: старт, смена страницы, сортировка, reload().
+   * При ошибке не эмитится (см. pageError). В ручном/legacy режиме события нет —
+   * хост загружает данные сам.
+   */
+  @Output() pageLoaded = new EventEmitter<AurPageLoadedEvent<T>>();
 
   /**
    * возвращает отфильтрованные строки
@@ -788,6 +796,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
         this.applyExternalPaginatorState(result.state);
         this.tableData = result.content;
         this.refreshTable();
+        // эмит ПОСЛЕ refreshTable(): подписчик читает уже применённое публичное состояние таблицы
+        this.pageLoaded.emit({
+          content: result.content,
+          totalElements: result.state.length,
+          pageIndex: result.state.pageIndex,
+        });
         this.cdr.markForCheck();
       },
       onLoading: loading => {
