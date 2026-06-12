@@ -218,7 +218,9 @@ export interface SortConfig<T> {
   position?: 'start' | 'end';
 
   /**
-   * Ключ колонки
+   * Кастомное значение строки для локальной сортировки колонки.
+   * В серверном режиме (`pageSource` или `paginationCfg.mode: 'server'`)
+   * не применяется — порядок строк определяет сервер.
    */
   customSort?: (data: TableRow<T>, key: string) => any;
 }

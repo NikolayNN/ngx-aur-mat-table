@@ -359,7 +359,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private initSortingDataAccessor(): void {
-    const sort = this.matSort ?? null;
+    // Серверная обвязка: сортирует сервер — не привязываем MatSort к dataSource, иначе
+    // _orderData пересортировал бы серверную страницу по значениям valueConverter
+    // (зеркало initPaginator(), который по той же причине не привязывает пагинатор).
+    // Стрелки и matSortChange живут на директиве MatSort и от привязки не зависят.
+    const sort = this.isServerWiring() ? null : (this.matSort ?? null);
     if (this.tableDataSource.sort !== sort) {
       // тот же гвард: сеттер .sort тоже пересоздаёт подписку
       this.tableDataSource.sort = sort;
