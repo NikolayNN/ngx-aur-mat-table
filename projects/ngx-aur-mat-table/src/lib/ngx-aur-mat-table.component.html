@@ -513,7 +513,7 @@
                    [length]="paginatorState?.length"
                    [pageIndex]="paginatorState?.pageIndex"
                    (page)="onPageChangeInternal($event)"
-                   showFirstLastButtons>
+                   [showFirstLastButtons]="tableConfig.paginationCfg?.showFirstLastButtons !== false">
     </mat-paginator>
   }
 </div>

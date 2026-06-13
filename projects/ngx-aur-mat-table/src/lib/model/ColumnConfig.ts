@@ -319,6 +319,15 @@ export interface PaginationConfig {
   position?: 'inline' | 'sticky';
   /** 'client' (по умолчанию) позволяет MatTableDataSource нарезать в памяти; 'server' использует pageSource / paginatorState. */
   mode?: 'client' | 'server';
+
+  /**
+   * Показывать кнопки «в начало/в конец» у встроенного пагинатора. По умолчанию true.
+   * Биндится напрямую к конфигу. Таблица — OnPush, поэтому переключение в рантайме надёжно
+   * работает при смене ССЫЛКИ на tableConfig (например, по брейкпоинту): это помечает вход
+   * изменённым и перерисовывает кнопки без пересборки данных. Мутация поля на месте сама по
+   * себе перерисовку не вызовет. На externalPaginator не влияет — им управляет хост.
+   */
+  showFirstLastButtons?: boolean;
 }
 
 export interface StickyConfig {
