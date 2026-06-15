@@ -357,6 +357,11 @@ export interface TableViewConfig {
   cellPaddingLeft?: string;
   /** Правый отступ ячеек всей таблицы (CSS-значение), по умолчанию 4px. */
   cellPaddingRight?: string;
+  /**
+   * Выравнивание по умолчанию для обычных колонок и колонки индекса.
+   * Локальный ColumnConfig.align / IndexConfig.align приоритетнее. По умолчанию 'left'.
+   */
+  align?: ColumnAlign;
 }
 
 export interface ColumnSize {

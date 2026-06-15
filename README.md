@@ -187,6 +187,8 @@ tableConfig: TableConfig<ReportRow> = {
 
 **Tooltip position:** `icon.tooltipPosition` / `text.tooltipPosition` (and the same on action icons) set `matTooltipPosition` (`'left' | 'right' | 'above' | 'below' | 'before' | 'after'`, default `'below'`) — useful for narrow or edge columns.
 
+**Default alignment:** `tableViewCfg.align` (`'left' | 'center' | 'right'`) sets the default for all data columns and the index column at once; a per-column `ColumnConfig.align` / `IndexConfig.align` overrides it. Without it columns stay left-aligned as before.
+
 ### Migration from pre-19.1.0
 
 ```ts

@@ -491,8 +491,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
         : a === 'right' ? 'aur-align-right' as const
           : undefined;
     const map: Record<string, 'aur-align-center' | 'aur-align-right' | undefined> = {};
-    this.tableConfig.columnsCfg.forEach(c => map[c.key] = toClass(c.align));
-    map[IndexProvider.COLUMN_NAME] = toClass(this.tableConfig.indexCfg?.align);
+    const def = this.tableConfig.tableViewCfg?.align;
+    this.tableConfig.columnsCfg.forEach(c => map[c.key] = toClass(c.align ?? def));
+    map[IndexProvider.COLUMN_NAME] = toClass(this.tableConfig.indexCfg?.align ?? def);
     return map;
   }
 
