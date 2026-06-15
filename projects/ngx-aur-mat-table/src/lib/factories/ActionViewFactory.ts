@@ -48,6 +48,7 @@ export class ActionViewFactory {
       color: iconSource.color ? iconSource.color(value) : undefined,
       tooltip: iconSource.tooltip ? iconSource.tooltip(value) : undefined,
       tooltipClass: iconSource.tooltipClass ? iconSource.tooltipClass(value) : undefined,
+      tooltipPosition: iconSource.tooltipPosition,
       position: iconSource.position,
       wrapper: iconSource.wrapper ? {color: iconSource.wrapper.color(value)} : undefined
     }

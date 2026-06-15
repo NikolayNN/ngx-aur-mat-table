@@ -185,6 +185,8 @@ tableConfig: TableConfig<ReportRow> = {
 - `totalRowCfg.styleCfg.style` / `class` can be a **static value** or a **function of `(totals: Map<string,any>, data: TableRow<T>[])`** — value-driven total styling.
 - For per-row **text color** prefer a `class` over the `style` hook, since Material cells set their own `color` and can override a `color` inherited from the row.
 
+**Tooltip position:** `icon.tooltipPosition` / `text.tooltipPosition` (and the same on action icons) set `matTooltipPosition` (`'left' | 'right' | 'above' | 'below' | 'before' | 'after'`, default `'below'`) — useful for narrow or edge columns.
+
 ### Migration from pre-19.1.0
 
 ```ts

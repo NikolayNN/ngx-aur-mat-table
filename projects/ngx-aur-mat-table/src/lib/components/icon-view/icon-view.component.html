@@ -6,6 +6,7 @@
   <mat-icon *ngIf="view.tooltip as tooltip; else plainIcon"
             [matTooltip]="tooltip"
             [matTooltipClass]="view.tooltipClass || ''"
+            [matTooltipPosition]="view.tooltipPosition || 'below'"
             [style.color]="view.color">
     {{ view.name }}
   </mat-icon>

@@ -203,6 +203,7 @@
                   <button mat-icon-button
                           (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
                           [matTooltip]="action.icon.tooltip || ''"
+                          [matTooltipPosition]="action.icon.tooltipPosition || 'below'"
                           *ngIf="action.visible !== false">
                     <mat-icon [style.color]="action.icon.color">
                       {{ action.icon.name }}
@@ -272,7 +273,8 @@
                   </mat-menu>
                   <span *ngIf="action.icon.tooltip; else menuBtnPlain"
                         [matTooltip]="action.icon.tooltip"
-                        [matTooltipClass]="action.icon.tooltipClass || ''">
+                        [matTooltipClass]="action.icon.tooltipClass || ''"
+                        [matTooltipPosition]="action.icon.tooltipPosition || 'below'">
                     <button mat-icon-button
                             [matMenuTriggerFor]="actionMenu"
                             [disabled]="action.disabled === true">
@@ -297,7 +299,8 @@
                 <ng-container *ngIf="action.visible !== false">
                   <span *ngIf="action.icon.tooltip; else directBtnPlain"
                         [matTooltip]="action.icon.tooltip"
-                        [matTooltipClass]="action.icon.tooltipClass || ''">
+                        [matTooltipClass]="action.icon.tooltipClass || ''"
+                        [matTooltipPosition]="action.icon.tooltipPosition || 'below'">
                     <button mat-icon-button
                             [disabled]="action.disabled === true"
                             (click)="emitRowAction(action.action, element.rowSrc, $event)">

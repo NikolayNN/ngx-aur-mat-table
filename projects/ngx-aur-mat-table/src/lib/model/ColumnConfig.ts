@@ -1,6 +1,7 @@
 import {TableRow} from "./TableRow";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 import {StyleBuilder} from "../style-builder/style-builder";
+import {TooltipPosition} from "@angular/material/tooltip";
 
 /**
  * Сопоставляет дженерик листового типа `T` с разрешённым значением:
@@ -180,6 +181,9 @@ export interface IconView<T> {
   /** CSS-класс(ы) тултипа; прокидывается в matTooltipClass. */
   tooltipClass?: T;
 
+  /** Позиция тултипа (matTooltipPosition). По умолчанию 'below'. От строки не зависит. */
+  tooltipPosition?: TooltipPosition;
+
   /**
    * Позиция иконки относительно текста ячейки: 'start' (по умолчанию) — перед текстом,
    * 'end' — после. Действует в ячейках/заголовках; для кнопок действий и drag-иконки игнорируется.
@@ -208,6 +212,8 @@ export interface TextView<T> {
   /** Подсказка */
   tooltip?: T;
   color?: T;
+  /** Позиция тултипа текста ячейки (matTooltipPosition). По умолчанию 'below'. */
+  tooltipPosition?: TooltipPosition;
 }
 
 export interface ColumnView<T> {

@@ -14,6 +14,7 @@
   <ng-container *ngIf="config?.text?.show != false">
     <span *ngIf="config?.text?.tooltip as tooltip; else plainText"
           [matTooltip]="tooltip"
+          [matTooltipPosition]="config?.text?.tooltipPosition || 'below'"
           [style.color]="config?.text?.color">
        {{ value }}
     </span>
