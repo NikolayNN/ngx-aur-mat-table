@@ -10,6 +10,9 @@ import {StyleBuilder} from "../style-builder/style-builder";
  */
 export type Resolvable<T, R> = T extends (arg: infer A) => any ? (arg: A) => R : R;
 
+/** Значение, общее для строки, или вычисляемое по строке. */
+export type RowValue<T, R> = R | ((row: TableRow<T>) => R);
+
 export interface TableConfig<T> {
 
   /**
@@ -72,41 +75,43 @@ export interface TableConfig<T> {
 
 }
 
-export interface ClickConfig {
+export interface ClickConfig<T = any> {
   /**
    * Стиль/класс, применяемый к кликнутой/подсвеченной строке.
    * Цвет текста ячеек при class задаётся селектором потребителя,
    * например `tr.my-highlight td { color: white; }`.
    */
-  styleCfg?: ClickStyleConfig;
+  styleCfg?: ClickStyleConfig<T>;
 
   /**
-   * По умолчанию false
+   * По умолчанию false (от строки не зависит).
    * false: и первый, и второй клик испускают эту строку; выделение не сбрасывается.
    * true: первый клик испускает эту строку, второй клик испускает undefined; первый выделяет, второй снимает выделение.
    */
   cancelable?: boolean;
 }
 
-export interface ClickStyleConfig {
-  /** CSS-класс(ы) на подсвеченном <tr>; допускается несколько через пробел. */
-  class?: string;
-  /** Инлайн-стиль; StyleBuilder.Row или сырая CSS-строка. */
-  style?: StyleBuilder.Row | string;
+export interface ClickStyleConfig<T = any> {
+  /** CSS-класс(ы) на подсвеченном <tr>; значение или (row) => значение. */
+  class?: RowValue<T, string | null>;
+  /** Инлайн-стиль; StyleBuilder.Row | строка, либо (row) => то же. */
+  style?: RowValue<T, StyleBuilder.Row | string>;
 }
 
-export interface HoverConfig {
-  /** Главный переключатель оверлея наведения; считается true, когда hoverCfg задан и это значение не false */
+export interface HoverConfig<T = any> {
+  /** Главный переключатель оверлея наведения (табличный); считается true, когда hoverCfg задан и это значение не false */
   enable?: boolean;
-  /** Показывать cursor: pointer на строке тела */
-  pointer?: boolean;
+  /** Показывать cursor: pointer на строке тела; значение или (row) => значение */
+  pointer?: RowValue<T, boolean>;
   /** Стиль/класс, применяемый при наведении на строку (оверлей, как подсветка) */
-  styleCfg?: HoverStyleConfig;
+  styleCfg?: HoverStyleConfig<T>;
 }
 
-export interface HoverStyleConfig {
-  class?: string;
-  style?: StyleBuilder.Row | string;
+export interface HoverStyleConfig<T = any> {
+  /** CSS-класс(ы) при наведении; значение или (row) => значение. */
+  class?: RowValue<T, string | null>;
+  /** Инлайн-стиль при наведении; StyleBuilder.Row | строка, либо (row) => то же. */
+  style?: RowValue<T, StyleBuilder.Row | string>;
 }
 
 export interface HeaderRowConfig {
@@ -114,8 +119,8 @@ export interface HeaderRowConfig {
 }
 
 export interface BodyRowConfig<T> {
-  clickCfg?: ClickConfig;
-  hoverCfg?: HoverConfig;
+  clickCfg?: ClickConfig<T>;
+  hoverCfg?: HoverConfig<T>;
   styleCfg?: BodyStyleConfig<T>;
 }
 

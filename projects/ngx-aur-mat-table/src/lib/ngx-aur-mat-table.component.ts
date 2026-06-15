@@ -18,7 +18,7 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-import {ColumnAlign, ColumnView, TableConfig} from './model/ColumnConfig';
+import {ColumnAlign, ColumnView, RowValue, TableConfig} from './model/ColumnConfig';
 import {StyleBuilder} from './style-builder/style-builder';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -682,6 +682,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return typeof v === 'function' ? (v as any)(totals, data) : v;
   }
 
+  /** RowValue<T,R> → R: статика как есть, функция вызывается со строкой. */
+  private resolveRow<R>(v: RowValue<T, R> | undefined, row: TableRow<T>): R | undefined {
+    return typeof v === 'function' ? (v as (row: TableRow<T>) => R)(row) : v;
+  }
+
   /** Хелпер для шаблона: функция активна, когда её конфигурация присутствует, если только не задано `enable: false`. */
   isFeatureEnabled(cfg: { enable?: boolean } | null | undefined): boolean {
     return isFeatureEnabledFn(cfg);
@@ -732,10 +737,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   rowStyle(row: TableRow<T>): string | null {
     let acc: StyleBuilder.Row | string | null = this.rowStyles[row.id]?.style ?? null;
     if (this.hoverActive(row)) {
-      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style ?? null);
+      acc = this.mergeStyle(acc, this.resolveRow(this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style, row) ?? null);
     }
     if (this.highlighted === row.rowSrc) {
-      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg?.style ?? null);
+      acc = this.mergeStyle(acc, this.resolveRow(this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg?.style, row) ?? null);
     }
     return this.toCss(acc);
   }
@@ -743,18 +748,20 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
     const hover = this.tableConfig.bodyRowCfg?.hoverCfg;
     const click = this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg;
-    const hl = click?.style;
-    const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
     const isHighlighted = this.highlighted === row.rowSrc;
+    // click-style резолвим только для подсвеченной строки (иначе функция зря зовётся на каждую)
+    const hl = isHighlighted ? this.resolveRow(click?.style, row) : null;
+    const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
     const cls: { [klass: string]: boolean } = {
-      'pointer': hover?.pointer || false,
+      'pointer': this.resolveRow(hover?.pointer, row) || false,
       'new-color': isHighlighted && hlHasColor,
     };
     const custom = this.rowStyles[row.id]?.class;
     if (custom) cls[custom] = true;
-    const hcls = this.hoverActive(row) ? hover?.styleCfg?.class : null;
+    const hcls = this.hoverActive(row) ? this.resolveRow(hover?.styleCfg?.class, row) : null;
     if (hcls) cls[hcls] = true;
-    if (isHighlighted && click?.class) cls[click.class] = true;
+    const ccls = isHighlighted ? this.resolveRow(click?.class, row) : null;
+    if (ccls) cls[ccls] = true;
     return cls;
   }
 
