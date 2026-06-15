@@ -162,7 +162,7 @@
               [style.--aur-cell-padding-left]="indexProvider.size?.paddingLeft"
               [style.--aur-cell-padding-right]="indexProvider.size?.paddingRight"
               [ngClass]="_alignClass[indexProvider.COLUMN_NAME]">
-            {{ indexProvider.format(element.id) }}
+            {{ indexProvider.format(element.id + _indexPageOffset) }}
           </td>
 
           <td mat-footer-cell *matFooterCellDef

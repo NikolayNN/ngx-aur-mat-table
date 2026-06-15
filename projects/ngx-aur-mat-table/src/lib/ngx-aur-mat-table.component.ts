@@ -122,6 +122,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   /** Строки интерактивны (clickCfg задан) → tabindex/клавиатурная активация. */
   _rowsInteractive = false;
 
+  /** Смещение индекса строки на номер страницы в серверном режиме (pageIndex*pageSize); 0 в клиентском. */
+  _indexPageOffset = 0;
+
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
 
   // @ts-ignore
@@ -426,6 +429,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .bindEventEmitters(this.selectChange, this.selectAdded, this.selectRemoved, this.selectionModel);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
+
+    // Серверная страница содержит только свои строки (id = позиция в странице) — смещаем индекс
+    // на номер страницы. Клиентский режим режет весь датасет локально (id сквозной) → offset 0.
+    const pageSize = this.activePaginator?.pageSize ?? this.paginationProvider.size;
+    this._indexPageOffset = this.paginatorState ? this.paginatorState.pageIndex * pageSize : 0;
 
     this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
       .setTotalRow();
