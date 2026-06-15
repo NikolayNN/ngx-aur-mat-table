@@ -89,7 +89,10 @@ describe('NgxAurMatTable tooltip instantiation', () => {
     const actionCell = cells()[4];
     const buttons = Array.from(actionCell.querySelectorAll('button')) as HTMLElement[];
     expect(buttons.length).toBe(2);
-    expect(buttons[0].classList.contains('mat-mdc-tooltip-trigger')).toBeTrue();
+    // После рефакторинга тултип переехал на <span>-обёртку (чтобы disabled-кнопка тоже показывала тултип).
+    // Проверяем, что span-триггер есть только у первой кнопки (с тултипом), а не у второй.
+    const spans = Array.from(actionCell.querySelectorAll('span.mat-mdc-tooltip-trigger')) as HTMLElement[];
+    expect(spans.length).toBe(1);
     expect(buttons[1].classList.contains('mat-mdc-tooltip-trigger')).toBeFalse();
   });
 });

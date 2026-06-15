@@ -106,6 +106,14 @@ onFilterChange() { this.rebuildFilters(); this.table.reload(); }
 
 `AurPage<T>` requires `content` + `totalElements` (+ optional `number`), matching Spring Data `Page<T>`, so a backend `Page<T>` is returned with no mapping.
 
+**Sorting:** a click on a sortable header issues a new `pageSource` request (`req.sort = { active, direction }`, page reset to 0). The page is rendered exactly in the order the server returned it — the table never re-sorts a server page locally, and `ColumnConfig.sort.customSort` is ignored in server mode. **Initial state:** `sortCfg: { active: 'name', direction: 'desc' }` in the table config lights the header arrow immediately and makes the first `pageSource` request carry this sort.
+
+**Page data for the host:** `(pageLoaded)` emits `{ content, totalElements, pageIndex }` after each successfully applied page — handy for header counters and charts. `loadingChange` and `pageError` cover the rest of the load lifecycle.
+
+**First/last buttons:** `paginationCfg.showFirstLastButtons: false` hides the built-in paginator's jump-to-first/last buttons (default shown). Bound straight to the config, so swapping the `tableConfig` reference at runtime (e.g. on a breakpoint) toggles them without rebuilding data.
+
+**Row index across pages:** with `indexCfg` in server mode the index column shows the absolute row number (`pageIndex * pageSize + position`), so page 2 continues 21, 22, … rather than restarting at 1. Client-mode pagination is unaffected (the index already spans the full dataset).
+
 > The legacy manual wiring (`[paginatorState]` + `(pageChange)` + `NgxAurTablePageEventUtils.createEmpty`) still works but is deprecated in favour of `pageSource`.
 
 ### Using an external paginator (`externalPaginator`)
@@ -173,8 +181,13 @@ tableConfig: TableConfig<ReportRow> = {
 - `bodyRowCfg.styleCfg.style` / `class` are per-row hooks called once per data refresh (OnPush-friendly).
 - `bodyRowCfg.clickCfg.styleCfg.style` задаёт стиль подсветки кликнутой строки; `styleCfg.class` задаёт CSS-класс подсвеченной строки; `overrideWith` merges builder fields so base styles survive.
 - `bodyRowCfg.hoverCfg` drives a mouse-enter/leave overlay; the `#f2f2f2` hardcoded hover background is gone — configure it via `hoverCfg.styleCfg` or suppress hover entirely by omitting `hoverCfg`.
+- `hoverCfg.pointer` / `hoverCfg.styleCfg.*` / `clickCfg.styleCfg.*` accept a static value **or** a `(row: TableRow<T>) => value` function — e.g. `pointer: row => !row.rowSrc.system` disables the pointer/hover for system rows while leaving others interactive.
 - `totalRowCfg.styleCfg.style` / `class` can be a **static value** or a **function of `(totals: Map<string,any>, data: TableRow<T>[])`** — value-driven total styling.
 - For per-row **text color** prefer a `class` over the `style` hook, since Material cells set their own `color` and can override a `color` inherited from the row.
+
+**Tooltip position:** `icon.tooltipPosition` / `text.tooltipPosition` (and the same on action icons) set `matTooltipPosition` (`'left' | 'right' | 'above' | 'below' | 'before' | 'after'`, default `'below'`) — useful for narrow or edge columns.
+
+**Default alignment:** `tableViewCfg.align` (`'left' | 'center' | 'right'`) sets the default for all data columns and the index column at once; a per-column `ColumnConfig.align` / `IndexConfig.align` overrides it. Without it columns stay left-aligned as before.
 
 ### Migration from pre-19.1.0
 
@@ -198,3 +211,5 @@ totalRowCfg: { enable: true, styleCfg: { style: StyleBuilder.Row.builder().color
 > ```scss
 > :host ::ng-deep tr.not-hover:hover { background-color: inherit !important; cursor: default; }
 > ```
+
+**Disabled actions:** `actionCfg.actions[].disabled: row => boolean` keeps a row action visible but greyed out — for both direct actions and menu triggers. When `icon.tooltip` is set, the tooltip is rendered on a wrapper element so it still shows on the disabled button, which is handy for explaining why the action is unavailable.

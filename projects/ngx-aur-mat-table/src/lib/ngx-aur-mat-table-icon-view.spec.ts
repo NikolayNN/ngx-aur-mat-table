@@ -55,3 +55,46 @@ describe('NgxAurMatTable icon tooltipClass/position (render)', () => {
     expect(tooltipDe.injector.get(MatTooltip).tooltipClass).toBe('tt-custom');
   });
 });
+
+@Component({
+  standalone: false,
+  template: `<aur-mat-table [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class IconVisibilityHostComponent {
+  iconVisible = false;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{
+      key: 'name', name: 'Name', valueConverter: v => v.name,
+      valueView: { icon: { name: () => 'info', wrapper: { color: () => 'red' }, visible: () => this.iconVisible } },
+    }],
+  };
+  data: R[] = [{ name: 'a' }];
+}
+
+describe('NgxAurMatTable icon visible (wrapper)', () => {
+  let fixture: ComponentFixture<IconVisibilityHostComponent>;
+  let host: IconVisibilityHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [IconVisibilityHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(IconVisibilityHostComponent);
+    host = fixture.componentInstance;
+  });
+
+  it('visible:false + wrapper — не рендерит ни круг, ни иконку', () => {
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('tr.mat-mdc-row lib-icon-view .circle')).toBeNull();
+    expect(fixture.nativeElement.querySelector('tr.mat-mdc-row lib-icon-view mat-icon')).toBeNull();
+  });
+
+  it('visible:true + wrapper — круг и иконка присутствуют (пин)', () => {
+    host.iconVisible = true;
+    host.data = [{ name: 'a' }]; // новая ссылка → ngOnChanges → refreshTable → re-resolve visible
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('tr.mat-mdc-row lib-icon-view .circle')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('tr.mat-mdc-row lib-icon-view mat-icon')).toBeTruthy();
+  });
+});

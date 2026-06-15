@@ -18,7 +18,7 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-import {ColumnAlign, ColumnView, TableConfig} from './model/ColumnConfig';
+import {ColumnAlign, ColumnView, RowValue, TableConfig} from './model/ColumnConfig';
 import {StyleBuilder} from './style-builder/style-builder';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -45,7 +45,7 @@ import {TimelineProvider, TimelineProviderDummy} from "./providers/TimelineProvi
 import {AurDragDropComponent} from "./drag-drop/aur-drag-drop-component";
 import {PaginatorState} from './model/PaginatorState';
 export {PaginatorState} from './model/PaginatorState';
-import {AurPageSource} from './model/AurPage';
+import {AurPageLoadedEvent, AurPageSource} from './model/AurPage';
 import {ServerPageController} from './providers/ServerPageController';
 import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.util';
 import {Subscription} from 'rxjs';
@@ -122,6 +122,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   /** Строки интерактивны (clickCfg задан) → tabindex/клавиатурная активация. */
   _rowsInteractive = false;
 
+  /** Смещение индекса строки на номер страницы в серверном режиме (pageIndex*pageSize); 0 в клиентском. */
+  _indexPageOffset = 0;
+
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
 
   // @ts-ignore
@@ -188,6 +191,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
 
   @Output() loadingChange = new EventEmitter<boolean>();
   @Output() pageError = new EventEmitter<unknown>();
+
+  /**
+   * Успешно загруженная и УЖЕ применённая серверная страница (pageSource-режим).
+   * Эмитится на каждую успешную загрузку: старт, смена страницы, сортировка, reload().
+   * При ошибке не эмитится (см. pageError). В ручном/legacy режиме события нет —
+   * хост загружает данные сам.
+   */
+  @Output() pageLoaded = new EventEmitter<AurPageLoadedEvent<T>>();
 
   /**
    * возвращает отфильтрованные строки
@@ -359,7 +370,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   }
 
   private initSortingDataAccessor(): void {
-    const sort = this.matSort ?? null;
+    // Серверная обвязка: сортирует сервер — не привязываем MatSort к dataSource, иначе
+    // _orderData пересортировал бы серверную страницу по значениям valueConverter
+    // (зеркало initPaginator(), который по той же причине не привязывает пагинатор).
+    // Стрелки и matSortChange живут на директиве MatSort и от привязки не зависят.
+    const sort = this.isServerWiring() ? null : (this.matSort ?? null);
     if (this.tableDataSource.sort !== sort) {
       // тот же гвард: сеттер .sort тоже пересоздаёт подписку
       this.tableDataSource.sort = sort;
@@ -414,6 +429,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
       .bindEventEmitters(this.selectChange, this.selectAdded, this.selectRemoved, this.selectionModel);
 
     this.paginationProvider = PaginationProvider.create(this.tableConfig);
+
+    // Серверная страница содержит только свои строки (id = позиция в странице) — смещаем индекс
+    // на номер страницы. Клиентский режим режет весь датасет локально (id сквозной) → offset 0.
+    const pageSize = this.activePaginator?.pageSize ?? this.paginationProvider.size;
+    this._indexPageOffset = this.paginatorState ? this.paginatorState.pageIndex * pageSize : 0;
 
     this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
       .setTotalRow();
@@ -471,8 +491,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
         : a === 'right' ? 'aur-align-right' as const
           : undefined;
     const map: Record<string, 'aur-align-center' | 'aur-align-right' | undefined> = {};
-    this.tableConfig.columnsCfg.forEach(c => map[c.key] = toClass(c.align));
-    map[IndexProvider.COLUMN_NAME] = toClass(this.tableConfig.indexCfg?.align);
+    const def = this.tableConfig.tableViewCfg?.align;
+    this.tableConfig.columnsCfg.forEach(c => map[c.key] = toClass(c.align ?? def));
+    map[IndexProvider.COLUMN_NAME] = toClass(this.tableConfig.indexCfg?.align ?? def);
     return map;
   }
 
@@ -662,6 +683,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     return typeof v === 'function' ? (v as any)(totals, data) : v;
   }
 
+  /** RowValue<T,R> → R: статика как есть, функция вызывается со строкой. */
+  private resolveRow<R>(v: RowValue<T, R> | undefined, row: TableRow<T>): R | undefined {
+    return typeof v === 'function' ? (v as (row: TableRow<T>) => R)(row) : v;
+  }
+
   /** Хелпер для шаблона: функция активна, когда её конфигурация присутствует, если только не задано `enable: false`. */
   isFeatureEnabled(cfg: { enable?: boolean } | null | undefined): boolean {
     return isFeatureEnabledFn(cfg);
@@ -712,10 +738,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   rowStyle(row: TableRow<T>): string | null {
     let acc: StyleBuilder.Row | string | null = this.rowStyles[row.id]?.style ?? null;
     if (this.hoverActive(row)) {
-      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style ?? null);
+      acc = this.mergeStyle(acc, this.resolveRow(this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style, row) ?? null);
     }
     if (this.highlighted === row.rowSrc) {
-      acc = this.mergeStyle(acc, this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg?.style ?? null);
+      acc = this.mergeStyle(acc, this.resolveRow(this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg?.style, row) ?? null);
     }
     return this.toCss(acc);
   }
@@ -723,18 +749,20 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
     const hover = this.tableConfig.bodyRowCfg?.hoverCfg;
     const click = this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg;
-    const hl = click?.style;
-    const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
     const isHighlighted = this.highlighted === row.rowSrc;
+    // click-style резолвим только для подсвеченной строки (иначе функция зря зовётся на каждую)
+    const hl = isHighlighted ? this.resolveRow(click?.style, row) : null;
+    const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
     const cls: { [klass: string]: boolean } = {
-      'pointer': hover?.pointer || false,
+      'pointer': this.resolveRow(hover?.pointer, row) || false,
       'new-color': isHighlighted && hlHasColor,
     };
     const custom = this.rowStyles[row.id]?.class;
     if (custom) cls[custom] = true;
-    const hcls = this.hoverActive(row) ? hover?.styleCfg?.class : null;
+    const hcls = this.hoverActive(row) ? this.resolveRow(hover?.styleCfg?.class, row) : null;
     if (hcls) cls[hcls] = true;
-    if (isHighlighted && click?.class) cls[click.class] = true;
+    const ccls = isHighlighted ? this.resolveRow(click?.class, row) : null;
+    if (ccls) cls[ccls] = true;
     return cls;
   }
 
@@ -784,6 +812,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
         this.applyExternalPaginatorState(result.state);
         this.tableData = result.content;
         this.refreshTable();
+        // эмит ПОСЛЕ refreshTable(): подписчик читает уже применённое публичное состояние таблицы
+        this.pageLoaded.emit({
+          content: result.content,
+          totalElements: result.state.length,
+          pageIndex: result.state.pageIndex,
+        });
         this.cdr.markForCheck();
       },
       onLoading: loading => {

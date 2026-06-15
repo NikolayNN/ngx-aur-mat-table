@@ -33,6 +33,8 @@
 
       <!-- Table -->
       <table #table mat-table matSort
+             [matSortActive]="tableConfig.sortCfg?.active ?? ''"
+             [matSortDirection]="tableConfig.sortCfg?.direction ?? ''"
              [trackBy]="trackByRow"
              [multiTemplateDataRows]="extendedRowTemplate !== null"
              [dataSource]="tableDataSource"
@@ -160,7 +162,7 @@
               [style.--aur-cell-padding-left]="indexProvider.size?.paddingLeft"
               [style.--aur-cell-padding-right]="indexProvider.size?.paddingRight"
               [ngClass]="_alignClass[indexProvider.COLUMN_NAME]">
-            {{ indexProvider.format(element.id) }}
+            {{ indexProvider.format(element.id + _indexPageOffset) }}
           </td>
 
           <td mat-footer-cell *matFooterCellDef
@@ -201,6 +203,7 @@
                   <button mat-icon-button
                           (click)="emitSelectedRowsAction(action.action, selectionProvider.selection.selected)"
                           [matTooltip]="action.icon.tooltip || ''"
+                          [matTooltipPosition]="action.icon.tooltipPosition || 'below'"
                           *ngIf="action.visible !== false">
                     <mat-icon [style.color]="action.icon.color">
                       {{ action.icon.name }}
@@ -268,16 +271,21 @@
                       </button>
                     </ng-container>
                   </mat-menu>
-                  <button *ngIf="action.icon.tooltip; else menuBtnPlain" mat-icon-button
-                          [matMenuTriggerFor]="actionMenu"
-                          [matTooltip]="action.icon.tooltip"
-                          [matTooltipClass]="action.icon.tooltipClass || ''">
-                    <mat-icon [style.color]="action.icon.color">
-                      {{ action.icon.name }}
-                    </mat-icon>
-                  </button>
+                  <span *ngIf="action.icon.tooltip; else menuBtnPlain"
+                        [matTooltip]="action.icon.tooltip"
+                        [matTooltipClass]="action.icon.tooltipClass || ''"
+                        [matTooltipPosition]="action.icon.tooltipPosition || 'below'">
+                    <button mat-icon-button
+                            [matMenuTriggerFor]="actionMenu"
+                            [disabled]="action.disabled === true">
+                      <mat-icon [style.color]="action.icon.color">
+                        {{ action.icon.name }}
+                      </mat-icon>
+                    </button>
+                  </span>
                   <ng-template #menuBtnPlain>
-                    <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+                    <button mat-icon-button [matMenuTriggerFor]="actionMenu"
+                            [disabled]="action.disabled === true">
                       <mat-icon [style.color]="action.icon.color">
                         {{ action.icon.name }}
                       </mat-icon>
@@ -289,16 +297,21 @@
               <!-- direct action (existing behavior) -->
               <ng-template #directAction>
                 <ng-container *ngIf="action.visible !== false">
-                  <button *ngIf="action.icon.tooltip; else directBtnPlain" mat-icon-button
-                          (click)="emitRowAction(action.action, element.rowSrc, $event)"
-                          [matTooltip]="action.icon.tooltip"
-                          [matTooltipClass]="action.icon.tooltipClass || ''">
-                    <mat-icon [style.color]="action.icon.color">
-                      {{ action.icon.name }}
-                    </mat-icon>
-                  </button>
+                  <span *ngIf="action.icon.tooltip; else directBtnPlain"
+                        [matTooltip]="action.icon.tooltip"
+                        [matTooltipClass]="action.icon.tooltipClass || ''"
+                        [matTooltipPosition]="action.icon.tooltipPosition || 'below'">
+                    <button mat-icon-button
+                            [disabled]="action.disabled === true"
+                            (click)="emitRowAction(action.action, element.rowSrc, $event)">
+                      <mat-icon [style.color]="action.icon.color">
+                        {{ action.icon.name }}
+                      </mat-icon>
+                    </button>
+                  </span>
                   <ng-template #directBtnPlain>
                     <button mat-icon-button
+                            [disabled]="action.disabled === true"
                             (click)="emitRowAction(action.action, element.rowSrc, $event)">
                       <mat-icon [style.color]="action.icon.color">
                         {{ action.icon.name }}
@@ -511,7 +524,7 @@
                    [length]="paginatorState?.length"
                    [pageIndex]="paginatorState?.pageIndex"
                    (page)="onPageChangeInternal($event)"
-                   showFirstLastButtons>
+                   [showFirstLastButtons]="tableConfig.paginationCfg?.showFirstLastButtons !== false">
     </mat-paginator>
   }
 </div>

@@ -47,6 +47,7 @@ export class TableViewFactory {
       color: iconSource.color ? iconSource.color(row) : undefined,
       tooltip: iconSource.tooltip ? iconSource.tooltip(row) : undefined,
       tooltipClass: iconSource.tooltipClass ? iconSource.tooltipClass(row) : undefined,
+      tooltipPosition: iconSource.tooltipPosition,
       position: iconSource.position,
       wrapper: iconSource.wrapper? {color: iconSource.wrapper.color(row)}: undefined,
       visible: iconSource.visible? iconSource.visible(row): true
@@ -59,7 +60,8 @@ export class TableViewFactory {
     return {
       show: textSource.show,
       tooltip: textSource.tooltip?.(row),
-      color: textSource.color?.(row)
+      color: textSource.color?.(row),
+      tooltipPosition: textSource.tooltipPosition
     }
   }
 

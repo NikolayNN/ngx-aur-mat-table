@@ -1,6 +1,7 @@
 import {TableRow} from "./TableRow";
 import {AurDragDropManager} from "../drag-drop/aur-drag-drop.manager";
 import {StyleBuilder} from "../style-builder/style-builder";
+import {TooltipPosition} from "@angular/material/tooltip";
 
 /**
  * Сопоставляет дженерик листового типа `T` с разрешённым значением:
@@ -9,6 +10,9 @@ import {StyleBuilder} from "../style-builder/style-builder";
  * Используется для управляющих полей, тип значения которых должен быть `boolean`, а не листовая строка.
  */
 export type Resolvable<T, R> = T extends (arg: infer A) => any ? (arg: A) => R : R;
+
+/** Значение, общее для строки, или вычисляемое по строке. */
+export type RowValue<T, R> = R | ((row: TableRow<T>) => R);
 
 export interface TableConfig<T> {
 
@@ -58,6 +62,9 @@ export interface TableConfig<T> {
    * Настройка пагинации таблицы
    */
   paginationCfg?: PaginationConfig,
+
+  /** Начальная сортировка. Не задан — без начальной сортировки (текущее поведение). */
+  sortCfg?: TableSortConfig,
   stickyCfg?: StickyConfig,
   tableViewCfg?: TableViewConfig,
   headerButtonCfg?: HeaderButtonConfig,
@@ -69,41 +76,43 @@ export interface TableConfig<T> {
 
 }
 
-export interface ClickConfig {
+export interface ClickConfig<T = any> {
   /**
    * Стиль/класс, применяемый к кликнутой/подсвеченной строке.
    * Цвет текста ячеек при class задаётся селектором потребителя,
    * например `tr.my-highlight td { color: white; }`.
    */
-  styleCfg?: ClickStyleConfig;
+  styleCfg?: ClickStyleConfig<T>;
 
   /**
-   * По умолчанию false
+   * По умолчанию false (от строки не зависит).
    * false: и первый, и второй клик испускают эту строку; выделение не сбрасывается.
    * true: первый клик испускает эту строку, второй клик испускает undefined; первый выделяет, второй снимает выделение.
    */
   cancelable?: boolean;
 }
 
-export interface ClickStyleConfig {
-  /** CSS-класс(ы) на подсвеченном <tr>; допускается несколько через пробел. */
-  class?: string;
-  /** Инлайн-стиль; StyleBuilder.Row или сырая CSS-строка. */
-  style?: StyleBuilder.Row | string;
+export interface ClickStyleConfig<T = any> {
+  /** CSS-класс(ы) на подсвеченном <tr>; значение или (row) => значение. */
+  class?: RowValue<T, string | null>;
+  /** Инлайн-стиль; StyleBuilder.Row | строка, либо (row) => то же. */
+  style?: RowValue<T, StyleBuilder.Row | string>;
 }
 
-export interface HoverConfig {
-  /** Главный переключатель оверлея наведения; считается true, когда hoverCfg задан и это значение не false */
+export interface HoverConfig<T = any> {
+  /** Главный переключатель оверлея наведения (табличный); считается true, когда hoverCfg задан и это значение не false */
   enable?: boolean;
-  /** Показывать cursor: pointer на строке тела */
-  pointer?: boolean;
+  /** Показывать cursor: pointer на строке тела; значение или (row) => значение */
+  pointer?: RowValue<T, boolean>;
   /** Стиль/класс, применяемый при наведении на строку (оверлей, как подсветка) */
-  styleCfg?: HoverStyleConfig;
+  styleCfg?: HoverStyleConfig<T>;
 }
 
-export interface HoverStyleConfig {
-  class?: string;
-  style?: StyleBuilder.Row | string;
+export interface HoverStyleConfig<T = any> {
+  /** CSS-класс(ы) при наведении; значение или (row) => значение. */
+  class?: RowValue<T, string | null>;
+  /** Инлайн-стиль при наведении; StyleBuilder.Row | строка, либо (row) => то же. */
+  style?: RowValue<T, StyleBuilder.Row | string>;
 }
 
 export interface HeaderRowConfig {
@@ -111,8 +120,8 @@ export interface HeaderRowConfig {
 }
 
 export interface BodyRowConfig<T> {
-  clickCfg?: ClickConfig;
-  hoverCfg?: HoverConfig;
+  clickCfg?: ClickConfig<T>;
+  hoverCfg?: HoverConfig<T>;
   styleCfg?: BodyStyleConfig<T>;
 }
 
@@ -172,6 +181,9 @@ export interface IconView<T> {
   /** CSS-класс(ы) тултипа; прокидывается в matTooltipClass. */
   tooltipClass?: T;
 
+  /** Позиция тултипа (matTooltipPosition). По умолчанию 'below'. От строки не зависит. */
+  tooltipPosition?: TooltipPosition;
+
   /**
    * Позиция иконки относительно текста ячейки: 'start' (по умолчанию) — перед текстом,
    * 'end' — после. Действует в ячейках/заголовках; для кнопок действий и drag-иконки игнорируется.
@@ -200,6 +212,8 @@ export interface TextView<T> {
   /** Подсказка */
   tooltip?: T;
   color?: T;
+  /** Позиция тултипа текста ячейки (matTooltipPosition). По умолчанию 'below'. */
+  tooltipPosition?: TooltipPosition;
 }
 
 export interface ColumnView<T> {
@@ -218,9 +232,27 @@ export interface SortConfig<T> {
   position?: 'start' | 'end';
 
   /**
-   * Ключ колонки
+   * Кастомное значение строки для локальной сортировки колонки.
+   * В серверном режиме (`pageSource` или `paginationCfg.mode: 'server'`)
+   * не применяется — порядок строк определяет сервер.
    */
   customSort?: (data: TableRow<T>, key: string) => any;
+}
+
+/**
+ * Начальная сортировка таблицы: стрелка в заголовке + начальный порядок.
+ * Это начальное состояние, а не реактивный контрол: смена значения в рантайме
+ * передвинет стрелку, но не пересортирует данные и не вызовет серверный запрос.
+ */
+export interface TableSortConfig {
+  /**
+   * Ключ колонки из `columnsCfg`, у которой включён `sort`.
+   * Ключ колонки без `sort` (или несуществующий) стрелку не покажет,
+   * но в клиентском режиме данные по нему всё равно отсортируются.
+   */
+  active: string;
+  /** Направление начальной сортировки. */
+  direction: 'asc' | 'desc';
 }
 
 export interface IndexConfig {
@@ -260,6 +292,8 @@ export interface Action<T> {
   icon: IconView<T>;
   /** Показать действие. `undefined`/`true` → показано, `false` → скрыто. */
   visible?: Resolvable<T, boolean>;
+  /** Выключить действие (кнопка видна, но недоступна). `undefined`/`false` → включено, `true` → выключено. */
+  disabled?: Resolvable<T, boolean>;
   menu?: MenuItem<T>[];
 }
 
@@ -298,6 +332,15 @@ export interface PaginationConfig {
   position?: 'inline' | 'sticky';
   /** 'client' (по умолчанию) позволяет MatTableDataSource нарезать в памяти; 'server' использует pageSource / paginatorState. */
   mode?: 'client' | 'server';
+
+  /**
+   * Показывать кнопки «в начало/в конец» у встроенного пагинатора. По умолчанию true.
+   * Биндится напрямую к конфигу. Таблица — OnPush, поэтому переключение в рантайме надёжно
+   * работает при смене ССЫЛКИ на tableConfig (например, по брейкпоинту): это помечает вход
+   * изменённым и перерисовывает кнопки без пересборки данных. Мутация поля на месте сама по
+   * себе перерисовку не вызовет. На externalPaginator не влияет — им управляет хост.
+   */
+  showFirstLastButtons?: boolean;
 }
 
 export interface StickyConfig {
@@ -314,6 +357,11 @@ export interface TableViewConfig {
   cellPaddingLeft?: string;
   /** Правый отступ ячеек всей таблицы (CSS-значение), по умолчанию 4px. */
   cellPaddingRight?: string;
+  /**
+   * Выравнивание по умолчанию для обычных колонок и колонки индекса.
+   * Локальный ColumnConfig.align / IndexConfig.align приоритетнее. По умолчанию 'left'.
+   */
+  align?: ColumnAlign;
 }
 
 export interface ColumnSize {
