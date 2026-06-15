@@ -270,16 +270,20 @@
                       </button>
                     </ng-container>
                   </mat-menu>
-                  <button *ngIf="action.icon.tooltip; else menuBtnPlain" mat-icon-button
-                          [matMenuTriggerFor]="actionMenu"
-                          [matTooltip]="action.icon.tooltip"
-                          [matTooltipClass]="action.icon.tooltipClass || ''">
-                    <mat-icon [style.color]="action.icon.color">
-                      {{ action.icon.name }}
-                    </mat-icon>
-                  </button>
+                  <span *ngIf="action.icon.tooltip; else menuBtnPlain"
+                        [matTooltip]="action.icon.tooltip"
+                        [matTooltipClass]="action.icon.tooltipClass || ''">
+                    <button mat-icon-button
+                            [matMenuTriggerFor]="actionMenu"
+                            [disabled]="action.disabled === true">
+                      <mat-icon [style.color]="action.icon.color">
+                        {{ action.icon.name }}
+                      </mat-icon>
+                    </button>
+                  </span>
                   <ng-template #menuBtnPlain>
-                    <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+                    <button mat-icon-button [matMenuTriggerFor]="actionMenu"
+                            [disabled]="action.disabled === true">
                       <mat-icon [style.color]="action.icon.color">
                         {{ action.icon.name }}
                       </mat-icon>
@@ -291,16 +295,20 @@
               <!-- direct action (existing behavior) -->
               <ng-template #directAction>
                 <ng-container *ngIf="action.visible !== false">
-                  <button *ngIf="action.icon.tooltip; else directBtnPlain" mat-icon-button
-                          (click)="emitRowAction(action.action, element.rowSrc, $event)"
-                          [matTooltip]="action.icon.tooltip"
-                          [matTooltipClass]="action.icon.tooltipClass || ''">
-                    <mat-icon [style.color]="action.icon.color">
-                      {{ action.icon.name }}
-                    </mat-icon>
-                  </button>
+                  <span *ngIf="action.icon.tooltip; else directBtnPlain"
+                        [matTooltip]="action.icon.tooltip"
+                        [matTooltipClass]="action.icon.tooltipClass || ''">
+                    <button mat-icon-button
+                            [disabled]="action.disabled === true"
+                            (click)="emitRowAction(action.action, element.rowSrc, $event)">
+                      <mat-icon [style.color]="action.icon.color">
+                        {{ action.icon.name }}
+                      </mat-icon>
+                    </button>
+                  </span>
                   <ng-template #directBtnPlain>
                     <button mat-icon-button
+                            [disabled]="action.disabled === true"
                             (click)="emitRowAction(action.action, element.rowSrc, $event)">
                       <mat-icon [style.color]="action.icon.color">
                         {{ action.icon.name }}

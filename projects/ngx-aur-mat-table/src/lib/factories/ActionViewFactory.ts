@@ -27,6 +27,7 @@ export class ActionViewFactory {
       action: action.action(row.rowSrc),
       icon: this.prepareIconConfig(action.icon, row.rowSrc),
       visible: action.visible? action.visible(row.rowSrc): true,
+      disabled: action.disabled? action.disabled(row.rowSrc): false,
       menu: action.menu? action.menu.map(item => this.prepareMenuItem(item, row.rowSrc)): undefined
     }));
   }

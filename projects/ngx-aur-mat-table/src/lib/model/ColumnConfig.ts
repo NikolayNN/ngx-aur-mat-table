@@ -281,6 +281,8 @@ export interface Action<T> {
   icon: IconView<T>;
   /** Показать действие. `undefined`/`true` → показано, `false` → скрыто. */
   visible?: Resolvable<T, boolean>;
+  /** Выключить действие (кнопка видна, но недоступна). `undefined`/`false` → включено, `true` → выключено. */
+  disabled?: Resolvable<T, boolean>;
   menu?: MenuItem<T>[];
 }
 
