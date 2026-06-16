@@ -70,6 +70,9 @@ import {
 import {
   TableWithRowStyleComponent
 } from "./table-with-row-style/table-with-row-style.component";
+import {
+  TableWithCellTemplateComponent
+} from "./table-with-cell-template/table-with-cell-template.component";
 
 @NgModule({
   declarations: [
@@ -110,7 +113,8 @@ import {
     TableWithServerFiltersComponent,
     TableWithExternalPaginatorComponent,
     TablePaginationMatrixComponent,
-    TableWithRowStyleComponent
+    TableWithRowStyleComponent,
+    TableWithCellTemplateComponent
   ],
   imports: [
     BrowserModule,

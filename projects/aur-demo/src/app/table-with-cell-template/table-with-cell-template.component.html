@@ -1,0 +1,24 @@
+<h2>Кастомный шаблон ячейки (ngxAurCellDef)</h2>
+<p>Колонку, которую не описать через valueView, рендерим произвольным &lt;ng-template&gt;. Поиск/сортировка по-прежнему работают по valueConverter.</p>
+
+<aur-mat-table [tableData]="tableData" [tableConfig]="tableConfig">
+
+  <!-- chip статуса -->
+  <ng-template ngxAurCellDef="status" let-value>
+    <span class="status-chip" [style.background-color]="statusColor(value)">{{ value }}</span>
+  </ng-template>
+
+  <!-- прогресс-бар из числового значения -->
+  <ng-template ngxAurCellDef="progress" let-value>
+    <div class="progress-track">
+      <div class="progress-fill" [style.width.%]="value"></div>
+      <span class="progress-label">{{ value }}%</span>
+    </div>
+  </ng-template>
+
+  <!-- инлайн-кнопка: исходный объект через row.rowSrc -->
+  <ng-template ngxAurCellDef="actions" let-row="row">
+    <button class="action-btn" (click)="onAction(row.rowSrc)">Открыть</button>
+  </ng-template>
+
+</aur-mat-table>

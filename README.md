@@ -81,6 +81,26 @@ export class SimpleTableComponent {
 
 больше примеров: в проекте aur-demo
 
+## Кастомный шаблон ячейки (`ngxAurCellDef`)
+
+Когда декларативного `valueView` (icon/image/text) мало, тело ячеек колонки можно отрисовать
+произвольным `<ng-template>`. Положите его внутрь `<aur-mat-table>` и привяжите к колонке по её
+`key` через директиву `ngxAurCellDef`:
+
+```html
+<aur-mat-table [tableData]="data" [tableConfig]="cfg">
+  <ng-template ngxAurCellDef="status" let-value let-row="row" let-i="index">
+    <span class="chip" [class.on]="row.rowSrc.active">{{ value }} (#{{ i }})</span>
+  </ng-template>
+</aur-mat-table>
+```
+
+Контекст шаблона: `$implicit`/`value` — значение колонки (`valueConverter`), `row` — `TableRow`
+(`row.rowSrc` — исходный объект, `row.id` — индекс), `rowSrc` — алиас `row.rowSrc`, `index` — индекс
+строки. Шаблон заменяет только тело ячеек данных и имеет приоритет над `valueView`; `valueConverter`
+остаётся обязательным, поэтому поиск, сортировка и строка «Итого» работают как обычно. Заголовок и
+«Итого» через шаблон не настраиваются (используйте `headerView` и `totalConverter`).
+
 ## Server pagination via `pageSource` (recommended)
 
 Provide a typed loader; the table performs the initial load and refetches on page/sort changes itself.
