@@ -1,12 +1,15 @@
 import {
+  AfterContentInit,
   AfterViewInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
   ContentChild,
+  ContentChildren,
   ElementRef,
   EventEmitter,
   Input,
+  isDevMode,
   OnChanges,
   OnDestroy,
   OnInit,
@@ -49,6 +52,8 @@ import {AurPageLoadedEvent, AurPageSource} from './model/AurPage';
 import {ServerPageController} from './providers/ServerPageController';
 import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.util';
 import {Subscription} from 'rxjs';
+import {NgxAurCellDefDirective} from './directive/ngx-aur-cell-def.directive';
+import {AurCellContext} from './model/AurCellContext';
 
 export interface HighlightContainer<T> {
   value: any;
@@ -79,7 +84,7 @@ enum ExpandState {
     ],
     standalone: false
 })
-export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewInit, OnDestroy, NgxAurMatTablePublic<T>, AurDragDropComponent<TableRow<T>> {
+export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterContentInit, AfterViewInit, OnDestroy, NgxAurMatTablePublic<T>, AurDragDropComponent<TableRow<T>> {
 
   expandedStateEnum = ExpandState;
 
@@ -126,6 +131,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
   _indexPageOffset = 0;
 
   @ContentChild(NgxTableSubFooterRowDirective) subFooterRowTemplate: TemplateRef<any> | null | undefined;
+
+  @ContentChildren(NgxAurCellDefDirective, {descendants: true})
+  cellDefs!: QueryList<NgxAurCellDefDirective>;
+
+  /** key → шаблон тела ячейки, собранный из спроецированных ngxAurCellDef. */
+  _cellTemplates = new Map<string, TemplateRef<any>>();
+  private cellDefsSub?: Subscription;
 
   // @ts-ignore
   @Input() extraHeaderCellTopTemplate: TemplateRef<any> | null;
@@ -339,6 +351,32 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     if (this.isServerWiring() && !this.paginatorState) {
       this.paginatorState = PaginatorState.empty();
     }
+  }
+
+  ngAfterContentInit(): void {
+    this.rebuildCellTemplates();
+    this.cellDefsSub = this.cellDefs.changes.subscribe(() => {
+      this.rebuildCellTemplates();
+      this.cdr.markForCheck();            // таблица OnPush
+    });
+  }
+
+  /** Пересобирает карту key → шаблон из спроецированных ngxAurCellDef. */
+  private rebuildCellTemplates(): void {
+    this._cellTemplates.clear();
+    const keys = new Set(this.tableConfig.columnsCfg.map(c => c.key));
+    this.cellDefs.forEach(def => {
+      this._cellTemplates.set(def.key, def.templateRef);   // дубль ключа → побеждает последний
+      if (isDevMode() && !keys.has(def.key)) {
+        console.warn(`[aur-mat-table] ngxAurCellDef="${def.key}" не соответствует ни одной колонке.`);
+      }
+    });
+  }
+
+  /** Контекст кастомного шаблона ячейки (пересобирается в CD — как у extendedRowTemplate). */
+  cellCtx(element: TableRow<T>, key: string): AurCellContext<T> {
+    const value = element[key];
+    return { $implicit: value, value, row: element, rowSrc: element.rowSrc, index: element.id };
   }
 
   // нам это нужно, чтобы пагинация работала с *ngIf
@@ -871,6 +909,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterViewI
     this.resizeColumnOffsetsObserver?.disconnect();
     this.serverPageController?.stop();
     this.externalPaginatorSub?.unsubscribe();
+    this.cellDefsSub?.unsubscribe();
   }
 
   onDragStart($event: DragEvent, row: TableRow<T>) {
