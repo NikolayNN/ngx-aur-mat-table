@@ -19,6 +19,8 @@ export * from './lib/filters/NgxAurFilters';
 export * from './lib/directive/ngx-table-sub-footer-row.directive'
 export * from './lib/directive/ngx-aur-table-search-prefix.directive'
 export * from './lib/directive/ngx-aur-table-search-suffix.directive'
+export * from './lib/directive/ngx-aur-cell-def.directive'
+export * from './lib/model/AurCellContext';
 export * from './lib/drag-drop/aur-drag-drop-component'
 export * from './lib/drag-drop/aur-drag-drop.manager'
 export * from './lib/drag-drop/model/aur-drag-drop-mapping'

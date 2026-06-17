@@ -383,13 +383,19 @@
               [style.--aur-cell-padding-left]="columnConfig.size?.paddingLeft"
               [style.--aur-cell-padding-right]="columnConfig.size?.paddingRight"
               [ngClass]="_alignClass[columnConfig.key]">
-            <!-- колонки без valueView минуют компоненты ячейки: лёгкий span дешевле пары компонентов с обёртками -->
-            <lib-column-view *ngIf="columnConfig.valueView; else plainCell"
-                             [config]="tableView[element.id]?.get(columnConfig.key)"
-                             [value]="element | dataPropertyGetter: columnConfig.key">
-            </lib-column-view>
-            <ng-template #plainCell>
-              <span class="aur-plain-cell">{{ element | dataPropertyGetter: columnConfig.key }}</span>
+            <!-- кастомный шаблон ячейки (ngxAurCellDef) имеет приоритет над valueView -->
+            <ng-container *ngIf="_cellTemplates.get(columnConfig.key) as cellTpl; else builtinCell">
+              <ng-container *ngTemplateOutlet="cellTpl; context: cellCtx(element, columnConfig.key)"></ng-container>
+            </ng-container>
+            <ng-template #builtinCell>
+              <!-- колонки без valueView минуют компоненты ячейки: лёгкий span дешевле пары компонентов с обёртками -->
+              <lib-column-view *ngIf="columnConfig.valueView; else plainCell"
+                               [config]="tableView[element.id]?.get(columnConfig.key)"
+                               [value]="element | dataPropertyGetter: columnConfig.key">
+              </lib-column-view>
+              <ng-template #plainCell>
+                <span class="aur-plain-cell">{{ element | dataPropertyGetter: columnConfig.key }}</span>
+              </ng-template>
             </ng-template>
           </td>
 
