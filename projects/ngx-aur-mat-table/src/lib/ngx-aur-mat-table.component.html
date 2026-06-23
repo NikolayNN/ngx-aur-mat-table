@@ -73,8 +73,8 @@
                    [style.border-left-style]="_timelineGaps.get(element.id)?.topGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
               </div>
 
-              <ng-container *ngIf="timelineMarkerTemplate; else defaultMarker">
-                <ng-container *ngTemplateOutlet="timelineMarkerTemplate; context: {$implicit: element}"></ng-container>
+              <ng-container *ngIf="rowMarkerTemplate; else defaultMarker">
+                <ng-container *ngTemplateOutlet="rowMarkerTemplate; context: rowCtx(element)"></ng-container>
               </ng-container>
               <ng-template #defaultMarker>
                 <div class="aur-timeline-marker-default"

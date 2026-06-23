@@ -21,6 +21,7 @@ export * from './lib/directive/ngx-aur-table-search-prefix.directive'
 export * from './lib/directive/ngx-aur-table-search-suffix.directive'
 export * from './lib/directive/ngx-aur-cell-def.directive'
 export * from './lib/directive/ngx-aur-expanded-row-def.directive'
+export * from './lib/directive/ngx-aur-row-marker-def.directive'
 export * from './lib/model/AurCellContext';
 export * from './lib/model/AurRowContext';
 export * from './lib/drag-drop/aur-drag-drop-component'

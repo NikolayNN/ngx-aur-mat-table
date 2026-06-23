@@ -55,6 +55,7 @@ import {Subscription} from 'rxjs';
 import {NgxAurCellDefDirective} from './directive/ngx-aur-cell-def.directive';
 import {AurCellContext} from './model/AurCellContext';
 import {NgxAurExpandedRowDefDirective} from './directive/ngx-aur-expanded-row-def.directive';
+import {NgxAurRowMarkerDefDirective} from './directive/ngx-aur-row-marker-def.directive';
 import {AurRowContext} from './model/AurRowContext';
 
 export interface HighlightContainer<T> {
@@ -146,6 +147,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   private _expandedRowTpl: TemplateRef<AurRowContext<T>> | null = null;
   get expandedRowTemplate(): TemplateRef<AurRowContext<T>> | null { return this._expandedRowTpl; }
 
+  @ContentChildren(NgxAurRowMarkerDefDirective, {descendants: true})
+  private rowMarkerDefs!: QueryList<NgxAurRowMarkerDefDirective>;
+  private _rowMarkerTpl: TemplateRef<AurRowContext<T>> | null = null;
+  get rowMarkerTemplate(): TemplateRef<AurRowContext<T>> | null { return this._rowMarkerTpl; }
+
   /** Подписки на .changes собранных template-директив (отписка в ngOnDestroy). */
   private defSubs: Subscription[] = [];
 
@@ -170,8 +176,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   @Input() expandedRows: T[] = [];
   @Output() expandedRowsChange = new EventEmitter<T[]>();
-
-  @Input() timelineMarkerTemplate: TemplateRef<any> | null = null;
 
   // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
   @Input() paginatorState: PaginatorState | undefined;
@@ -388,6 +392,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     });
     this.defSubs.push(
       this.resolveDef(this.expandedRowDefs, 'ngxAurExpandedRowDef', t => this._expandedRowTpl = t),
+      this.resolveDef(this.rowMarkerDefs, 'ngxAurRowMarkerDef', t => this._rowMarkerTpl = t),
     );
   }
 
