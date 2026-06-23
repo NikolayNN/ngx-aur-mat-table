@@ -242,7 +242,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
    */
   @Output() filterChange = new EventEmitter<T[]>();
 
-  /** @deprecated используйте extraHeaderCellTopTemplate или extraHeaderCellBottomTemplate */
+  /** @deprecated используйте ngxAurExtraHeaderTopDef или ngxAurExtraHeaderBottomDef */
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
 
