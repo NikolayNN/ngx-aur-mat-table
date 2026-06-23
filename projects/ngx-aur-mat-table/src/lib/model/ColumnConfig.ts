@@ -74,6 +74,12 @@ export interface TableConfig<T> {
   headerRowCfg?: HeaderRowConfig,
   bodyRowCfg?: BodyRowConfig<T>,
 
+  /**
+   * Поведение раскрытия detail-строки (extendedRowTemplate).
+   * Действует только при заданном [extendedRowTemplate]; иначе инертно.
+   */
+  extendedRowCfg?: ExtendedRowConfig,
+
 }
 
 export interface ClickConfig<T = any> {
@@ -132,6 +138,24 @@ export interface BodyRowConfig<T> {
   clickCfg?: ClickConfig<T>;
   hoverCfg?: HoverConfig<T>;
   styleCfg?: BodyStyleConfig<T>;
+}
+
+export interface ExtendedRowConfig {
+  /**
+   * Как управляется раскрытие detail-строки.
+   * 'row-click' (по умолчанию): таблица владеет состоянием, клик по строке раскрывает/сворачивает.
+   * 'controlled': источник правды — [expandedRow]/[expandedRows]; клик шлёт
+   *   (expandedRowChange)/(expandedRowsChange), контейнер применяет (см. two-way [(expandedRow)]).
+   * 'manual': состояние только из [expandedRow]/[expandedRows]; клик не влияет на раскрытие.
+   */
+  mode?: 'row-click' | 'controlled' | 'manual';
+
+  /**
+   * Разрешить раскрытие нескольких строк одновременно.
+   * false (по умолчанию): одна строка (аккордеон) — пара [expandedRow]/(expandedRowChange).
+   * true: несколько — пара [expandedRows]/(expandedRowsChange).
+   */
+  multiple?: boolean;
 }
 
 export interface HeaderStyleConfig {
