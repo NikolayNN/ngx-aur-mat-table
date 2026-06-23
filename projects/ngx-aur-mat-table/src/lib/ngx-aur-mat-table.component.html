@@ -474,7 +474,7 @@
             <td mat-cell class="expanded-cell" *matCellDef="let element" [attr.colspan]="_displayColumns.length"
                 style="padding-right: 0!important;">
               <div class="row-detail"
-                   [@detailExpand]="element.rowSrc === highlighted ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
+                   [@detailExpand]="isExpanded(element) ? expandedStateEnum.EXPANDED : expandedStateEnum.COLLAPSED">
                 <!-- timeline continuation -->
                 <div *ngIf="timelineProvider.isEnabled"
                      class="aur-timeline-continuation"
@@ -483,7 +483,7 @@
                      [style.border-left-style]="_timelineGaps.get(element.id)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
                 </div>
                 <!-- lazy-load of details -->
-                <ng-container *ngIf="element.rowSrc === highlighted">
+                <ng-container *ngIf="isExpanded(element)">
                   <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
                 </ng-container>
               </div>
