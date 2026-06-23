@@ -57,6 +57,9 @@ import {AurCellContext} from './model/AurCellContext';
 import {NgxAurExpandedRowDefDirective} from './directive/ngx-aur-expanded-row-def.directive';
 import {NgxAurRowMarkerDefDirective} from './directive/ngx-aur-row-marker-def.directive';
 import {AurRowContext} from './model/AurRowContext';
+import {NgxAurExtraHeaderTopDefDirective} from './directive/ngx-aur-extra-header-top-def.directive';
+import {NgxAurExtraHeaderBottomDefDirective} from './directive/ngx-aur-extra-header-bottom-def.directive';
+import {AurExtraHeaderContext} from './model/AurExtraHeaderContext';
 
 export interface HighlightContainer<T> {
   value: any;
@@ -152,14 +155,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   private _rowMarkerTpl: TemplateRef<AurRowContext<T>> | null = null;
   get rowMarkerTemplate(): TemplateRef<AurRowContext<T>> | null { return this._rowMarkerTpl; }
 
+  @ContentChildren(NgxAurExtraHeaderTopDefDirective, {descendants: true})
+  private extraHeaderTopDefs!: QueryList<NgxAurExtraHeaderTopDefDirective>;
+  private _extraHeaderTopTpl: TemplateRef<AurExtraHeaderContext> | null = null;
+  get extraHeaderTopTemplate(): TemplateRef<AurExtraHeaderContext> | null { return this._extraHeaderTopTpl; }
+
+  @ContentChildren(NgxAurExtraHeaderBottomDefDirective, {descendants: true})
+  private extraHeaderBottomDefs!: QueryList<NgxAurExtraHeaderBottomDefDirective>;
+  private _extraHeaderBottomTpl: TemplateRef<AurExtraHeaderContext> | null = null;
+  get extraHeaderBottomTemplate(): TemplateRef<AurExtraHeaderContext> | null { return this._extraHeaderBottomTpl; }
+
   /** Подписки на .changes собранных template-директив (отписка в ngOnDestroy). */
   private defSubs: Subscription[] = [];
-
-  // @ts-ignore
-  @Input() extraHeaderCellTopTemplate: TemplateRef<any> | null;
-
-  // @ts-ignore
-  @Input() extraHeaderCellBottomTemplate: TemplateRef<any> | null;
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
@@ -393,6 +400,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     this.defSubs.push(
       this.resolveDef(this.expandedRowDefs, 'ngxAurExpandedRowDef', t => this._expandedRowTpl = t),
       this.resolveDef(this.rowMarkerDefs, 'ngxAurRowMarkerDef', t => this._rowMarkerTpl = t),
+      this.resolveDef(this.extraHeaderTopDefs, 'ngxAurExtraHeaderTopDef', t => this._extraHeaderTopTpl = t),
+      this.resolveDef(this.extraHeaderBottomDefs, 'ngxAurExtraHeaderBottomDef', t => this._extraHeaderBottomTpl = t),
     );
   }
 
