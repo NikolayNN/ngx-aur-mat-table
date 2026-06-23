@@ -517,7 +517,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     this._headerStyle = this.toCss(this.tableConfig.headerRowCfg?.styleCfg?.style);
     this._headerClass = this.tableConfig.headerRowCfg?.styleCfg?.class ?? null;
     this._alignClass = this.buildAlignClassMap();
-    this._rowsInteractive = !!this.tableConfig.bodyRowCfg?.clickCfg;
+    this._rowsInteractive = isFeatureEnabledFn(this.tableConfig.bodyRowCfg?.clickCfg);
     if (!this._customDisplayColumnsEnabled) {
       this._displayColumns = DisplayColumnsFactory.create(this.tableConfig);
     }
@@ -805,6 +805,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   }
 
   handleRowClick(row: TableRow<T>) {
+    // clickCfg.enable: false — строка полностью неинтерактивна (Group 2 opt-out):
+    // ни rowClick, ни highlight, ни авто-раскрытие. Покрывает и клавиатуру (handleRowKeydown делегирует сюда).
+    if (this.tableConfig.bodyRowCfg?.clickCfg?.enable === false) return;
     if (row.rowSrc !== this.highlighted || (row.rowSrc === this.highlighted && !this.tableConfig.bodyRowCfg?.clickCfg?.cancelable)) {
       this.rowClick.emit(row.rowSrc);
       this.highlighted = row.rowSrc;

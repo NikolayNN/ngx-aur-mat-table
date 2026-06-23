@@ -200,6 +200,7 @@ tableConfig: TableConfig<ReportRow> = {
 
 - `bodyRowCfg.styleCfg.style` / `class` are per-row hooks called once per data refresh (OnPush-friendly).
 - `bodyRowCfg.clickCfg.styleCfg.style` задаёт стиль подсветки кликнутой строки; `styleCfg.class` задаёт CSS-класс подсвеченной строки; `overrideWith` merges builder fields so base styles survive.
+- `bodyRowCfg.clickCfg.enable: false` makes rows fully non-interactive — no `rowClick`, no internal highlight, no auto-expand of the detail row, and no `tabindex`/keyboard activation. The default (rows interactive) is unchanged.
 - `bodyRowCfg.hoverCfg` drives a mouse-enter/leave overlay; the `#f2f2f2` hardcoded hover background is gone — configure it via `hoverCfg.styleCfg` or suppress hover entirely by omitting `hoverCfg`.
 - `hoverCfg.pointer` / `hoverCfg.styleCfg.*` / `clickCfg.styleCfg.*` accept a static value **or** a `(row: TableRow<T>) => value` function — e.g. `pointer: row => !row.rowSrc.system` disables the pointer/hover for system rows while leaving others interactive.
 - `totalRowCfg.styleCfg.style` / `class` can be a **static value** or a **function of `(totals: Map<string,any>, data: TableRow<T>[])`** — value-driven total styling.
