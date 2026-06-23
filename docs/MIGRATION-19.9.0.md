@@ -13,8 +13,9 @@
 <!-- single -->
 <aur-mat-table [extendedRowTemplate]="tpl" [(expandedRow)]="openRow" ...></aur-mat-table>
 
-<!-- multiple: extendedRowCfg.multiple = true -->
-<aur-mat-table [extendedRowTemplate]="tpl" [(expandedRows)]="openRows" ...></aur-mat-table>
+<!-- multiple: задайте extendedRowCfg: { multiple: true } в tableConfig -->
+<aur-mat-table [extendedRowTemplate]="tpl" [tableConfig]="cfg"
+               [(expandedRows)]="openRows" ...></aur-mat-table>
 ```
 
 Если вы НЕ использовали `[highlight]` для раскрытия — изменений в вашем коде не требуется,
