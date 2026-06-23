@@ -7,11 +7,10 @@
 <h3>Route timeline — custom marker template</h3>
 <aur-mat-table
   [tableData]="tableData"
-  [tableConfig]="tableConfigCustomMarker"
-  [timelineMarkerTemplate]="customMarker">
+  [tableConfig]="tableConfigCustomMarker">
+  <ng-template ngxAurRowMarkerDef let-element="row">
+    <div class="custom-marker" [ngClass]="getMarkerClass(element.rowSrc.status)">
+      {{ getMarkerIcon(element.rowSrc.status) }}
+    </div>
+  </ng-template>
 </aur-mat-table>
-<ng-template #customMarker let-element>
-  <div class="custom-marker" [ngClass]="getMarkerClass(element.rowSrc.status)">
-    {{ getMarkerIcon(element.rowSrc.status) }}
-  </div>
-</ng-template>

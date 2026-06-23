@@ -1,10 +1,12 @@
 <p>Позволяет отображать расширенную информацию при нажатии на строку</p>
-<p> Необхходимо задать Input extendedRowTemplate передать template который будет отображать подробную информацию</p>
+<p> Необхходимо использовать директиву ngxAurExpandedRowDef внутри &lt;aur-mat-table&gt; для передачи template который будет отображать подробную информацию</p>
 <p>Необходимо импортировать модуль BrowserAnimationsModule</p>
 <pre>
-  &lt;ng-template #rowTemplate let-row&gt;
-    &lt;app-row-details [row]="row"&gt;&lt;/app-row-details&gt;
-  &lt;/ng-template&gt;
+  &lt;aur-mat-table ...&gt;
+    &lt;ng-template ngxAurExpandedRowDef let-row="row"&gt;
+      &lt;app-row-details [row]="row"&gt;&lt;/app-row-details&gt;
+    &lt;/ng-template&gt;
+  &lt;/aur-mat-table&gt;
 </pre>
 <p>Также можно настроить bodyRowCfg.clickCfg и bodyRowCfg.hoverCfg для управления подсветкой и наведением строк и тп </p>
 <p>Пример</p>
@@ -24,8 +26,10 @@
 
 <aur-mat-table
   [tableData]="tableData"
-  [tableConfig]="tableConfig"
-  [extendedRowTemplate]="rowTemplate">
+  [tableConfig]="tableConfig">
+  <ng-template ngxAurExpandedRowDef let-row="row">
+    <app-row-details [row]="row"></app-row-details>
+  </ng-template>
 </aur-mat-table>
 
 <hr/>
@@ -34,8 +38,10 @@
 <aur-mat-table
   [tableData]="controlledData"
   [tableConfig]="controlledConfig"
-  [extendedRowTemplate]="rowTemplate"
   [(expandedRow)]="expandedCustomer">
+  <ng-template ngxAurExpandedRowDef let-row="row">
+    <app-row-details [row]="row"></app-row-details>
+  </ng-template>
 </aur-mat-table>
 
 <hr/>
@@ -44,10 +50,8 @@
 <aur-mat-table
   [tableData]="multipleData"
   [tableConfig]="multipleConfig"
-  [extendedRowTemplate]="rowTemplate"
   [(expandedRows)]="expandedCustomers">
+  <ng-template ngxAurExpandedRowDef let-row="row">
+    <app-row-details [row]="row"></app-row-details>
+  </ng-template>
 </aur-mat-table>
-
-<ng-template #rowTemplate let-row>
-  <app-row-details [row]="row"></app-row-details>
-</ng-template>
