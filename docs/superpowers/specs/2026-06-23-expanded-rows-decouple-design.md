@@ -33,14 +33,14 @@
 один движок, без legacy-ветки `=== highlighted` в шаблоне. `highlight` возвращается к
 своему истинному смыслу (подсветка + scrollIntoView) и больше не раскрывает.
 
-| Решение | Выбор |
-|---|---|
-| Совместимость | Чистая развязка. Дефолт `mode: 'row-click'` визуально сохраняет клик-раскрытие. Единственный breaking — `[highlight]` больше не раскрывает. |
-| Режимы | Классические три: `row-click` (uncontrolled), `controlled` (источник правды — контейнер), `manual` (только инпуты, клик инертен). |
-| Single / multiple | Флаг `multiple` (дефолт false). false → пара `[expandedRow]`/`(expandedRowChange)`; true → `[expandedRows]`/`(expandedRowsChange)`. |
-| Идентичность | `tableConfig.trackBy` если задан, иначе ссылка на `rowSrc` (как highlight сейчас). Переживает серверный reload при заданном `trackBy`. |
-| Тип инпутов/аутпутов | Говорим в `rowSrc` (`T`), как `rowClick`/`highlight`, а не в `TableRow`. |
-| Включение фичи | Наличие `[extendedRowTemplate]` (как сейчас). `extendedRowCfg` только тюнит поведение; `enable` не нужен. |
+| Решение              | Выбор                                                                                                                                       |
+|----------------------|---------------------------------------------------------------------------------------------------------------------------------------------|
+| Совместимость        | Чистая развязка. Дефолт `mode: 'row-click'` визуально сохраняет клик-раскрытие. Единственный breaking — `[highlight]` больше не раскрывает. |
+| Режимы               | Классические три: `row-click` (uncontrolled), `controlled` (источник правды — контейнер), `manual` (только инпуты, клик инертен).           |
+| Single / multiple    | Флаг `multiple` (дефолт false). false → пара `[expandedRow]`/`(expandedRowChange)`; true → `[expandedRows]`/`(expandedRowsChange)`.         |
+| Идентичность         | `tableConfig.trackBy` если задан, иначе ссылка на `rowSrc` (как highlight сейчас). Переживает серверный reload при заданном `trackBy`.      |
+| Тип инпутов/аутпутов | Говорим в `rowSrc` (`T`), как `rowClick`/`highlight`, а не в `TableRow`.                                                                    |
+| Включение фичи       | Наличие `[extendedRowTemplate]` (как сейчас). `extendedRowCfg` только тюнит поведение; `enable` не нужен.                                   |
 
 ## Состояние и движок
 
