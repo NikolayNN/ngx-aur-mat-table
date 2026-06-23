@@ -54,6 +54,8 @@ import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.
 import {Subscription} from 'rxjs';
 import {NgxAurCellDefDirective} from './directive/ngx-aur-cell-def.directive';
 import {AurCellContext} from './model/AurCellContext';
+import {NgxAurExpandedRowDefDirective} from './directive/ngx-aur-expanded-row-def.directive';
+import {AurRowContext} from './model/AurRowContext';
 
 export interface HighlightContainer<T> {
   value: any;
@@ -139,6 +141,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   _cellTemplates = new Map<string, TemplateRef<any>>();
   private cellDefsSub?: Subscription;
 
+  @ContentChildren(NgxAurExpandedRowDefDirective, {descendants: true})
+  private expandedRowDefs!: QueryList<NgxAurExpandedRowDefDirective>;
+  private _expandedRowTpl: TemplateRef<AurRowContext<T>> | null = null;
+  get expandedRowTemplate(): TemplateRef<AurRowContext<T>> | null { return this._expandedRowTpl; }
+
+  /** Подписки на .changes собранных template-директив (отписка в ngOnDestroy). */
+  private defSubs: Subscription[] = [];
+
   // @ts-ignore
   @Input() extraHeaderCellTopTemplate: TemplateRef<any> | null;
 
@@ -154,8 +164,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   @Input() tableConfig: TableConfig<T>;
 
   @Input() tableData: T[] = [];
-
-  @Input() extendedRowTemplate: TemplateRef<any> | null = null;
 
   @Input() expandedRow: T | null = null;
   @Output() expandedRowChange = new EventEmitter<T | null>();
@@ -378,6 +386,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       this.rebuildCellTemplates();
       this.cdr.markForCheck();            // таблица OnPush
     });
+    this.defSubs.push(
+      this.resolveDef(this.expandedRowDefs, 'ngxAurExpandedRowDef', t => this._expandedRowTpl = t),
+    );
   }
 
   /** Пересобирает карту key → шаблон из спроецированных ngxAurCellDef. */
@@ -392,7 +403,32 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     });
   }
 
-  /** Контекст кастомного шаблона ячейки (пересобирается в CD — как у extendedRowTemplate). */
+  /**
+   * Резолвит одно-слотовую template-директиву: ставит первую в assign, dev-warn при
+   * нескольких, подписывается на .changes (OnPush). Зеркало механизма cellDefs.
+   */
+  private resolveDef<C>(
+    list: QueryList<{ templateRef: TemplateRef<C> }>,
+    selector: string,
+    assign: (tpl: TemplateRef<C> | null) => void,
+  ): Subscription {
+    const apply = () => {
+      if (isDevMode() && list.length > 1) {
+        console.warn(`[aur-mat-table] обнаружено несколько ${selector}; используется первый.`);
+      }
+      assign(list.first?.templateRef ?? null);
+      this.cdr.markForCheck();            // таблица OnPush
+    };
+    apply();
+    return list.changes.subscribe(apply);
+  }
+
+  /** Контекст row-level шаблона (обогащённый, как AurCellContext минус value). */
+  rowCtx(element: TableRow<T>): AurRowContext<T> {
+    return { $implicit: element.rowSrc, row: element, rowSrc: element.rowSrc, index: element.id };
+  }
+
+  /** Контекст кастомного шаблона ячейки (пересобирается в CD). */
   cellCtx(element: TableRow<T>, key: string): AurCellContext<T> {
     const value = element[key];
     return { $implicit: value, value, row: element, rowSrc: element.rowSrc, index: element.id };
@@ -892,7 +928,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   /** Реакция на клик по строке (вызывается из handleRowClick после гейта enable). */
   private handleExpandOnClick(row: TableRow<T>): void {
-    if (!this.extendedRowTemplate) return;
+    if (!this.expandedRowTemplate) return;
     const mode = this.tableConfig.extendedRowCfg?.mode ?? 'row-click';
     if (mode === 'manual') return;                       // клик инертен для раскрытия
     if (mode === 'controlled') {
@@ -1014,6 +1050,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     this.serverPageController?.stop();
     this.externalPaginatorSub?.unsubscribe();
     this.cellDefsSub?.unsubscribe();
+    this.defSubs.forEach(s => s.unsubscribe());
   }
 
   onDragStart($event: DragEvent, row: TableRow<T>) {

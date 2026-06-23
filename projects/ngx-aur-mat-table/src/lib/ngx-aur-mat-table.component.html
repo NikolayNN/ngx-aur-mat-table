@@ -36,7 +36,7 @@
              [matSortActive]="tableConfig.sortCfg?.active ?? ''"
              [matSortDirection]="tableConfig.sortCfg?.direction ?? ''"
              [trackBy]="trackByRow"
-             [multiTemplateDataRows]="extendedRowTemplate !== null"
+             [multiTemplateDataRows]="expandedRowTemplate !== null"
              [dataSource]="tableDataSource"
              (matSortChange)="sortTable($event)"
              [style.height]="tableConfig.tableViewCfg?.height"
@@ -469,7 +469,7 @@
         </tr>
 
         <!--expanded-row (деф регистрируем только при наличии шаблона)-->
-        <ng-container *ngIf="extendedRowTemplate">
+        <ng-container *ngIf="expandedRowTemplate">
           <ng-container matColumnDef="expandedRow">
             <td mat-cell class="expanded-cell" *matCellDef="let element" [attr.colspan]="_displayColumns.length"
                 style="padding-right: 0!important;">
@@ -484,14 +484,14 @@
                 </div>
                 <!-- lazy-load of details -->
                 <ng-container *ngIf="isExpanded(element)">
-                  <ng-container *ngTemplateOutlet="extendedRowTemplate; context: {$implicit: element}"></ng-container>
+                  <ng-container *ngTemplateOutlet="expandedRowTemplate; context: rowCtx(element)"></ng-container>
                 </ng-container>
               </div>
             </td>
           </ng-container>
         </ng-container>
 
-        <ng-container *ngIf="extendedRowTemplate">
+        <ng-container *ngIf="expandedRowTemplate">
           <tr mat-row class="expanded-row" *matRowDef="let row; columns: ['expandedRow']"></tr>
         </ng-container>
         <!--expanded-row-->

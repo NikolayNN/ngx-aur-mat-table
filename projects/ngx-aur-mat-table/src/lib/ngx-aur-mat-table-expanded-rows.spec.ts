@@ -12,10 +12,10 @@ interface R { id: number; name: string; }
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"
                    [highlight]="hl"
-                   (expandedRowChange)="single.push($event)"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+                   (expandedRowChange)="single.push($event)">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class RowClickHostComponent {
@@ -125,9 +125,9 @@ describe('NgxAurMatTable expanded rows — no template guard', () => {
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"
-                   (expandedRowsChange)="multi.push($event)"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+                   (expandedRowsChange)="multi.push($event)">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class MultipleHostComponent {
@@ -181,10 +181,10 @@ describe('NgxAurMatTable expanded rows — multiple', () => {
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"
                    [expandedRow]="exp"
-                   (expandedRowChange)="changes.push($event)"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+                   (expandedRowChange)="changes.push($event)">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class ControlledHostComponent {
@@ -203,10 +203,10 @@ class ControlledHostComponent {
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"
                    [expandedRow]="exp"
-                   (expandedRowChange)="changes.push($event)"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+                   (expandedRowChange)="changes.push($event)">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class ManualHostComponent {
@@ -225,9 +225,9 @@ class ManualHostComponent {
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"
-                   [expandedRow]="exp" [expandedRows]="rows"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+                   [expandedRow]="exp" [expandedRows]="rows">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class MismatchHostComponent {
@@ -245,10 +245,10 @@ class MismatchHostComponent {
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"
                    [expandedRow]="exp"
-                   (expandedRowChange)="changes.push($event)"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+                   (expandedRowChange)="changes.push($event)">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class DisabledControlledHostComponent {
@@ -383,9 +383,9 @@ describe('NgxAurMatTable expanded rows — clickCfg.enable:false', () => {
 @Component({
   standalone: false,
   template: `
-    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class TrackByHostComponent {

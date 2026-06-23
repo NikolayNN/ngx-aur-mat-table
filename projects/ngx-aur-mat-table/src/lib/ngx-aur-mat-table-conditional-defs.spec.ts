@@ -35,11 +35,11 @@ class ExtraHeaderHostComponent {
 @Component({
   standalone: false,
   template: `
-    <aur-mat-table [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="details"></aur-mat-table>
-    <ng-template #details let-row>
-      <div class="row-details">D-{{ row.rowSrc.name }}</div>
-    </ng-template>`
+    <aur-mat-table [tableConfig]="cfg" [tableData]="data">
+      <ng-template ngxAurExpandedRowDef let-row="row">
+        <div class="row-details">D-{{ row.rowSrc.name }}</div>
+      </ng-template>
+    </aur-mat-table>`
 })
 class ExpandedHostComponent {
   cfg = cfg();

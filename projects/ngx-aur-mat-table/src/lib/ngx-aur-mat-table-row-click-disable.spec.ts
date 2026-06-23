@@ -7,14 +7,14 @@ import { TableConfig } from './model/ColumnConfig';
 
 interface R { name: string; }
 
-/** clickCfg.enable: false — строка полностью неинтерактивна; с extendedRowTemplate для проверки раскрытия. */
+/** clickCfg.enable: false — строка полностью неинтерактивна; с ngxAurExpandedRowDef для проверки раскрытия. */
 @Component({
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="detail"
-                   (rowClick)="events.push($event)"></aur-mat-table>
-    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+                   (rowClick)="events.push($event)">
+      <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+    </aur-mat-table>
   `,
 })
 class DisabledHostComponent {
