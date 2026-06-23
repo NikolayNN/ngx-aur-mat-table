@@ -157,6 +157,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   @Input() extendedRowTemplate: TemplateRef<any> | null = null;
 
+  @Input() expandedRow: T | null = null;
+  @Output() expandedRowChange = new EventEmitter<T | null>();
+
+  @Input() expandedRows: T[] = [];
+  @Output() expandedRowsChange = new EventEmitter<T[]>();
+
   @Input() timelineMarkerTemplate: TemplateRef<any> | null = null;
 
   // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
@@ -248,6 +254,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   highlighted: T | undefined;
 
+  /** Состояние раскрытия detail-строк: ключ идентичности → исходный объект (rowSrc). */
+  private _expanded = new Map<unknown, T>();
+
   // Состояние наведения. Сравнивает идентичность объекта TableRow (тот же экземпляр, по которому итерирует шаблон),
   // в отличие от `highlighted`, который сравнивает row.rowSrc (внешнее @Input-значение, а не TableRow).
   hovered: TableRow<T> | null = null;
@@ -285,6 +294,16 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     }
     if (changes['highlight'] && this.highlight) {
       this.handleHighlightChange(this.highlight);
+    }
+    if (changes['expandedRow'] || changes['expandedRows']) {
+      const mode = this.tableConfig.extendedRowCfg?.mode ?? 'row-click';
+      const multiple = !!this.tableConfig.extendedRowCfg?.multiple;
+      const authoritative = mode === 'controlled' || mode === 'manual';
+      const firstSeed = mode === 'row-click'
+        && (!!changes['expandedRow']?.firstChange || !!changes['expandedRows']?.firstChange);
+      if (authoritative || firstSeed) {
+        this.syncExpandedFromInputs(multiple);
+      }
     }
     if (changes['externalPaginator']) {
       if (this.externalPaginator) {
@@ -495,6 +514,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
     this._displayExtraHeaderTopCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_TOP_SUFFIX)
     this._displayExtraHeaderBottomCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_BOTTOM_SUFFIX)
+    this.remapExpandedToData();
   }
 
   private removeWrongKeysFromDisplayColumns() {
@@ -815,6 +835,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       this.rowClick.emit(undefined);
       this.highlighted = undefined;
     }
+    this.handleExpandOnClick(row);
   }
 
   /**
@@ -829,6 +850,86 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       event.preventDefault();
       this.handleRowClick(row);
     }
+  }
+
+  /** Ключ идентичности раскрытия по строке таблицы — зеркало trackByRow. */
+  private expandKey(row: TableRow<T>): unknown {
+    return this.tableConfig.trackBy ? this.tableConfig.trackBy(row.rowSrc) : row.rowSrc;
+  }
+
+  /** Ключ по исходному значению (инпуты приходят как rowSrc, а не TableRow). */
+  private keyOfSrc(src: T): unknown {
+    return this.tableConfig.trackBy ? this.tableConfig.trackBy(src) : src;
+  }
+
+  /** Рендер-предикат detail-строки (используется шаблоном). */
+  isExpanded(row: TableRow<T>): boolean {
+    return this._expanded.has(this.expandKey(row));
+  }
+
+  /** Следующее состояние раскрытия при клике/запросе по строке. */
+  private nextExpanded(row: TableRow<T>): Map<unknown, T> {
+    const key = this.expandKey(row);
+    const multiple = !!this.tableConfig.extendedRowCfg?.multiple;
+    const next = new Map(this._expanded);
+    if (next.has(key)) {
+      next.delete(key);                 // повторный клик по открытой — закрыть
+    } else {
+      if (!multiple) next.clear();      // single → аккордеон
+      next.set(key, row.rowSrc);
+    }
+    return next;
+  }
+
+  /** Эмит активной пары по флагу multiple. */
+  private emitExpanded(map: Map<unknown, T>): void {
+    if (this.tableConfig.extendedRowCfg?.multiple) {
+      this.expandedRowsChange.emit([...map.values()]);
+    } else {
+      this.expandedRowChange.emit([...map.values()][0] ?? null);
+    }
+  }
+
+  /** Реакция на клик по строке (вызывается из handleRowClick после гейта enable). */
+  private handleExpandOnClick(row: TableRow<T>): void {
+    if (!this.extendedRowTemplate) return;
+    const mode = this.tableConfig.extendedRowCfg?.mode ?? 'row-click';
+    if (mode === 'manual') return;                       // клик инертен для раскрытия
+    if (mode === 'controlled') {
+      this.emitExpanded(this.nextExpanded(row));         // только эмит, без мутации
+      return;
+    }
+    this._expanded = this.nextExpanded(row);             // row-click: мутируем + эмитим
+    this.emitExpanded(this._expanded);
+  }
+
+  /** На смене данных: обновляет rowSrc по совпадающим ключам и выкидывает исчезнувшие. */
+  private remapExpandedToData(): void {
+    if (this._expanded.size === 0) return;
+    const byKey = new Map<unknown, T>();
+    this.tableDataSource.data.forEach(r => byKey.set(this.expandKey(r), r.rowSrc));
+    const next = new Map<unknown, T>();
+    this._expanded.forEach((_src, key) => {
+      if (byKey.has(key)) next.set(key, byKey.get(key)!);
+    });
+    this._expanded = next;
+  }
+
+  /** Перестраивает _expanded из активного инпута (выбор пары по multiple). */
+  private syncExpandedFromInputs(multiple: boolean): void {
+    const next = new Map<unknown, T>();
+    if (multiple) {
+      (this.expandedRows ?? []).forEach(src => next.set(this.keyOfSrc(src), src));
+      if (isDevMode() && this.expandedRow != null) {
+        console.warn('[aur-mat-table] multiple:true — используйте [expandedRows], [expandedRow] игнорируется.');
+      }
+    } else {
+      if (this.expandedRow != null) next.set(this.keyOfSrc(this.expandedRow), this.expandedRow);
+      if (isDevMode() && this.expandedRows?.length) {
+        console.warn('[aur-mat-table] multiple:false — используйте [expandedRow], [expandedRows] игнорируется.');
+      }
+    }
+    this._expanded = next;
   }
 
   public getSelectionModel(): SelectionModel<T> {

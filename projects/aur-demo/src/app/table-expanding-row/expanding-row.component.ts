@@ -42,4 +42,28 @@ export class ExpandingRowComponent {
   }
   tableData: Customer[] = CustomerGenerator.generate(10);
 
+  // --- controlled ---
+  controlledConfig: TableConfig<Customer> = {
+    columnsCfg: [
+      { name: 'customers name', key: 'name', valueConverter: v => v.name },
+      { name: 'customers age', key: 'age', valueConverter: v => v.age },
+    ],
+    extendedRowCfg: { mode: 'controlled' },
+    indexCfg: { enable: true, offset: 1 },
+  };
+  controlledData: Customer[] = CustomerGenerator.generate(5);
+  expandedCustomer: Customer | null = null;
+
+  // --- multiple ---
+  multipleConfig: TableConfig<Customer> = {
+    columnsCfg: [
+      { name: 'customers name', key: 'name', valueConverter: v => v.name },
+      { name: 'customers age', key: 'age', valueConverter: v => v.age },
+    ],
+    extendedRowCfg: { multiple: true },
+    indexCfg: { enable: true, offset: 1 },
+  };
+  multipleData: Customer[] = CustomerGenerator.generate(5);
+  expandedCustomers: Customer[] = [];
+
 }

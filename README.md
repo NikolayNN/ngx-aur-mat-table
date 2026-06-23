@@ -101,6 +101,40 @@ export class SimpleTableComponent {
 остаётся обязательным, поэтому поиск, сортировка и строка «Итого» работают как обычно. Заголовок и
 «Итого» через шаблон не настраиваются (используйте `headerView` и `totalConverter`).
 
+## Detail-row expansion (`extendedRowTemplate`)
+
+Передайте `<ng-template>` в `[extendedRowTemplate]`, чтобы таблица показывала
+detail-строку под каждой раскрытой строкой:
+
+```html
+<aur-mat-table [tableData]="data" [tableConfig]="cfg" [extendedRowTemplate]="detailTpl">
+  <ng-template #detailTpl let-row>
+    <div class="detail">{{ row.rowSrc | json }}</div>
+  </ng-template>
+</aur-mat-table>
+```
+
+### Управление раскрытием (`extendedRowCfg`)
+
+Раскрытие detail-строки — самостоятельное состояние, не связанное с подсветкой (`highlight`).
+
+| Поле | Значения | По умолчанию | Смысл |
+|---|---|---|---|
+| `mode` | `'row-click'` \| `'controlled'` \| `'manual'` | `'row-click'` | кто владеет состоянием раскрытия |
+| `multiple` | `boolean` | `false` | разрешить несколько раскрытых строк |
+
+Режимы:
+- **row-click** — таблица сама раскрывает/сворачивает по клику.
+- **controlled** — источник правды контейнер: `[(expandedRow)]` (или `[(expandedRows)]` при `multiple`). Клик шлёт `(expandedRowChange)`/`(expandedRowsChange)`.
+- **manual** — состояние только из инпутов; клик не раскрывает.
+
+Single (`multiple:false`) → `[expandedRow]`/`(expandedRowChange)` (`T | null`).
+Multiple (`multiple:true`) → `[expandedRows]`/`(expandedRowsChange)` (`T[]`).
+
+Идентичность раскрытой строки определяется `tableConfig.trackBy` (иначе ссылкой на объект), поэтому раскрытие переживает серверный reload при заданном `trackBy`.
+
+> **Миграция с ≤19.8.x:** `[highlight]` больше не раскрывает detail-строку (только подсветка/скролл). Для программного раскрытия используйте `[expandedRow]`/`[expandedRows]`.
+
 ## Server pagination via `pageSource` (recommended)
 
 Provide a typed loader; the table performs the initial load and refetches on page/sort changes itself.

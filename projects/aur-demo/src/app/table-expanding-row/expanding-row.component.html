@@ -27,6 +27,27 @@
   [tableConfig]="tableConfig"
   [extendedRowTemplate]="rowTemplate">
 </aur-mat-table>
+
+<hr/>
+<h3>Controlled (источник правды — контейнер, two-way)</h3>
+<p>Раскрытая строка хранится в контейнере: <code>{{ expandedCustomer?.name ?? '—' }}</code></p>
+<aur-mat-table
+  [tableData]="controlledData"
+  [tableConfig]="controlledConfig"
+  [extendedRowTemplate]="rowTemplate"
+  [(expandedRow)]="expandedCustomer">
+</aur-mat-table>
+
+<hr/>
+<h3>Multiple (несколько раскрытых строк)</h3>
+<p>Раскрыто строк: <code>{{ expandedCustomers.length }}</code></p>
+<aur-mat-table
+  [tableData]="multipleData"
+  [tableConfig]="multipleConfig"
+  [extendedRowTemplate]="rowTemplate"
+  [(expandedRows)]="expandedCustomers">
+</aur-mat-table>
+
 <ng-template #rowTemplate let-row>
   <app-row-details [row]="row"></app-row-details>
 </ng-template>
