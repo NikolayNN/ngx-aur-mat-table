@@ -295,6 +295,16 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     if (changes['highlight'] && this.highlight) {
       this.handleHighlightChange(this.highlight);
     }
+    if (changes['expandedRow'] || changes['expandedRows']) {
+      const mode = this.tableConfig.extendedRowCfg?.mode ?? 'row-click';
+      const multiple = !!this.tableConfig.extendedRowCfg?.multiple;
+      const authoritative = mode === 'controlled' || mode === 'manual';
+      const firstSeed = mode === 'row-click'
+        && (!!changes['expandedRow']?.firstChange || !!changes['expandedRows']?.firstChange);
+      if (authoritative || firstSeed) {
+        this.syncExpandedFromInputs(multiple);
+      }
+    }
     if (changes['externalPaginator']) {
       if (this.externalPaginator) {
         if (this.isServerMode()) {
@@ -890,6 +900,23 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     }
     this._expanded = this.nextExpanded(row);             // row-click: мутируем + эмитим
     this.emitExpanded(this._expanded);
+  }
+
+  /** Перестраивает _expanded из активного инпута (выбор пары по multiple). */
+  private syncExpandedFromInputs(multiple: boolean): void {
+    const next = new Map<unknown, T>();
+    if (multiple) {
+      (this.expandedRows ?? []).forEach(src => next.set(this.keyOfSrc(src), src));
+      if (isDevMode() && this.expandedRow != null) {
+        console.warn('[aur-mat-table] multiple:true — используйте [expandedRows], [expandedRow] игнорируется.');
+      }
+    } else {
+      if (this.expandedRow != null) next.set(this.keyOfSrc(this.expandedRow), this.expandedRow);
+      if (isDevMode() && this.expandedRows?.length) {
+        console.warn('[aur-mat-table] multiple:false — используйте [expandedRow], [expandedRows] игнорируется.');
+      }
+    }
+    this._expanded = next;
   }
 
   public getSelectionModel(): SelectionModel<T> {

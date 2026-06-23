@@ -175,3 +175,207 @@ describe('NgxAurMatTable expanded rows — multiple', () => {
     expect(markers()).toEqual(['b details']);
   });
 });
+
+/** Controlled: контейнер — источник правды, без авто-echo. */
+@Component({
+  standalone: false,
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [extendedRowTemplate]="detail"
+                   [expandedRow]="exp"
+                   (expandedRowChange)="changes.push($event)"></aur-mat-table>
+    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+  `,
+})
+class ControlledHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  changes: (R | null)[] = [];
+  exp: R | null = null;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    extendedRowCfg: { mode: 'controlled' },
+  };
+  data: R[] = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
+}
+
+/** Manual: только инпут, клик инертен. */
+@Component({
+  standalone: false,
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [extendedRowTemplate]="detail"
+                   [expandedRow]="exp"
+                   (expandedRowChange)="changes.push($event)"></aur-mat-table>
+    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+  `,
+})
+class ManualHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  changes: (R | null)[] = [];
+  exp: R | null = null;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    extendedRowCfg: { mode: 'manual' },
+  };
+  data: R[] = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
+}
+
+/** multiple:false, но привязан [expandedRows] — dev-warning, активна пара [expandedRow]. */
+@Component({
+  standalone: false,
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [extendedRowTemplate]="detail"
+                   [expandedRow]="exp" [expandedRows]="rows"></aur-mat-table>
+    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+  `,
+})
+class MismatchHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  exp: R | null = null;
+  rows: R[] = [];
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    extendedRowCfg: { mode: 'controlled' },
+  };
+  data: R[] = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
+}
+
+@Component({
+  standalone: false,
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [extendedRowTemplate]="detail"
+                   [expandedRow]="exp"
+                   (expandedRowChange)="changes.push($event)"></aur-mat-table>
+    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+  `,
+})
+class DisabledControlledHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  changes: (R | null)[] = [];
+  exp: R | null = null;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    bodyRowCfg: { clickCfg: { enable: false } },
+    extendedRowCfg: { mode: 'controlled' },
+  };
+  data: R[] = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
+}
+
+function markersOf(f: ComponentFixture<unknown>): string[] {
+  return Array.from(f.nativeElement.querySelectorAll('.detail-marker'))
+    .map(e => (e as HTMLElement).textContent!.trim());
+}
+function mainRowsOf(f: ComponentFixture<unknown>): HTMLElement[] {
+  return Array.from(f.nativeElement.querySelectorAll('tr[mat-row]:not(.expanded-row)'));
+}
+
+describe('NgxAurMatTable expanded rows — controlled', () => {
+  let fixture: ComponentFixture<ControlledHostComponent>;
+  let host: ControlledHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [ControlledHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(ControlledHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('инпут раскрывает строку', () => {
+    host.exp = host.data[0];
+    fixture.detectChanges();
+    expect(markersOf(fixture)).toEqual(['a details']);
+  });
+
+  it('клик НЕ меняет DOM сам по себе, но эмитит запрос', () => {
+    mainRowsOf(fixture)[0].click();
+    fixture.detectChanges();
+    expect(markersOf(fixture)).toEqual([]);            // нет echo — нет раскрытия
+    expect(host.changes).toEqual([host.data[0]]);      // запрос ушёл
+  });
+
+  it('клик по уже раскрытой (через инпут) эмитит null', () => {
+    host.exp = host.data[0];
+    fixture.detectChanges();
+    mainRowsOf(fixture)[0].click();
+    fixture.detectChanges();
+    expect(host.changes).toEqual([null]);
+  });
+});
+
+describe('NgxAurMatTable expanded rows — manual', () => {
+  let fixture: ComponentFixture<ManualHostComponent>;
+  let host: ManualHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [ManualHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(ManualHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('инпут раскрывает', () => {
+    host.exp = host.data[1];
+    fixture.detectChanges();
+    expect(markersOf(fixture)).toEqual(['b details']);
+  });
+
+  it('клик не раскрывает и не эмитит', () => {
+    mainRowsOf(fixture)[0].click();
+    fixture.detectChanges();
+    expect(markersOf(fixture)).toEqual([]);
+    expect(host.changes).toEqual([]);
+  });
+});
+
+describe('NgxAurMatTable expanded rows — mismatch warning', () => {
+  it('multiple:false + [expandedRows] → warn, работает [expandedRow]', async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [MismatchHostComponent],
+    }).compileComponents();
+    const warn = spyOn(console, 'warn');
+    const fixture = TestBed.createComponent(MismatchHostComponent);
+    const host = fixture.componentInstance;
+    host.rows = [host.data[1]];      // в неактивной паре
+    host.exp = host.data[0];         // активная пара
+    fixture.detectChanges();
+    expect(markersOf(fixture)).toEqual(['a details']);
+    expect(warn).toHaveBeenCalled();
+  });
+});
+
+describe('NgxAurMatTable expanded rows — clickCfg.enable:false', () => {
+  let fixture: ComponentFixture<DisabledControlledHostComponent>;
+  let host: DisabledControlledHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [DisabledControlledHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(DisabledControlledHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('клик по неинтерактивной строке не раскрывает и не эмитит', () => {
+    mainRowsOf(fixture)[0].click();
+    fixture.detectChanges();
+    expect(markersOf(fixture)).toEqual([]);
+    expect(host.changes).toEqual([]);
+  });
+
+  it('инпут раскрывает даже при enable:false', () => {
+    host.exp = host.data[0];
+    fixture.detectChanges();
+    expect(markersOf(fixture)).toEqual(['a details']);
+  });
+});
