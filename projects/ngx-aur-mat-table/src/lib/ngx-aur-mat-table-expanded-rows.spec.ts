@@ -79,3 +79,44 @@ describe('NgxAurMatTable expanded rows — row-click (default)', () => {
     expect(host.table.highlighted).toBe(host.data[1]); // highlight отработал
   });
 });
+
+/** Таблица БЕЗ extendedRowTemplate не должна запускать движок раскрытия при клике. */
+@Component({
+  standalone: false,
+  template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   (expandedRowChange)="changes.push($event)"></aur-mat-table>`,
+})
+class NoTemplateHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  changes: any[] = [];
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+  };
+  data: R[] = [{ id: 1, name: 'a' }];
+}
+
+describe('NgxAurMatTable expanded rows — no template guard', () => {
+  let fixture: ComponentFixture<NoTemplateHostComponent>;
+  let host: NoTemplateHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [NoTemplateHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(NoTemplateHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  function mainRows(): HTMLElement[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('tr[mat-row]:not(.expanded-row)'));
+  }
+
+  it('клик по строке без [extendedRowTemplate] не эмитит expandedRowChange', () => {
+    const row = mainRows()[0];
+    row.click();
+    fixture.detectChanges();
+    expect(host.changes).toEqual([]);
+  });
+});

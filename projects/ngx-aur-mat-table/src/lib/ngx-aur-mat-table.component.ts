@@ -881,6 +881,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   /** Реакция на клик по строке (вызывается из handleRowClick после гейта enable). */
   private handleExpandOnClick(row: TableRow<T>): void {
+    if (!this.extendedRowTemplate) return;
     const mode = this.tableConfig.extendedRowCfg?.mode ?? 'row-click';
     if (mode === 'manual') return;                       // клик инертен для раскрытия
     if (mode === 'controlled') {
