@@ -120,3 +120,58 @@ describe('NgxAurMatTable expanded rows — no template guard', () => {
     expect(host.changes).toEqual([]);
   });
 });
+
+@Component({
+  standalone: false,
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [extendedRowTemplate]="detail"
+                   (expandedRowsChange)="multi.push($event)"></aur-mat-table>
+    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+  `,
+})
+class MultipleHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  multi: R[][] = [];
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    extendedRowCfg: { multiple: true },
+  };
+  data: R[] = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
+}
+
+describe('NgxAurMatTable expanded rows — multiple', () => {
+  let fixture: ComponentFixture<MultipleHostComponent>;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [MultipleHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(MultipleHostComponent);
+    fixture.detectChanges();
+  });
+
+  function mainRows(): HTMLElement[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('tr[mat-row]:not(.expanded-row)'));
+  }
+  function markers(): string[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('.detail-marker'))
+      .map(e => (e as HTMLElement).textContent!.trim());
+  }
+
+  it('две строки раскрыты одновременно; эмитит массив rowSrc', () => {
+    const host = fixture.componentInstance;
+    mainRows()[0].click(); fixture.detectChanges();
+    mainRows()[1].click(); fixture.detectChanges();
+    expect(markers()).toEqual(['a details', 'b details']);
+    expect(host.multi[host.multi.length - 1]).toEqual([host.data[0], host.data[1]]);
+  });
+
+  it('повторный клик закрывает только свою строку', () => {
+    mainRows()[0].click(); fixture.detectChanges();
+    mainRows()[1].click(); fixture.detectChanges();
+    mainRows()[0].click(); fixture.detectChanges();
+    expect(markers()).toEqual(['b details']);
+  });
+});
