@@ -433,4 +433,19 @@ describe('NgxAurMatTable expanded rows — trackBy identity', () => {
     fixture.detectChanges();
     expect(markers()).toEqual([]);
   });
+
+  it('строка id=1 не воскресает раскрытой после удаления и повторного появления (prune)', () => {
+    // Шаг 1: раскрыть строку id=1
+    mainRows()[0].click(); fixture.detectChanges();
+    expect(markers()).toEqual(['a details']);
+
+    // Шаг 2: убрать id=1 из данных — ключ должен быть удалён из _expanded (prune)
+    host.data = [{ id: 2, name: 'b' }]; fixture.detectChanges();
+    expect(markers()).toEqual([]);
+
+    // Шаг 3: вернуть id=1 — WITHOUT prune ключ «1» остался бы в _expanded и строка
+    // раскрылась бы снова; WITH remapExpandedToData ключ удалён → строка остаётся свёрнутой
+    host.data = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }]; fixture.detectChanges();
+    expect(markers()).toEqual([]);
+  });
 });
