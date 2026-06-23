@@ -514,6 +514,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
     this._displayExtraHeaderTopCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_TOP_SUFFIX)
     this._displayExtraHeaderBottomCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_BOTTOM_SUFFIX)
+    this.remapExpandedToData();
   }
 
   private removeWrongKeysFromDisplayColumns() {
@@ -900,6 +901,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     }
     this._expanded = this.nextExpanded(row);             // row-click: мутируем + эмитим
     this.emitExpanded(this._expanded);
+  }
+
+  /** На смене данных: обновляет rowSrc по совпадающим ключам и выкидывает исчезнувшие. */
+  private remapExpandedToData(): void {
+    if (this._expanded.size === 0) return;
+    const byKey = new Map<unknown, T>();
+    this.tableDataSource.data.forEach(r => byKey.set(this.expandKey(r), r.rowSrc));
+    const next = new Map<unknown, T>();
+    this._expanded.forEach((_src, key) => {
+      if (byKey.has(key)) next.set(key, byKey.get(key)!);
+    });
+    this._expanded = next;
   }
 
   /** Перестраивает _expanded из активного инпута (выбор пары по multiple). */

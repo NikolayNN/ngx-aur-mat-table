@@ -379,3 +379,58 @@ describe('NgxAurMatTable expanded rows — clickCfg.enable:false', () => {
     expect(markersOf(fixture)).toEqual(['a details']);
   });
 });
+
+@Component({
+  standalone: false,
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [extendedRowTemplate]="detail"></aur-mat-table>
+    <ng-template #detail let-row><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
+  `,
+})
+class TrackByHostComponent {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  cfg: TableConfig<R> = {
+    trackBy: r => r.id,
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+  };
+  data: R[] = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
+}
+
+describe('NgxAurMatTable expanded rows — trackBy identity', () => {
+  let fixture: ComponentFixture<TrackByHostComponent>;
+  let host: TrackByHostComponent;
+
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [TrackByHostComponent],
+    }).compileComponents();
+    fixture = TestBed.createComponent(TrackByHostComponent);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  function mainRows(): HTMLElement[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('tr[mat-row]:not(.expanded-row)'));
+  }
+  function markers(): string[] {
+    return Array.from(fixture.nativeElement.querySelectorAll('.detail-marker'))
+      .map(e => (e as HTMLElement).textContent!.trim());
+  }
+
+  it('раскрытая строка остаётся раскрытой после пересоздания данных (reload)', () => {
+    mainRows()[0].click(); fixture.detectChanges();
+    expect(markers()).toEqual(['a details']);
+    host.data = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];   // новые объекты, те же id
+    fixture.detectChanges();
+    expect(markers()).toEqual(['a details']);
+  });
+
+  it('исчезнувшая строка выпадает из раскрытия', () => {
+    mainRows()[0].click(); fixture.detectChanges();
+    host.data = [{ id: 2, name: 'b' }];                          // строки id=1 больше нет
+    fixture.detectChanges();
+    expect(markers()).toEqual([]);
+  });
+});
