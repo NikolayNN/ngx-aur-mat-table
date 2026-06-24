@@ -4,6 +4,7 @@ import { ActionViewFactory } from "../factories/ActionViewFactory";
 import { EmptyValue } from "../model/EmptyValue";
 import { AbstractProvider } from "./AbstractProvider";
 import { NgxAurTableConfigUtil } from "../utils/ngx-aur-table-config.util";
+import { isDevMode } from "@angular/core";
 
 export interface ActionEvent<T> {
   action: string;
@@ -57,6 +58,38 @@ export class RowActionProvider<T> extends AbstractProvider {
     return this;
   }
 
+  /** Фаза 2: вставка колонок с ЯКОРНЫМ position ({before}/{after}); итеративно для цепочек. */
+  public applyAnchors(columns: string[]): RowActionProvider<T> {
+    const pending = this.columns.filter(c =>
+      typeof c.position === 'object' && !this.hasKey(c.columnName, columns));
+
+    let progress = true;
+    while (pending.length && progress) {
+      progress = false;
+      for (let i = pending.length - 1; i >= 0; i--) {
+        const col = pending[i];
+        const pos = col.position as { before?: string; after?: string };
+        const anchor = pos.before ?? pos.after!;
+        const idx = columns.indexOf(anchor);
+        if (idx === -1) continue;                       // якорь ещё не на месте — позже
+        const at = pos.before !== undefined ? idx : idx + 1;
+        columns.splice(at, 0, col.columnName);
+        pending.splice(i, 1);
+        progress = true;
+      }
+    }
+
+    // неразрешённые (якорь не найден/выключен) — в конец + dev-warn
+    for (const col of pending) {
+      columns.push(col.columnName);
+      if (isDevMode()) {
+        const pos = col.position as { before?: string; after?: string };
+        console.warn(`[aur-mat-table] action-колонка "${col.columnName}": якорь "${pos.before ?? pos.after}" не найден — колонка добавлена в конец.`);
+      }
+    }
+    return this;
+  }
+
   /** Строит actionView для КАЖДОЙ колонки (ActionViewFactory переиспользуется per-config). */
   public setView(rows: TableRow<T>[]): RowActionProvider<T> {
     this.columns.forEach((col, i) => {
@@ -85,6 +118,10 @@ export class RowActionProviderDummy<T> extends RowActionProvider<T> {
   }
 
   public override addActionColumns(columns: string[]): RowActionProviderDummy<T> {
+    return this;
+  }
+
+  public override applyAnchors(columns: string[]): RowActionProviderDummy<T> {
     return this;
   }
 

@@ -624,6 +624,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     this.timelineProvider = TimelineProvider.create(this.tableConfig)
       .addTimelineColumn(this._displayColumns);
 
+    // Фаза 2: anchor before/after — все возможные якоря (data, спец, action-start/end) уже на местах.
+    // До построения extra-header/detail-ремапа (ниже), чтобы они охватили финальный порядок.
+    this.rowActionsProvider.applyAnchors(this._displayColumns);
+
     this.emitFilteredValues();
 
     this._displayExtraHeaderTopCell = this._displayColumns.map(col => col + this.EXTRA_HEADER_CELL_TOP_SUFFIX)

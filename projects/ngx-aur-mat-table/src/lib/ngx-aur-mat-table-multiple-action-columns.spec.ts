@@ -94,4 +94,18 @@ describe('NgxAurMatTable — несколько action-колонок', () => {
     c.refreshTable();
     expect(c._displayColumns).toEqual(['p', 'name']);
   });
+
+  it('якорь {after:name} ставит колонку сразу после data-колонки (сквозь refreshTable)', () => {
+    host.cfg = {
+      columnsCfg: [
+        { key: 'name', name: 'Name', valueConverter: (v: any) => v.name },
+        { key: 'age', name: 'Age', valueConverter: (v: any) => v.age },
+      ],
+      actionCfg: [
+        { key: 't', position: { after: 'name' }, actions: [{ action: () => 'e', icon: { name: () => 'edit' } }] },
+      ],
+    } as any;
+    fixture.detectChanges();
+    expect(host.table._displayColumns).toEqual(['name', 't', 'age']);
+  });
 });

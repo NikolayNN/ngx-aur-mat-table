@@ -57,3 +57,45 @@ describe('RowActionProvider — мульти-колоночный (start/end)', 
     expect(p.columns[0].actionView.get(0)![0].action).toBe('edit');
   });
 });
+
+describe('RowActionProvider — якоря (before/after)', () => {
+  it('after вставляет после якоря (data-колонка)', () => {
+    const p = RowActionProvider.create(cfgOf([{ key: 't', position: { after: 'name' }, actions: [] }]));
+    const cols = ['name', 'age'];
+    p.applyAnchors(cols);
+    expect(cols).toEqual(['name', 't', 'age']);
+  });
+
+  it('before вставляет перед якорём (спец-колонка)', () => {
+    const p = RowActionProvider.create(cfgOf([{ key: 'm', position: { before: 'tbl_selects' }, actions: [] }]));
+    const cols = ['name', 'tbl_selects'];
+    p.applyAnchors(cols);
+    expect(cols).toEqual(['name', 'm', 'tbl_selects']);
+  });
+
+  it('цепочка: B after A, A after name', () => {
+    const p = RowActionProvider.create(cfgOf([
+      { key: 'A', position: { after: 'name' }, actions: [] },
+      { key: 'B', position: { after: 'A' }, actions: [] },
+    ]));
+    const cols = ['name'];
+    p.applyAnchors(cols);
+    expect(cols).toEqual(['name', 'A', 'B']);
+  });
+
+  it('якорь не найден → в конец + warn', () => {
+    const warn = spyOn(console, 'warn');
+    const p = RowActionProvider.create(cfgOf([{ key: 'x', position: { after: 'missing' }, actions: [] }]));
+    const cols = ['name'];
+    p.applyAnchors(cols);
+    expect(cols).toEqual(['name', 'x']);
+    expect(warn).toHaveBeenCalled();
+  });
+
+  it('не дублирует уже присутствующий ключ ([displayColumns])', () => {
+    const p = RowActionProvider.create(cfgOf([{ key: 'x', position: { after: 'name' }, actions: [] }]));
+    const cols = ['x', 'name'];
+    p.applyAnchors(cols);
+    expect(cols).toEqual(['x', 'name']);
+  });
+});
