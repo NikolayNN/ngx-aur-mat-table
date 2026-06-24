@@ -51,7 +51,7 @@ export interface TableConfig<T> {
   /**
    * Настройка отображения кнопок для совершения действий с объектом в строке
    */
-  actionCfg?: ActionConfig<T>,
+  actionCfg?: ActionConfig<T> | ActionConfig<T>[],
 
   /**
    * Настройка для отображения чекбоксов

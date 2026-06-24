@@ -1,66 +1,72 @@
-import {Action, ActionConfig, ColumnSize, TableConfig} from "../model/ColumnConfig";
-import {TableRow} from "../model/TableRow";
-import {ActionViewFactory} from "../factories/ActionViewFactory";
-import {EmptyValue} from "../model/EmptyValue";
-import {AbstractProvider} from "./AbstractProvider";
-import { isFeatureEnabled } from "../utils/feature-enabled.util";
+import { Action, ActionColumnPosition, ActionConfig, ColumnSize, DEFAULT_ACTION_COLUMN, TableConfig } from "../model/ColumnConfig";
+import { TableRow } from "../model/TableRow";
+import { ActionViewFactory } from "../factories/ActionViewFactory";
+import { EmptyValue } from "../model/EmptyValue";
+import { AbstractProvider } from "./AbstractProvider";
+import { NgxAurTableConfigUtil } from "../utils/ngx-aur-table-config.util";
 
 export interface ActionEvent<T> {
   action: string;
   value: T;
 }
 
+/** Разрешённое представление одной колонки действий (одна на каждый ActionConfig). */
+export interface ActionColumnView<T> {
+  /** Имя matColumnDef (= key или 'tbl_actions'). */
+  columnName: string;
+  size?: ColumnSize;
+  position: ActionColumnPosition;
+  /** ключ — rowId; значение — разрешённые действия строки. */
+  actionView: Map<number, Action<string>[]>;
+}
+
 export class RowActionProvider<T> extends AbstractProvider {
-  public static readonly COLUMN_NAME = 'tbl_actions';
+  public static readonly COLUMN_NAME = DEFAULT_ACTION_COLUMN;
   public readonly isEnabled: boolean = true;
 
-  private readonly config: ActionConfig<T>;
-  public readonly size: ColumnSize | undefined;
+  /** По одному элементу на каждую валидную action-колонку. Пусто → колонок нет. */
+  public columns: ActionColumnView<T>[] = [];
 
-  // ключ — это rowId
-  public actionView: Map<number, Action<string>[]> = new Map();
+  /** Нормализованные конфиги, выровнены 1:1 с columns. */
+  protected readonly configs: ActionConfig<T>[];
 
   constructor(tableConfig: TableConfig<T>) {
     super();
-    if (!tableConfig.actionCfg) {
-      throw new Error("Actions is undefined")
-    }
-    this.config = tableConfig.actionCfg;
-    this.size = this.config.size;
+    this.configs = NgxAurTableConfigUtil.actionConfigs(tableConfig);
+    this.columns = this.configs.map(cfg => ({
+      columnName: NgxAurTableConfigUtil.actionColumnName(cfg),
+      size: cfg.size,
+      position: cfg.position ?? 'end',
+      actionView: new Map<number, Action<string>[]>(),
+    }));
   }
 
-  get COLUMN_NAME() {
-    return RowActionProvider.COLUMN_NAME;
-  }
-
-  public addActionColumn(columns: string[]): RowActionProvider<T> {
-    if (!this.config || this.hasKey(this.COLUMN_NAME, columns)) {
-      return this;
+  /** Фаза 1: вставка колонок со строковым position ('start'/'end'). */
+  public addActionColumns(columns: string[]): RowActionProvider<T> {
+    const startNames: string[] = [];
+    for (const col of this.columns) {
+      if (this.hasKey(col.columnName, columns)) continue;   // вписан в [displayColumns]
+      if (col.position === 'start') {
+        startNames.push(col.columnName);
+      } else if (col.position === 'end') {
+        columns.push(col.columnName);
+      }
+      // объектные (anchor) позиции — фаза 2 (applyAnchors), см. Task 3
     }
-    if (this.config.position === 'start') {
-      columns.unshift(this.COLUMN_NAME);
-    } else {
-      columns.push(this.COLUMN_NAME);
-    }
+    if (startNames.length) columns.unshift(...startNames);
     return this;
   }
 
-  /**
-   * Преобразует строки и действия в формат представления.
-   * @param rows - Строки данных для преобразования.
-   * @param actionConfig - Настройка действий над строками.
-   * @return Соответствие идентификаторов строк связанным с ними представлениям действий.
-   */
+  /** Строит actionView для КАЖДОЙ колонки (ActionViewFactory переиспользуется per-config). */
   public setView(rows: TableRow<T>[]): RowActionProvider<T> {
-    if (!this.config) {
-      throw new Error("ActionConfig is undefined");
-    }
-    this.actionView = ActionViewFactory.create(rows, this.config);
+    this.columns.forEach((col, i) => {
+      col.actionView = ActionViewFactory.create(rows, this.configs[i]);
+    });
     return this;
   }
 
   private static canEnabled<T>(tableConfig: TableConfig<T>): boolean {
-    return isFeatureEnabled(tableConfig.actionCfg);
+    return NgxAurTableConfigUtil.actionConfigs(tableConfig).length > 0;
   }
 
   public static create<T>(tableConfig: TableConfig<T>): RowActionProvider<T> {
@@ -78,7 +84,7 @@ export class RowActionProviderDummy<T> extends RowActionProvider<T> {
     super(EmptyValue.TABLE_CONFIG);
   }
 
-  public override addActionColumn(columns: string[]): RowActionProviderDummy<T> {
+  public override addActionColumns(columns: string[]): RowActionProviderDummy<T> {
     return this;
   }
 

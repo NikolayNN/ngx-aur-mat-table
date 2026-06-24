@@ -238,23 +238,23 @@
           </td>
         </ng-container>
 
-        <!-- action column -->
-        <ng-container *ngIf="rowActionsProvider.isEnabled" [matColumnDef]="rowActionsProvider.COLUMN_NAME">
+        <!-- action columns (одна или несколько) -->
+        <ng-container *ngFor="let col of rowActionsProvider.columns" [matColumnDef]="col.columnName">
           <th mat-header-cell *matHeaderCellDef
-              [style.width]="rowActionsProvider.size?.width"
-              [style.min-width]="rowActionsProvider.size?.minWidth"
-              [style.max-width]="rowActionsProvider.size?.maxWidth"
-              [class.aur-col-fit]="rowActionsProvider.size?.fit"
-              [style.--aur-cell-padding-left]="rowActionsProvider.size?.paddingLeft"
-              [style.--aur-cell-padding-right]="rowActionsProvider.size?.paddingRight"></th>
+              [style.width]="col.size?.width"
+              [style.min-width]="col.size?.minWidth"
+              [style.max-width]="col.size?.maxWidth"
+              [class.aur-col-fit]="col.size?.fit"
+              [style.--aur-cell-padding-left]="col.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="col.size?.paddingRight"></th>
           <td mat-cell *matCellDef="let element" (click)="$event.stopPropagation()" style="cursor: default"
-              [style.width]="rowActionsProvider.size?.width"
-              [style.min-width]="rowActionsProvider.size?.minWidth"
-              [style.max-width]="rowActionsProvider.size?.maxWidth"
-              [class.aur-col-fit]="rowActionsProvider.size?.fit"
-              [style.--aur-cell-padding-left]="rowActionsProvider.size?.paddingLeft"
-              [style.--aur-cell-padding-right]="rowActionsProvider.size?.paddingRight">
-            <ng-container *ngFor="let action of rowActionsProvider.actionView.get(element.id)">
+              [style.width]="col.size?.width"
+              [style.min-width]="col.size?.minWidth"
+              [style.max-width]="col.size?.maxWidth"
+              [class.aur-col-fit]="col.size?.fit"
+              [style.--aur-cell-padding-left]="col.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="col.size?.paddingRight">
+            <ng-container *ngFor="let action of col.actionView.get(element.id)">
               <!-- action with dropdown menu -->
               <ng-container *ngIf="action.menu; else directAction">
                 <ng-container *ngIf="action.visible !== false">
@@ -324,13 +324,13 @@
           </td>
 
           <td mat-footer-cell *matFooterCellDef
-              [style.width]="rowActionsProvider.size?.width"
-              [style.min-width]="rowActionsProvider.size?.minWidth"
-              [style.max-width]="rowActionsProvider.size?.maxWidth"
-              [class.aur-col-fit]="rowActionsProvider.size?.fit"
-              [style.--aur-cell-padding-left]="rowActionsProvider.size?.paddingLeft"
-              [style.--aur-cell-padding-right]="rowActionsProvider.size?.paddingRight">
-            {{ totalRowProvider.totals.get(rowActionsProvider.COLUMN_NAME) ?? '' }}
+              [style.width]="col.size?.width"
+              [style.min-width]="col.size?.minWidth"
+              [style.max-width]="col.size?.maxWidth"
+              [class.aur-col-fit]="col.size?.fit"
+              [style.--aur-cell-padding-left]="col.size?.paddingLeft"
+              [style.--aur-cell-padding-right]="col.size?.paddingRight">
+            {{ totalRowProvider.totals.get(col.columnName) ?? '' }}
           </td>
         </ng-container>
 

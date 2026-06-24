@@ -51,6 +51,7 @@ export {PaginatorState} from './model/PaginatorState';
 import {AurPageLoadedEvent, AurPageSource} from './model/AurPage';
 import {ServerPageController} from './providers/ServerPageController';
 import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.util';
+import { NgxAurTableConfigUtil } from './utils/ngx-aur-table-config.util';
 import {Subscription} from 'rxjs';
 import {NgxAurCellDefDirective} from './directive/ngx-aur-cell-def.directive';
 import {AurCellContext} from './model/AurCellContext';
@@ -591,7 +592,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       .addIndexColumn(this._displayColumns);
 
     this.rowActionsProvider = RowActionProvider.create(this.tableConfig)
-      .addActionColumn(this._displayColumns)
+      .addActionColumns(this._displayColumns)
       .setView(this.tableDataSource.data);
 
     this.selectionProvider = SelectionProvider.create(this.tableConfig, this.tableDataSource, initSelection)
@@ -631,7 +632,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   }
 
   private removeWrongKeysFromDisplayColumns() {
-    const whiteKeys = new Set(this.tableConfig.columnsCfg.map(cfg => cfg.key));
+    const whiteKeys = new Set<string>([
+      ...this.tableConfig.columnsCfg.map(cfg => cfg.key),
+      ...NgxAurTableConfigUtil.actionColumnNames(this.tableConfig),
+    ]);
     this._displayColumns = this._displayColumns.filter(actual => whiteKeys.has(actual) || actual.startsWith('tbl_'));
   }
 
