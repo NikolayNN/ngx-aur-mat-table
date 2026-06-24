@@ -76,6 +76,9 @@ import {
 import {
   TableWithHeaderCellTemplateComponent
 } from "./table-with-header-cell-template/table-with-header-cell-template.component";
+import {
+  TableWithMultipleActionsComponent
+} from "./table-with-multiple-actions/table-with-multiple-actions.component";
 
 @NgModule({
   declarations: [
@@ -118,7 +121,8 @@ import {
     TablePaginationMatrixComponent,
     TableWithRowStyleComponent,
     TableWithCellTemplateComponent,
-    TableWithHeaderCellTemplateComponent
+    TableWithHeaderCellTemplateComponent,
+    TableWithMultipleActionsComponent
   ],
   imports: [
     BrowserModule,
