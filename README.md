@@ -101,18 +101,22 @@ export class SimpleTableComponent {
 остаётся обязательным, поэтому поиск, сортировка и строка «Итого» работают как обычно. Заголовок и
 «Итого» через шаблон не настраиваются (используйте `headerView` и `totalConverter`).
 
-## Detail-row expansion (`extendedRowTemplate`)
+## Detail-row expansion (`ngxAurExpandedRowDef`)
 
-Передайте `<ng-template>` в `[extendedRowTemplate]`, чтобы таблица показывала
-detail-строку под каждой раскрытой строкой:
+Разместите `<ng-template ngxAurExpandedRowDef>` внутри `<aur-mat-table>`, чтобы
+таблица показывала detail-строку под каждой раскрытой строкой:
 
 ```html
-<aur-mat-table [tableData]="data" [tableConfig]="cfg" [extendedRowTemplate]="detailTpl">
-  <ng-template #detailTpl let-row>
-    <div class="detail">{{ row.rowSrc | json }}</div>
+<aur-mat-table [tableData]="data" [tableConfig]="cfg">
+  <ng-template ngxAurExpandedRowDef let-rowSrc>
+    <div class="detail">{{ rowSrc | json }}</div>
   </ng-template>
 </aur-mat-table>
 ```
+
+Контекст шаблона: `$implicit`/`rowSrc` — исходный объект `T`; `row` — полная
+обёртка `TableRow<T>` (`row.rowSrc`, `row.id`); `index` — индекс строки.
+Для доступа к обёртке используйте именованную привязку `let-row="row"`.
 
 ### Управление раскрытием (`extendedRowCfg`)
 
@@ -131,9 +135,54 @@ detail-строку под каждой раскрытой строкой:
 Single (`multiple:false`) → `[expandedRow]`/`(expandedRowChange)` (`T | null`).
 Multiple (`multiple:true`) → `[expandedRows]`/`(expandedRowsChange)` (`T[]`).
 
+```html
+<!-- single -->
+<aur-mat-table [tableConfig]="cfg" [(expandedRow)]="openRow" ...>
+  <ng-template ngxAurExpandedRowDef let-rowSrc>
+    <div class="detail">{{ rowSrc | json }}</div>
+  </ng-template>
+</aur-mat-table>
+
+<!-- multiple: задайте extendedRowCfg: { mode: 'controlled', multiple: true } в tableConfig -->
+<aur-mat-table [tableConfig]="cfg" [(expandedRows)]="openRows" ...>
+  <ng-template ngxAurExpandedRowDef let-rowSrc>
+    <div class="detail">{{ rowSrc | json }}</div>
+  </ng-template>
+</aur-mat-table>
+```
+
 Идентичность раскрытой строки определяется `tableConfig.trackBy` (иначе ссылкой на объект), поэтому раскрытие переживает серверный reload при заданном `trackBy`.
 
+> **Миграция с ≤19.9.x:** `[extendedRowTemplate]`, `[timelineMarkerTemplate]`, `[extraHeaderCellTopTemplate]`, `[extraHeaderCellBottomTemplate]` удалены. Используйте директивы `ngxAurExpandedRowDef`, `ngxAurRowMarkerDef`, `ngxAurExtraHeaderTopDef`, `ngxAurExtraHeaderBottomDef` внутри `<aur-mat-table>`. См. `docs/MIGRATION-19.10.0.md`.
+
 > **Миграция с ≤19.8.x:** `[highlight]` больше не раскрывает detail-строку (только подсветка/скролл). Для программного раскрытия используйте `[expandedRow]`/`[expandedRows]`.
+
+### Template directives and context types
+
+Четыре директивы для передачи шаблонов через проекцию контента:
+
+| Директива | Описание | Контекст |
+|---|---|---|
+| `ngxAurExpandedRowDef` | Detail-строка под раскрытой строкой | `AurRowContext<T>` |
+| `ngxAurRowMarkerDef` | Маркер строки в timeline-режиме | `AurRowContext<T>` |
+| `ngxAurExtraHeaderTopDef` | Дополнительная ячейка верхнего заголовка | `AurExtraHeaderContext` |
+| `ngxAurExtraHeaderBottomDef` | Дополнительная ячейка нижнего заголовка | `AurExtraHeaderContext` |
+
+```ts
+// Контекст строковых директив (ngxAurExpandedRowDef, ngxAurRowMarkerDef)
+interface AurRowContext<T> {
+  $implicit: T;       // исходный объект (rowSrc) — позиционная привязка let-x
+  row: TableRow<T>;   // полная обёртка — let-x="row"
+  rowSrc: T;          // псевдоним $implicit — let-x="rowSrc"
+  index: number;      // индекс строки — let-i="index"
+}
+
+// Контекст extra-header директив
+interface AurExtraHeaderContext {
+  key: string;        // ключ колонки — let-key="key"
+  index: number;      // порядковый индекс — let-i="index"
+}
+```
 
 ## Server pagination via `pageSource` (recommended)
 

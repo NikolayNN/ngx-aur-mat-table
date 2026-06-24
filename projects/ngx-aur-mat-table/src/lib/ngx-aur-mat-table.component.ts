@@ -54,6 +54,12 @@ import { isFeatureEnabled as isFeatureEnabledFn } from './utils/feature-enabled.
 import {Subscription} from 'rxjs';
 import {NgxAurCellDefDirective} from './directive/ngx-aur-cell-def.directive';
 import {AurCellContext} from './model/AurCellContext';
+import {NgxAurExpandedRowDefDirective} from './directive/ngx-aur-expanded-row-def.directive';
+import {NgxAurRowMarkerDefDirective} from './directive/ngx-aur-row-marker-def.directive';
+import {AurRowContext} from './model/AurRowContext';
+import {NgxAurExtraHeaderTopDefDirective} from './directive/ngx-aur-extra-header-top-def.directive';
+import {NgxAurExtraHeaderBottomDefDirective} from './directive/ngx-aur-extra-header-bottom-def.directive';
+import {AurExtraHeaderContext} from './model/AurExtraHeaderContext';
 
 export interface HighlightContainer<T> {
   value: any;
@@ -139,11 +145,28 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   _cellTemplates = new Map<string, TemplateRef<any>>();
   private cellDefsSub?: Subscription;
 
-  // @ts-ignore
-  @Input() extraHeaderCellTopTemplate: TemplateRef<any> | null;
+  @ContentChildren(NgxAurExpandedRowDefDirective, {descendants: true})
+  private expandedRowDefs!: QueryList<NgxAurExpandedRowDefDirective>;
+  private _expandedRowTpl: TemplateRef<AurRowContext<T>> | null = null;
+  get expandedRowTemplate(): TemplateRef<AurRowContext<T>> | null { return this._expandedRowTpl; }
 
-  // @ts-ignore
-  @Input() extraHeaderCellBottomTemplate: TemplateRef<any> | null;
+  @ContentChildren(NgxAurRowMarkerDefDirective, {descendants: true})
+  private rowMarkerDefs!: QueryList<NgxAurRowMarkerDefDirective>;
+  private _rowMarkerTpl: TemplateRef<AurRowContext<T>> | null = null;
+  get rowMarkerTemplate(): TemplateRef<AurRowContext<T>> | null { return this._rowMarkerTpl; }
+
+  @ContentChildren(NgxAurExtraHeaderTopDefDirective, {descendants: true})
+  private extraHeaderTopDefs!: QueryList<NgxAurExtraHeaderTopDefDirective>;
+  private _extraHeaderTopTpl: TemplateRef<AurExtraHeaderContext> | null = null;
+  get extraHeaderTopTemplate(): TemplateRef<AurExtraHeaderContext> | null { return this._extraHeaderTopTpl; }
+
+  @ContentChildren(NgxAurExtraHeaderBottomDefDirective, {descendants: true})
+  private extraHeaderBottomDefs!: QueryList<NgxAurExtraHeaderBottomDefDirective>;
+  private _extraHeaderBottomTpl: TemplateRef<AurExtraHeaderContext> | null = null;
+  get extraHeaderBottomTemplate(): TemplateRef<AurExtraHeaderContext> | null { return this._extraHeaderBottomTpl; }
+
+  /** Подписки на .changes собранных template-директив (отписка в ngOnDestroy). */
+  private defSubs: Subscription[] = [];
 
   // @ts-ignore
   @ViewChildren('rowLink', {read: ElementRef}) rows: QueryList<ElementRef>;
@@ -155,15 +178,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   @Input() tableData: T[] = [];
 
-  @Input() extendedRowTemplate: TemplateRef<any> | null = null;
-
   @Input() expandedRow: T | null = null;
   @Output() expandedRowChange = new EventEmitter<T | null>();
 
   @Input() expandedRows: T[] = [];
   @Output() expandedRowsChange = new EventEmitter<T[]>();
-
-  @Input() timelineMarkerTemplate: TemplateRef<any> | null = null;
 
   // если используется серверный пагинатор, сюда передается текущее состояние пагинатора
   @Input() paginatorState: PaginatorState | undefined;
@@ -223,7 +242,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
    */
   @Output() filterChange = new EventEmitter<T[]>();
 
-  /** @deprecated используйте extraHeaderCellTopTemplate или extraHeaderCellBottomTemplate */
+  /** @deprecated используйте ngxAurExtraHeaderTopDef или ngxAurExtraHeaderBottomDef */
   @Output() columnOffsets = new EventEmitter<ColumnOffset[]>();
   private prevColumnOffsets: ColumnOffset[] = [];
 
@@ -378,6 +397,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       this.rebuildCellTemplates();
       this.cdr.markForCheck();            // таблица OnPush
     });
+    this.defSubs.push(
+      this.resolveDef(this.expandedRowDefs, 'ngxAurExpandedRowDef', t => this._expandedRowTpl = t),
+      this.resolveDef(this.rowMarkerDefs, 'ngxAurRowMarkerDef', t => this._rowMarkerTpl = t),
+      this.resolveDef(this.extraHeaderTopDefs, 'ngxAurExtraHeaderTopDef', t => this._extraHeaderTopTpl = t),
+      this.resolveDef(this.extraHeaderBottomDefs, 'ngxAurExtraHeaderBottomDef', t => this._extraHeaderBottomTpl = t),
+    );
   }
 
   /** Пересобирает карту key → шаблон из спроецированных ngxAurCellDef. */
@@ -392,7 +417,32 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     });
   }
 
-  /** Контекст кастомного шаблона ячейки (пересобирается в CD — как у extendedRowTemplate). */
+  /**
+   * Резолвит одно-слотовую template-директиву: ставит первую в assign, dev-warn при
+   * нескольких, подписывается на .changes (OnPush). Зеркало механизма cellDefs.
+   */
+  private resolveDef<C>(
+    list: QueryList<{ templateRef: TemplateRef<C> }>,
+    selector: string,
+    assign: (tpl: TemplateRef<C> | null) => void,
+  ): Subscription {
+    const apply = () => {
+      if (isDevMode() && list.length > 1) {
+        console.warn(`[aur-mat-table] обнаружено несколько ${selector}; используется первый.`);
+      }
+      assign(list.first?.templateRef ?? null);
+      this.cdr.markForCheck();            // таблица OnPush
+    };
+    apply();
+    return list.changes.subscribe(apply);
+  }
+
+  /** Контекст row-level шаблона (обогащённый, как AurCellContext минус value). */
+  rowCtx(element: TableRow<T>): AurRowContext<T> {
+    return { $implicit: element.rowSrc, row: element, rowSrc: element.rowSrc, index: element.id };
+  }
+
+  /** Контекст кастомного шаблона ячейки (пересобирается в CD). */
   cellCtx(element: TableRow<T>, key: string): AurCellContext<T> {
     const value = element[key];
     return { $implicit: value, value, row: element, rowSrc: element.rowSrc, index: element.id };
@@ -892,7 +942,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   /** Реакция на клик по строке (вызывается из handleRowClick после гейта enable). */
   private handleExpandOnClick(row: TableRow<T>): void {
-    if (!this.extendedRowTemplate) return;
+    if (!this.expandedRowTemplate) return;
     const mode = this.tableConfig.extendedRowCfg?.mode ?? 'row-click';
     if (mode === 'manual') return;                       // клик инертен для раскрытия
     if (mode === 'controlled') {
@@ -1014,6 +1064,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     this.serverPageController?.stop();
     this.externalPaginatorSub?.unsubscribe();
     this.cellDefsSub?.unsubscribe();
+    this.defSubs.forEach(s => s.unsubscribe());
   }
 
   onDragStart($event: DragEvent, row: TableRow<T>) {

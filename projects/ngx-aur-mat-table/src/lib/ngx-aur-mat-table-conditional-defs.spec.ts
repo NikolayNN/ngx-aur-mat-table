@@ -17,15 +17,10 @@ function cfg(): TableConfig<Row> {
 @Component({
   standalone: false,
   template: `
-    <aur-mat-table [tableConfig]="cfg" [tableData]="data"
-                   [extraHeaderCellTopTemplate]="top"
-                   [extraHeaderCellBottomTemplate]="bottom"></aur-mat-table>
-    <ng-template #top let-key="key">
-      <span class="top-cell">T-{{ key }}</span>
-    </ng-template>
-    <ng-template #bottom let-key="key">
-      <span class="bottom-cell">B-{{ key }}</span>
-    </ng-template>`
+    <aur-mat-table [tableConfig]="cfg" [tableData]="data">
+      <ng-template ngxAurExtraHeaderTopDef let-key="key"><span class="top-cell">T-{{ key }}</span></ng-template>
+      <ng-template ngxAurExtraHeaderBottomDef let-key="key"><span class="bottom-cell">B-{{ key }}</span></ng-template>
+    </aur-mat-table>`
 })
 class ExtraHeaderHostComponent {
   cfg = cfg();
@@ -35,11 +30,11 @@ class ExtraHeaderHostComponent {
 @Component({
   standalone: false,
   template: `
-    <aur-mat-table [tableConfig]="cfg" [tableData]="data"
-                   [extendedRowTemplate]="details"></aur-mat-table>
-    <ng-template #details let-row>
-      <div class="row-details">D-{{ row.rowSrc.name }}</div>
-    </ng-template>`
+    <aur-mat-table [tableConfig]="cfg" [tableData]="data">
+      <ng-template ngxAurExpandedRowDef let-row="row">
+        <div class="row-details">D-{{ row.rowSrc.name }}</div>
+      </ng-template>
+    </aur-mat-table>`
 })
 class ExpandedHostComponent {
   cfg = cfg();

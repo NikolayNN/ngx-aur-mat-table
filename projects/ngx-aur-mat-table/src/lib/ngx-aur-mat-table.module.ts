@@ -16,6 +16,10 @@ import {NgxTableSubFooterRowDirective} from './directive/ngx-table-sub-footer-ro
 import {NgxAurTableSearchPrefixDirective} from "./directive/ngx-aur-table-search-prefix.directive";
 import {NgxAurTableSearchSuffixDirective} from "./directive/ngx-aur-table-search-suffix.directive";
 import {NgxAurCellDefDirective} from './directive/ngx-aur-cell-def.directive';
+import {NgxAurExpandedRowDefDirective} from './directive/ngx-aur-expanded-row-def.directive';
+import {NgxAurRowMarkerDefDirective} from './directive/ngx-aur-row-marker-def.directive';
+import {NgxAurExtraHeaderTopDefDirective} from './directive/ngx-aur-extra-header-top-def.directive';
+import {NgxAurExtraHeaderBottomDefDirective} from './directive/ngx-aur-extra-header-bottom-def.directive';
 import {MatMenuModule} from "@angular/material/menu";
 import {IconViewComponent} from "./components/icon-view/icon-view.component";
 
@@ -29,7 +33,11 @@ import {IconViewComponent} from "./components/icon-view/icon-view.component";
     NgxTableSubFooterRowDirective,
     NgxAurTableSearchPrefixDirective,
     NgxAurTableSearchSuffixDirective,
-    NgxAurCellDefDirective
+    NgxAurCellDefDirective,
+    NgxAurExpandedRowDefDirective,
+    NgxAurRowMarkerDefDirective,
+    NgxAurExtraHeaderTopDefDirective,
+    NgxAurExtraHeaderBottomDefDirective
   ],
   imports: [
     CommonModule,
@@ -50,7 +58,11 @@ import {IconViewComponent} from "./components/icon-view/icon-view.component";
     NgxTableSubFooterRowDirective,
     NgxAurTableSearchPrefixDirective,
     NgxAurTableSearchSuffixDirective,
-    NgxAurCellDefDirective
+    NgxAurCellDefDirective,
+    NgxAurExpandedRowDefDirective,
+    NgxAurRowMarkerDefDirective,
+    NgxAurExtraHeaderTopDefDirective,
+    NgxAurExtraHeaderBottomDefDirective
   ]
 })
 export class NgxAurMatTableModule {

@@ -75,8 +75,8 @@ export interface TableConfig<T> {
   bodyRowCfg?: BodyRowConfig<T>,
 
   /**
-   * Поведение раскрытия detail-строки (extendedRowTemplate).
-   * Действует только при заданном [extendedRowTemplate]; иначе инертно.
+   * Поведение раскрытия detail-строки (ngxAurExpandedRowDef).
+   * Действует только при наличии директивы ngxAurExpandedRowDef; иначе инертно.
    */
   extendedRowCfg?: ExtendedRowConfig,
 
