@@ -366,6 +366,37 @@ tableConfig: TableConfig<ReportRow> = {
 
 **Default alignment:** `tableViewCfg.align` (`'left' | 'center' | 'right'`) sets the default for all data columns and the index column at once; a per-column `ColumnConfig.align` / `IndexConfig.align` overrides it. Without it columns stay left-aligned as before.
 
+### Row type markers (CSS hooks)
+
+Every rendered `<tr>` carries a stable, namespaced marker class, so the three row
+types are explicitly distinguishable from your own (global / `::ng-deep`) CSS:
+
+| Row type | Marker class |
+|---|---|
+| data row | `aur-data-row` |
+| detail / expanded row (`ngxAurExpandedRowDef`) | `aur-expanded-row` |
+| total / footer row | `aur-total-row` |
+
+The library attaches no styling of its own to these classes — they are pure hooks.
+The detail row also keeps its legacy `expanded-row` class for backward compatibility.
+
+```css
+/* neutralize the hover your app/theme applies to the detail row */
+tr.aur-expanded-row:hover { background: none; }
+
+/* give the detail "drawer" a background and drop its own bottom border */
+tr.aur-expanded-row { background: #fafafa; }
+tr.aur-expanded-row td.expanded-cell { border-bottom: none; }
+
+/* emphasize the total row */
+tr.aur-total-row { font-weight: 600; }
+```
+
+> A collapsed detail row has `height: 0`, so its `:hover` never triggers — the marker
+> targets the expanded one. Merging a detail row visually with its parent (removing the
+> separator *between* them) is the parent data row's cell `border-bottom`, and is out of
+> scope here.
+
 ### Migration from pre-19.1.0
 
 ```ts
