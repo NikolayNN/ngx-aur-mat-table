@@ -1,0 +1,13 @@
+/* Маркер-классы строк — стилизуем detail обычным CSS.
+   ::ng-deep нужен, т.к. <tr> принадлежит библиотечному компоненту (эмулированная инкапсуляция). */
+:host ::ng-deep tr.aur-expanded-row {
+  background: #fafafa;
+}
+
+:host ::ng-deep tr.aur-expanded-row:hover {
+  background: #fafafa; /* гасим унаследованный hover на детали */
+}
+
+:host ::ng-deep tr.aur-expanded-row td.expanded-cell {
+  border-bottom: none;
+}

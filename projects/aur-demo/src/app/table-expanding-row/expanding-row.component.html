@@ -24,6 +24,17 @@
   &#125;,
 </pre>
 
+<hr/>
+<h3>Маркер-классы типов строк</h3>
+<p>Каждый <code>&lt;tr&gt;</code> несёт стабильный класс:
+  <code>aur-data-row</code>, <code>aur-expanded-row</code>, <code>aur-total-row</code>.
+  Стилизуйте их своим (глобальным / <code>::ng-deep</code>) CSS. В этом примере detail-строка
+  получает фон и сброс hover (см. expanding-row.component.scss):</p>
+<pre>
+  :host ::ng-deep tr.aur-expanded-row &#123; background: #fafafa; &#125;
+  :host ::ng-deep tr.aur-expanded-row:hover &#123; background: #fafafa; &#125;
+</pre>
+
 <aur-mat-table
   [tableData]="tableData"
   [tableConfig]="tableConfig">
