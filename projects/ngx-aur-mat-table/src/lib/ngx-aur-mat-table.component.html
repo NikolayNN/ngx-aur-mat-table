@@ -459,7 +459,7 @@
           </tr>
         </ng-container>
 
-        <tr mat-row #rowLink
+        <tr mat-row #rowLink class="aur-data-row"
             (dragover)="onDragOver($event)"
             (drop)="onDrop($event, row)"
             *matRowDef="let row; columns: _displayColumns;"
@@ -497,12 +497,12 @@
         </ng-container>
 
         <ng-container *ngIf="expandedRowTemplate">
-          <tr mat-row class="expanded-row" *matRowDef="let row; columns: ['expandedRow']"></tr>
+          <tr mat-row class="expanded-row aur-expanded-row" *matRowDef="let row; columns: ['expandedRow']"></tr>
         </ng-container>
         <!--expanded-row-->
 
         <ng-container *ngIf="totalRowProvider.isEnabled">
-          <tr mat-footer-row *matFooterRowDef="_displayColumns; sticky: this.tableConfig.stickyCfg?.total"
+          <tr mat-footer-row class="aur-total-row" *matFooterRowDef="_displayColumns; sticky: this.tableConfig.stickyCfg?.total"
               [style]="_totalStyle" [ngClass]="_totalClass"
               [style.display]="isTotalRowVisible() ? null : 'none'"></tr>
         </ng-container>
