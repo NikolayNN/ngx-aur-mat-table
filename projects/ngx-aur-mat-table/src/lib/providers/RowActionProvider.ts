@@ -1,4 +1,4 @@
-import { Action, ActionColumnPosition, ActionConfig, ColumnSize, DEFAULT_ACTION_COLUMN, TableConfig } from "../model/ColumnConfig";
+import { Action, ActionColumnPosition, ActionConfig, AUR_COLUMN, ColumnSize, DEFAULT_ACTION_COLUMN, TableConfig } from "../model/ColumnConfig";
 import { TableRow } from "../model/TableRow";
 import { ActionViewFactory } from "../factories/ActionViewFactory";
 import { EmptyValue } from "../model/EmptyValue";
@@ -33,13 +33,35 @@ export class RowActionProvider<T> extends AbstractProvider {
 
   constructor(tableConfig: TableConfig<T>) {
     super();
-    this.configs = NgxAurTableConfigUtil.actionConfigs(tableConfig);
+    this.configs = this.resolveConfigs(tableConfig);
     this.columns = this.configs.map(cfg => ({
       columnName: NgxAurTableConfigUtil.actionColumnName(cfg),
       size: cfg.size,
       position: cfg.position ?? 'end',
       actionView: new Map<number, Action<string>[]>(),
     }));
+  }
+
+  /** Нормализация + отбрасывание дублей/коллизий ключей (dev-warn). Возвращает выровненный с columns список. */
+  private resolveConfigs(tableConfig: TableConfig<T>): ActionConfig<T>[] {
+    const reserved = new Set<string>([
+      ...tableConfig.columnsCfg.map(c => c.key),
+      AUR_COLUMN.selection, AUR_COLUMN.index, AUR_COLUMN.drag, AUR_COLUMN.timeline,
+    ]);
+    const taken = new Set<string>();
+    const kept: ActionConfig<T>[] = [];
+    for (const cfg of NgxAurTableConfigUtil.actionConfigs(tableConfig)) {
+      const name = NgxAurTableConfigUtil.actionColumnName(cfg);
+      if (taken.has(name) || reserved.has(name)) {
+        if (isDevMode()) {
+          console.warn(`[aur-mat-table] action key "${name}" дублируется или конфликтует с другой колонкой — колонка пропущена.`);
+        }
+        continue;
+      }
+      taken.add(name);
+      kept.push(cfg);
+    }
+    return kept;
   }
 
   /** Фаза 1: вставка колонок со строковым position ('start'/'end'). */

@@ -99,3 +99,28 @@ describe('RowActionProvider — якоря (before/after)', () => {
     expect(cols).toEqual(['x', 'name']);
   });
 });
+
+describe('RowActionProvider — валидация ключей (dev-warn)', () => {
+  it('дубль key → одна колонка + warn', () => {
+    const warn = spyOn(console, 'warn');
+    const p = RowActionProvider.create(cfgOf([
+      { key: 'a', actions: [] }, { key: 'a', actions: [] },
+    ]));
+    expect(p.columns.map(c => c.columnName)).toEqual(['a']);
+    expect(warn).toHaveBeenCalled();
+  });
+
+  it('коллизия с data-ключом → колонка отброшена + warn', () => {
+    const warn = spyOn(console, 'warn');
+    const p = RowActionProvider.create(cfgOf([{ key: 'name', actions: [] }]));
+    expect(p.columns.length).toBe(0);
+    expect(warn).toHaveBeenCalled();
+  });
+
+  it('коллизия с зарезервированным спец-именем (tbl_selects) → отброшена + warn', () => {
+    const warn = spyOn(console, 'warn');
+    const p = RowActionProvider.create(cfgOf([{ key: 'tbl_selects', actions: [] }]));
+    expect(p.columns.length).toBe(0);
+    expect(warn).toHaveBeenCalled();
+  });
+});
