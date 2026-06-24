@@ -73,6 +73,9 @@ import {
 import {
   TableWithCellTemplateComponent
 } from "./table-with-cell-template/table-with-cell-template.component";
+import {
+  TableWithHeaderCellTemplateComponent
+} from "./table-with-header-cell-template/table-with-header-cell-template.component";
 
 @NgModule({
   declarations: [
@@ -114,7 +117,8 @@ import {
     TableWithExternalPaginatorComponent,
     TablePaginationMatrixComponent,
     TableWithRowStyleComponent,
-    TableWithCellTemplateComponent
+    TableWithCellTemplateComponent,
+    TableWithHeaderCellTemplateComponent
   ],
   imports: [
     BrowserModule,

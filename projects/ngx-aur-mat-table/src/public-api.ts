@@ -24,9 +24,11 @@ export * from './lib/directive/ngx-aur-expanded-row-def.directive'
 export * from './lib/directive/ngx-aur-row-marker-def.directive'
 export * from './lib/directive/ngx-aur-extra-header-top-def.directive'
 export * from './lib/directive/ngx-aur-extra-header-bottom-def.directive'
+export * from './lib/directive/ngx-aur-header-cell-def.directive'
 export * from './lib/model/AurExtraHeaderContext';
 export * from './lib/model/AurCellContext';
 export * from './lib/model/AurRowContext';
+export * from './lib/model/AurHeaderCellContext';
 export * from './lib/drag-drop/aur-drag-drop-component'
 export * from './lib/drag-drop/aur-drag-drop.manager'
 export * from './lib/drag-drop/model/aur-drag-drop-mapping'

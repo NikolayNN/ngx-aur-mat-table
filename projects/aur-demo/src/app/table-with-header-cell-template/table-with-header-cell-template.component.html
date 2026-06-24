@@ -1,0 +1,31 @@
+<h2>Кастомный шаблон заголовка (ngxAurHeaderCellDef)</h2>
+<p>
+  Произвольная разметка в &lt;th&gt; конкретной колонки. По умолчанию шаблон живёт внутри
+  mat-sort-header (стрелка/клик сохраняются); флаг <code>ownsCell</code> отдаёт ячейку шаблону
+  целиком, sort/filter берутся из контекста.
+</p>
+
+<aur-mat-table [tableData]="tableData" [tableConfig]="tableConfig">
+
+  <!-- keep-sort (по умолчанию): своя разметка + встроенная стрелка/клик-сортировка -->
+  <ng-template ngxAurHeaderCellDef="name" let-column>
+    <span class="h-label">🛒 {{ column.name }}</span>
+  </ng-template>
+
+  <!-- ownsCell: фильтр прямо в заголовке -->
+  <ng-template ngxAurHeaderCellDef="category" ownsCell let-column let-filter="filter">
+    <div class="h-filter">
+      <span>{{ column.name }}</span>
+      <input #f (input)="filter.apply(makeCategoryFilter(f.value))" placeholder="фильтр…">
+      <button *ngIf="filter.active" (click)="f.value=''; filter.remove()">✕</button>
+    </div>
+  </ng-template>
+
+  <!-- ownsCell: своя кнопка-сортировка через sort.toggle() -->
+  <ng-template ngxAurHeaderCellDef="price" ownsCell let-column let-sort="sort">
+    <button class="h-sort" (click)="sort.toggle()">
+      {{ column.name }} {{ sort.active ? (sort.direction === 'asc' ? '▲' : '▼') : '⇅' }}
+    </button>
+  </ng-template>
+
+</aur-mat-table>

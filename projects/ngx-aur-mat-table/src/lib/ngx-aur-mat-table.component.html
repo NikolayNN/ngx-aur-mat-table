@@ -337,8 +337,8 @@
         <!--    value-icon-->
         <ng-container *ngFor="let columnConfig of tableConfig.columnsCfg" [matColumnDef]="columnConfig.key">
 
-          <!-- if sortable column header -->
-          <ng-container *ngIf="isFeatureEnabled(columnConfig.sort); else notSortable">
+          <!-- if sortable column header (и шаблон не забрал ячейку через ownsCell) -->
+          <ng-container *ngIf="isHeaderSortHeader(columnConfig); else notSortable">
             <th mat-header-cell *matHeaderCellDef [mat-sort-header]="columnConfig.key"
                 [arrowPosition]="columnConfig.sort?.position === 'start' ? 'before' : 'after'"
                 [style.width]="columnConfig.size?.width"
@@ -366,11 +366,16 @@
             </th>
           </ng-template>
 
-          <!--      header value-->
+          <!--      header value: кастомный шаблон (ngxAurHeaderCellDef) имеет приоритет над name/headerView-->
           <ng-template #headerValue>
-            <lib-column-view [config]="columnConfig.headerView"
-                             [value]="columnConfig.name">
-            </lib-column-view>
+            <ng-container *ngIf="headerTpl(columnConfig.key) as hTpl; else builtinHeader">
+              <ng-container *ngTemplateOutlet="hTpl; context: headerCtx(columnConfig)"></ng-container>
+            </ng-container>
+            <ng-template #builtinHeader>
+              <lib-column-view [config]="columnConfig.headerView"
+                               [value]="columnConfig.name">
+              </lib-column-view>
+            </ng-template>
           </ng-template>
 
           <!-- column value получать настройки колонок нужно через getView(rowIndex, columnConfig.key) там находятся уже

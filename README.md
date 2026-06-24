@@ -98,8 +98,52 @@ export class SimpleTableComponent {
 Контекст шаблона: `$implicit`/`value` — значение колонки (`valueConverter`), `row` — `TableRow`
 (`row.rowSrc` — исходный объект, `row.id` — индекс), `rowSrc` — алиас `row.rowSrc`, `index` — индекс
 строки. Шаблон заменяет только тело ячеек данных и имеет приоритет над `valueView`; `valueConverter`
-остаётся обязательным, поэтому поиск, сортировка и строка «Итого» работают как обычно. Заголовок и
-«Итого» через шаблон не настраиваются (используйте `headerView` и `totalConverter`).
+остаётся обязательным, поэтому поиск, сортировка и строка «Итого» работают как обычно. «Итого» через
+шаблон не настраивается (используйте `totalConverter`); заголовок настраивается отдельной директивой
+`ngxAurHeaderCellDef` (см. ниже).
+
+## Кастомный шаблон заголовка (`ngxAurHeaderCellDef`)
+
+Когда заголовок колонки не описать через `name`/`headerView` (нужны селектор, фильтр-инпут, toggle,
+своя вёрстка), `<th>` колонки можно отрисовать произвольным `<ng-template>`. Положите его внутрь
+`<aur-mat-table>` и привяжите к колонке по её `key` через директиву `ngxAurHeaderCellDef`:
+
+```html
+<aur-mat-table [tableData]="data" [tableConfig]="cfg">
+
+  <!-- по умолчанию: своя разметка внутри mat-sort-header (стрелка и клик-сортировка сохраняются) -->
+  <ng-template ngxAurHeaderCellDef="amount" let-column let-sort="sort">
+    <b>{{ column.name }}</b> <small *ngIf="sort.active">{{ sort.direction }}</small>
+  </ng-template>
+
+  <!-- ownsCell: шаблон владеет всем <th> (без mat-sort-header); sort/filter — из контекста -->
+  <ng-template ngxAurHeaderCellDef="status" ownsCell let-filter="filter">
+    <input (input)="filter.apply(buildFilter($event))" placeholder="фильтр">
+    <button *ngIf="filter.active" (click)="filter.remove()">✕</button>
+  </ng-template>
+
+</aur-mat-table>
+```
+
+Шаблон имеет приоритет над `name`/`headerView` и заменяет содержимое заголовка одной data-колонки.
+
+**Сортировка.** По умолчанию шаблон рендерится **внутри** `mat-sort-header` — встроенные стрелка и
+клик-сортировка по всей ячейке сохраняются (подходит для косметических заголовков). Для
+интерактивного содержимого (input/checkbox/toggle) добавьте атрибут `ownsCell`: он убирает
+`mat-sort-header`, отдаёт `<th>` шаблону целиком и снимает конфликт клика; сортировку при
+необходимости пересоберите через хэндл `sort` из контекста.
+
+**Контекст шаблона:**
+
+| Поле | Значение |
+|---|---|
+| `$implicit` / `column` | `ColumnConfig` колонки (`let-column`) |
+| `key` | ключ колонки (`ColumnConfig.key`) |
+| `sort` | `{ sortable, active, direction: 'asc' \| 'desc' \| '', toggle() }` |
+| `filter` | `{ apply(filter), remove(), active }` — обёртка над `applyFilter`/`removeFilter`, имя фильтра = `key` |
+
+Заголовки спец-колонок (выбор/индекс/действия) и шаблон строки «Итого» — вне scope (используйте их
+встроенные настройки и `totalConverter`).
 
 ## Detail-row expansion (`ngxAurExpandedRowDef`)
 

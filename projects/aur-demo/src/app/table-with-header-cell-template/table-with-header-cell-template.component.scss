@@ -1,0 +1,30 @@
+.h-label {
+  font-weight: 600;
+}
+
+.h-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  input {
+    width: 90px;
+    font-size: 12px;
+    padding: 2px 4px;
+  }
+
+  button {
+    cursor: pointer;
+    border: none;
+    background: transparent;
+  }
+}
+
+.h-sort {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-weight: 600;
+  padding: 0;
+}

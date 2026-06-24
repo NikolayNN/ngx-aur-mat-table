@@ -21,7 +21,7 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-import {ColumnAlign, ColumnView, RowValue, TableConfig} from './model/ColumnConfig';
+import {ColumnAlign, ColumnConfig, ColumnView, RowValue, TableConfig} from './model/ColumnConfig';
 import {StyleBuilder} from './style-builder/style-builder';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -60,6 +60,8 @@ import {AurRowContext} from './model/AurRowContext';
 import {NgxAurExtraHeaderTopDefDirective} from './directive/ngx-aur-extra-header-top-def.directive';
 import {NgxAurExtraHeaderBottomDefDirective} from './directive/ngx-aur-extra-header-bottom-def.directive';
 import {AurExtraHeaderContext} from './model/AurExtraHeaderContext';
+import {NgxAurHeaderCellDefDirective} from './directive/ngx-aur-header-cell-def.directive';
+import {AurHeaderCellContext} from './model/AurHeaderCellContext';
 
 export interface HighlightContainer<T> {
   value: any;
@@ -144,6 +146,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   /** key → шаблон тела ячейки, собранный из спроецированных ngxAurCellDef. */
   _cellTemplates = new Map<string, TemplateRef<any>>();
   private cellDefsSub?: Subscription;
+
+  @ContentChildren(NgxAurHeaderCellDefDirective, {descendants: true})
+  headerCellDefs!: QueryList<NgxAurHeaderCellDefDirective>;
+
+  /** key → деф заголовка (templateRef + ownsCell), собранный из спроецированных ngxAurHeaderCellDef. */
+  _headerCellDefs = new Map<string, NgxAurHeaderCellDefDirective>();
+  private headerCellDefsSub?: Subscription;
 
   @ContentChildren(NgxAurExpandedRowDefDirective, {descendants: true})
   private expandedRowDefs!: QueryList<NgxAurExpandedRowDefDirective>;
@@ -397,6 +406,11 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       this.rebuildCellTemplates();
       this.cdr.markForCheck();            // таблица OnPush
     });
+    this.rebuildHeaderCellTemplates();
+    this.headerCellDefsSub = this.headerCellDefs.changes.subscribe(() => {
+      this.rebuildHeaderCellTemplates();
+      this.cdr.markForCheck();            // таблица OnPush
+    });
     this.defSubs.push(
       this.resolveDef(this.expandedRowDefs, 'ngxAurExpandedRowDef', t => this._expandedRowTpl = t),
       this.resolveDef(this.rowMarkerDefs, 'ngxAurRowMarkerDef', t => this._rowMarkerTpl = t),
@@ -446,6 +460,55 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   cellCtx(element: TableRow<T>, key: string): AurCellContext<T> {
     const value = element[key];
     return { $implicit: value, value, row: element, rowSrc: element.rowSrc, index: element.id };
+  }
+
+  /** Пересобирает карту key → деф заголовка из спроецированных ngxAurHeaderCellDef. */
+  private rebuildHeaderCellTemplates(): void {
+    this._headerCellDefs.clear();
+    const keys = new Set(this.tableConfig.columnsCfg.map(c => c.key));
+    this.headerCellDefs.forEach(def => {
+      this._headerCellDefs.set(def.key, def);   // дубль ключа → побеждает последний
+      if (isDevMode() && !keys.has(def.key)) {
+        console.warn(`[aur-mat-table] ngxAurHeaderCellDef="${def.key}" не соответствует ни одной колонке.`);
+      }
+    });
+  }
+
+  /** Шаблон заголовка для колонки (или null). */
+  headerTpl(key: string): TemplateRef<AurHeaderCellContext<T>> | null {
+    return this._headerCellDefs.get(key)?.templateRef ?? null;
+  }
+
+  /** Шаблон заголовка забрал ячейку (ownsCell) — mat-sort-header не рендерится. */
+  private headerOwnsCell(key: string): boolean {
+    return !!this._headerCellDefs.get(key)?.ownsCell;
+  }
+
+  /** Рендерить mat-sort-header, если колонка сортируема И шаблон не забрал ячейку (ownsCell). */
+  isHeaderSortHeader(col: ColumnConfig<T>): boolean {
+    return isFeatureEnabledFn(col.sort) && !this.headerOwnsCell(col.key);
+  }
+
+  /** Контекст header-шаблона (пересобирается в CD, как cellCtx). */
+  headerCtx(col: ColumnConfig<T>): AurHeaderCellContext<T> {
+    const key = col.key;
+    const active = this.matSort?.active === key;
+    return {
+      $implicit: col,
+      column: col,
+      key,
+      sort: {
+        sortable: isFeatureEnabledFn(col.sort),
+        active,
+        direction: active ? this.matSort.direction : '',
+        toggle: () => this.matSort?.sort({ id: key, start: 'asc', disableClear: false }),
+      },
+      filter: {
+        apply: f => this.applyFilter(key, f),
+        remove: () => this.removeFilter(key),
+        active: this.filterStorage.has(key),
+      },
+    };
   }
 
   // нам это нужно, чтобы пагинация работала с *ngIf
@@ -1064,6 +1127,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     this.serverPageController?.stop();
     this.externalPaginatorSub?.unsubscribe();
     this.cellDefsSub?.unsubscribe();
+    this.headerCellDefsSub?.unsubscribe();
     this.defSubs.forEach(s => s.unsubscribe());
   }
 
