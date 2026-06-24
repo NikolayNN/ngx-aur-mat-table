@@ -313,10 +313,25 @@ export interface FilterConfig {
   placeholder?: string;
 }
 
+/** Позиция колонки действий. По умолчанию 'end'. */
+export type ActionColumnPosition =
+  | 'start'
+  | 'end'
+  | { before: string }   // вставить непосредственно ПЕРЕД колонкой с этим ключом
+  | { after: string };   // ...или ПОСЛЕ
+
 export interface ActionConfig<T> {
+  /**
+   * Уникальный ключ колонки действий. ОН ЖЕ имя matColumnDef и публичная идентичность
+   * (используется в anchor before/after и в [displayColumns]).
+   * Не задан → 'tbl_actions' (историческое имя; сохраняет обратную совместимость одиночной колонки).
+   * Для нескольких колонок key обязателен и должен быть уникален.
+   */
+  key?: string;
   enable?: boolean;
   actions: Action<(value: T) => string>[];
-  position?: 'start' | 'end';
+  /** По умолчанию 'end'. */
+  position?: ActionColumnPosition;
   size?: ColumnSize;
 }
 
@@ -457,3 +472,17 @@ export interface TimelineConfig<T = any> {
   segmentColor?: (prev: TableRow<T>, next: TableRow<T>) => string;
   size?: ColumnSize;
 }
+
+/** Имя по умолчанию для колонки действий без явного key (историческое). */
+export const DEFAULT_ACTION_COLUMN = 'tbl_actions';
+
+/**
+ * Публичные ссылки на спец-колонки для anchor (before/after), чтобы не хардкодить внутренние tbl_*.
+ * Значения ОБЯЗАНЫ совпадать с *Provider.COLUMN_NAME (есть тест синхронизации).
+ */
+export const AUR_COLUMN = {
+  selection: 'tbl_selects',
+  index:     'tbl_index',
+  drag:      'tbl_drag_col',
+  timeline:  'tbl_timeline',
+} as const;
