@@ -394,8 +394,8 @@ tr.aur-total-row { font-weight: 600; }
 
 > A collapsed detail row has `height: 0`, so its `:hover` never triggers — the marker
 > targets the expanded one. Merging a detail row visually with its parent (removing the
-> separator *between* them) is the parent data row's cell `border-bottom`, and is out of
-> scope here.
+> separator *between* them) is controlled by the parent data row's cell `border-bottom`,
+> and is out of scope here.
 
 ### Migration from pre-19.1.0
 
