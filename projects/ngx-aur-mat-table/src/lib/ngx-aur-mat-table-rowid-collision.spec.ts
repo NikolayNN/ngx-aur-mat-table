@@ -78,3 +78,58 @@ describe('NgxAurMatTable rowId collision — valueView with column key "id"', ()
         .not.toBeNull());
   });
 });
+
+@Component({
+  standalone: false,
+  template: `<aur-mat-table [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class IndexColumnHostComponent {
+  cfg: TableConfig<Row> = {
+    indexCfg: {offset: 1},
+    columnsCfg: [{key: 'id', name: 'ID', valueConverter: v => v.id}],
+  };
+  data: Row[] = [{id: 23, status: 'RUN'}, {id: 3, status: 'RUN'}, {id: 2, status: 'RUN'}, {id: 1, status: 'RUN'}];
+}
+
+describe('NgxAurMatTable rowId collision — index column with a key:"id" column', () => {
+  it('shows the positional row number, not the business id', async () => {
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [IndexColumnHostComponent],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(IndexColumnHostComponent);
+    fixture.detectChanges();
+    // index column (tbl_index) is prepended → first cell of each row
+    const indexCells = Array.from(
+      fixture.nativeElement.querySelectorAll('tr.mat-mdc-row td.mat-mdc-cell:first-child')) as HTMLElement[];
+    expect(indexCells.map(c => c.textContent!.trim())).toEqual(['1', '2', '3', '4']);
+  });
+});
+
+@Component({
+  standalone: false,
+  template: `<aur-mat-table [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class RowStyleHostComponent {
+  cfg: TableConfig<Row> = {
+    bodyRowCfg: {styleCfg: {class: r => r.rowSrc.status === 'RUN' ? 'is-run' : null}},
+    columnsCfg: [{key: 'id', name: 'ID', valueConverter: v => v.id}],
+  };
+  data: Row[] = [{id: 23, status: 'RUN'}, {id: 3, status: 'IDLE'}];
+}
+
+describe('NgxAurMatTable rowId collision — row styles with a key:"id" column', () => {
+  it('applies the per-row class to the correct row (business id out of index range)', async () => {
+    TestBed.resetTestingModule();
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [RowStyleHostComponent],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(RowStyleHostComponent);
+    fixture.detectChanges();
+    const rows = Array.from(fixture.nativeElement.querySelectorAll('tr.mat-mdc-row')) as HTMLElement[];
+    expect(rows[0].classList.contains('is-run')).withContext('строка id=23 (RUN) должна получить класс').toBeTrue();
+    expect(rows[1].classList.contains('is-run')).withContext('строка id=3 (IDLE) не должна').toBeFalse();
+  });
+});

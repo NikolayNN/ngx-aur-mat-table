@@ -6,10 +6,10 @@ export interface AurCellContext<T = any> {
   $implicit: any;
   /** Именованный алиас $implicit (для let-value="value"). */
   value: any;
-  /** Строка таблицы: .rowSrc — исходный объект T, .id — индекс строки. */
+  /** Строка таблицы: .rowSrc — исходный объект T, .rowId — индекс строки. */
   row: TableRow<T>;
   /** Удобный алиас row.rowSrc. */
   rowSrc: T;
-  /** Индекс строки = row.id. */
+  /** Индекс строки = row.rowId. */
   index: number;
 }

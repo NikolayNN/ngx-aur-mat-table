@@ -4,10 +4,10 @@ import { TableRow } from './TableRow';
 export interface AurRowContext<T = any> {
   /** Исходный объект строки (row.rowSrc). */
   $implicit: T;
-  /** Строка таблицы: .rowSrc — исходный объект T, .id — индекс строки. */
+  /** Строка таблицы: .rowSrc — исходный объект T, .rowId — индекс строки. */
   row: TableRow<T>;
   /** Удобный алиас row.rowSrc. */
   rowSrc: T;
-  /** Индекс строки = row.id. */
+  /** Индекс строки = row.rowId. */
   index: number;
 }

@@ -10,7 +10,7 @@ export interface ResolvedRowStyle {
 export class RowStyleFactory {
 
   /**
-   * Разрешает `bodyRowCfg.styleCfg` в массив по строкам, индексированный по `row.id`.
+   * Разрешает `bodyRowCfg.styleCfg` в массив по строкам, индексированный по `row.rowId`.
    * Возвращает пустой массив, когда хук не сконфигурирован. Стили хранятся в сыром виде
    * (не собранные `StyleBuilder.Row | string`), чтобы компонент мог вызвать `overrideWith()`/`build()` во время отрисовки.
    */
