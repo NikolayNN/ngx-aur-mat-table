@@ -27,7 +27,7 @@ export class TablesDragDropComponent implements OnInit {
     this.dragDropManagerService.deleteFromFirstTableEvent
       .subscribe(deletedRows => {
         // Создаем Set для хранения индексов, которые нужно удалить
-        const indicesToDelete = new Set(deletedRows.map(row => row.id));
+        const indicesToDelete = new Set(deletedRows.map(row => row.rowId));
 
         // Отфильтровываем элементы, оставляя только те, которых нет в Set indicesToDelete
         this.tableDataFirst = this.tableDataFirst.filter((_, index) => !indicesToDelete.has(index));

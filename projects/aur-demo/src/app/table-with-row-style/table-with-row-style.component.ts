@@ -13,7 +13,7 @@ import FontWeight = StyleBuilder.FontWeight;
 export class TableWithRowStyleComponent {
 
   /** every 5th row is treated as a bold "subtotal" row */
-  private isSubtotal = (row: TableRow<Customer>): boolean => row.id % 5 === 4;
+  private isSubtotal = (row: TableRow<Customer>): boolean => row.rowId % 5 === 4;
 
   tableConfig: TableConfig<Customer> = {
     columnsCfg: [
