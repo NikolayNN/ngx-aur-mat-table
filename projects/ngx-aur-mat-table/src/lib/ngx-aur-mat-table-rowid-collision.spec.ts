@@ -21,6 +21,36 @@ class IdColumnHostComponent {
   data: Row[] = [{id: 23, status: 'RUN'}, {id: 3, status: 'RUN'}, {id: 2, status: 'RUN'}, {id: 1, status: 'RUN'}];
 }
 
+@Component({
+  standalone: false,
+  template: `<aur-mat-table [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class ReservedKeyHostComponent {
+  cfg: TableConfig<any> = { columnsCfg: [{key: 'rowId', name: 'X', valueConverter: (v: any) => v.x}] };
+  data: any[] = [{x: 1}];
+}
+
+describe('NgxAurMatTable rowId collision — reserved-key guard', () => {
+  function renderWith(key: string): () => void {
+    TestBed.resetTestingModule();
+    TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [ReservedKeyHostComponent],
+    });
+    const fixture = TestBed.createComponent(ReservedKeyHostComponent);
+    fixture.componentInstance.cfg = {columnsCfg: [{key, name: 'X', valueConverter: (v: any) => v.x}]};
+    return () => fixture.detectChanges();
+  }
+
+  it('throws when a column key is "rowId"', () => {
+    expect(renderWith('rowId')).toThrowError(/конфликтует со служебным полем/);
+  });
+
+  it('throws when a column key is "rowSrc"', () => {
+    expect(renderWith('rowSrc')).toThrowError(/конфликтует со служебным полем/);
+  });
+});
+
 describe('NgxAurMatTable rowId collision — valueView with column key "id"', () => {
   let fixture: ComponentFixture<IdColumnHostComponent>;
 

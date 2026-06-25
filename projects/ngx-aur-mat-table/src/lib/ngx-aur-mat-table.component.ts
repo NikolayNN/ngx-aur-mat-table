@@ -396,8 +396,23 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     if (!this.tableConfig) {
       throw new Error("init inputs [tableConfig] is mandatory!")
     }
+    this.assertNoReservedColumnKeys();
     if (this.isServerWiring() && !this.paginatorState) {
       this.paginatorState = PaginatorState.empty();
+    }
+  }
+
+  /**
+   * Ключ колонки не должен совпадать со служебным полем TableRow: иначе overlay
+   * `row[c.key] = valueConverter(...)` затирает его (как было с `id` до 20.0.0).
+   */
+  private assertNoReservedColumnKeys(): void {
+    const RESERVED = ['rowId', 'rowSrc'];
+    const clash = this.tableConfig.columnsCfg.find(c => RESERVED.includes(c.key));
+    if (clash) {
+      throw new Error(
+        `[aur-mat-table] ключ колонки "${clash.key}" конфликтует со служебным полем TableRow ` +
+        `(${RESERVED.join(', ')}). Переименуйте колонку.`);
     }
   }
 
