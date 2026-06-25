@@ -63,9 +63,9 @@ config.forEach(c => row[c.key] = c.valueConverter(obj)); // key:'id' → row.id 
 |---|---|
 | Имя служебного поля | `id` → **`rowId`** (однообразно с существующим публичным `rowSrc`) |
 | `rowSrc` | **не трогаем** — established публичный контракт, низко-коллизионный |
-| Защита от коллизии | **dev-guard**: `isDevMode()` + `console.warn('[aur-mat-table] …')` на колонку с ключом из reserved-набора |
+| Защита от коллизии | **guard fail-fast**: `throw new Error` на init для колонки с ключом из reserved-набора (модель обязательной проверки `[tableConfig]`, `component.ts:397`) |
 | Reserved-набор | ровно `['rowId', 'rowSrc']` (единственные именованные поля `TableRow`) |
-| Реакция guard'а | warn + continue (house-стиль, как `RowActionProvider.ts:56`); сломанный рендер всё равно произойдёт, но dev получает точную причину |
+| Реакция guard'а | **throw на init** — таблица не инициализируется до исправления конфига; никакого тихого/сломанного рендера (фатальная конфиг-ошибка, как `:397`, а не мягкий dev-варн) |
 | Публичный `index` | **сохраняется** в `AurRowContext`/`AurCellContext`, источник → `rowId` |
 | `TableRow.id` | удаляется; shim-геттер невозможен (getter-only поле + `row['id']=…` бросит в strict mode) |
 
@@ -118,24 +118,33 @@ page-local `0..N-1`, переживает sort/filter (`MatTableDataSource` пе
 > На этапе плана — пройтись по **каждому** вхождению `.id` и классифицировать по типу
 > получателя (TableRow vs rowSrc), чтобы миграция была механически однозначной.
 
-### Dev-guard на reserved-ключи
+### Guard на reserved-ключи (fail-fast)
 
 Отдельный метод, вызывается из init-пути компонента (рядом с обязательной проверкой
-`[tableConfig]` в `ngOnInit`, до `initTable()`), один раз на применение конфига:
+`[tableConfig]` в `component.ts:397`, до `initTable()`), один раз на применение конфига.
+Бросает **безусловно** — как и проверка обязательного `[tableConfig]` (модель фатальной
+конфиг-ошибки, а не мягкий dev-варн):
 
 ```ts
-private warnReservedColumnKeys(): void {
-  if (!isDevMode()) return;
+private assertNoReservedColumnKeys(): void {
   const RESERVED = ['rowId', 'rowSrc'];
-  this.tableConfig.columnsCfg
-    .filter(c => RESERVED.includes(c.key))
-    .forEach(c => console.warn(
-      `[aur-mat-table] ключ колонки "${c.key}" конфликтует со служебным полем TableRow — переименуйте колонку.`));
+  const clash = this.tableConfig.columnsCfg.find(c => RESERVED.includes(c.key));
+  if (clash) {
+    throw new Error(
+      `[aur-mat-table] ключ колонки "${clash.key}" конфликтует со служебным полем TableRow ` +
+      `(${RESERVED.join(', ')}). Переименуйте колонку.`);
+  }
 }
 ```
 
-`key:'id'` теперь валиден и ничего не триггерит — он ложится в `row['id']` как бизнес-значение
-и читается через `dataPropertyGetter`.
+Fail-fast: ошибка детерминированная (от данных не зависит) → всплывёт на init в dev/CI сразу,
+а не как загадочный визуальный баг позже. `key:'id'` теперь валиден и ничего не триггерит —
+ложится в `row['id']` как бизнес-значение, читается через `dataPropertyGetter`.
+
+> **Подрешение (throw-always vs dev-only).** По умолчанию — безусловный throw (как `:397`):
+> ошибка конфигурации детерминированная, ловится до прода; если всё же дойдёт — явный `Error`
+> лучше тихой визуальной порчи. Если решим не ронять прод — обернуть в `if (isDevMode())`.
+> Зафиксировать на ревью спеки.
 
 ### Публичный `index` в контекстах
 
@@ -156,16 +165,19 @@ return { $implicit: element.rowSrc, row: element, rowSrc: element.rowSrc, index:
 | timeline-разрывы при `key:'id'` | мусорные | корректные |
 | `row.id` у потребителя (ожидал индекс) | индекс (или бизнес-id при коллизии) | `undefined` (или бизнес-id, если есть колонка `id`) → миграция на `index` |
 | Данные без бизнес-`id`, без колонки `id` | работает | работает (rowId синтетический) |
-| Колонка `key:'rowId'`/`'rowSrc'` | тихая порча | dev-warn + (порча сохраняется до переименования) |
+| Колонка `key:'rowId'`/`'rowSrc'` | тихая порча | **`Error` на init** (таблица не рендерится до переименования) |
 
 ## Edge cases
 
 - **Данные без поля `id`.** Библиотека на бизнес-`id` не полагается: `rowId` ставится из позиции
   массива. Default trackBy (`component.ts:836`) — ссылка на `rowSrc`, `id` не нужен.
-- **Несколько колонок с reserved-ключом.** Guard варнит по каждой.
-- **Прод-сборка.** `isDevMode()` отсекает guard; в проде проверки нет (как и прочие dev-варны либы).
-- **`rowSrc`-коллизия** (`key:'rowSrc'`) — покрыта тем же guard'ом; ломает скролл/expand/highlight
-  (`component.ts:384,1031`), но это сценарий той же природы и теперь предупреждается.
+- **Несколько колонок с reserved-ключом.** `find` ловит первую — таблица падает на ней; после
+  переименования всплывёт следующая (детерминированно, по одной).
+- **Детерминированность / прод.** Коллизия ключей — ошибка конфигурации, от данных не зависит →
+  ловится в dev/CI до прода. Throw безусловный (как `:397`): либо поймали раньше, либо явный
+  `Error` вместо тихой визуальной порчи (см. подрешение throw-always vs dev-only выше).
+- **`rowSrc`-коллизия** (`key:'rowSrc'`) — покрыта тем же guard'ом (тот же `Error`); иначе
+  ломала бы скролл/expand/highlight (`component.ts:384,1031`) — теперь блокируется на init.
 - **Sort/filter.** `rowId` едет вместе со строкой, `tableView` в исходном порядке → лукап верен
   при любом отображаемом порядке (инвариант не меняется, только имя поля).
 
@@ -191,7 +203,8 @@ return { $implicit: element.rowSrc, row: element, rowSrc: element.rowSrc, index:
 3. **rowStyles при наличии `key:'id'`.** `bodyRowCfg.styleCfg` по позиции применяется к верным
    строкам.
 4. **timeline-разрывы при наличии `key:'id'`.** Gap-детекция корректна.
-5. **Guard.** Колонка `key:'rowId'` и `key:'rowSrc'` → `console.warn` (spy) в dev-режиме.
+5. **Guard.** Колонка `key:'rowId'` и `key:'rowSrc'` → инициализация бросает `Error`
+   (`expect(() => fixture.detectChanges()).toThrowError(/конфликтует со служебным полем/)`).
 6. **Регрессия.** Полный существующий набор зелёный после `.id`→`.rowId`
    (включая `TableViewFactory`, `RowStyleFactory`, `ActionViewFactory`, trackBy-, expanded-rows-спеки).
 7. **trackBy не затронут.** Бизнес-key trackBy (`item => item.id` над данными `{id, name}`)
