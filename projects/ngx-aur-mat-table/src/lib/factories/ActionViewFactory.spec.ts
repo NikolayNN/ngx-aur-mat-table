@@ -37,7 +37,7 @@ describe('ActionViewFactory menu resolution', () => {
 
   it('resolves menu item functions to booleans per row', () => {
     const view = ActionViewFactory.create([old], configWithMenu());
-    const action = view.get(old.id)![0];
+    const action = view.get(old.rowId)![0];
 
     expect(action.action).toBe('more');
     expect(action.icon.tooltipClass).toBe('tt-danger');
@@ -56,7 +56,7 @@ describe('ActionViewFactory menu resolution', () => {
 
   it('applies per-row display and disabled conditions', () => {
     const view = ActionViewFactory.create([young], configWithMenu());
-    const del = view.get(young.id)![0].menu![1];
+    const del = view.get(young.rowId)![0].menu![1];
 
     expect(del.visible).toBe(false);
     expect(del.disabled).toBe(true);
@@ -69,6 +69,6 @@ describe('ActionViewFactory menu resolution', () => {
     };
     const view = ActionViewFactory.create([old], config);
 
-    expect(view.get(old.id)![0].menu).toBeUndefined();
+    expect(view.get(old.rowId)![0].menu).toBeUndefined();
   });
 });

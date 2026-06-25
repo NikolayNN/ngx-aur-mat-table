@@ -454,13 +454,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   /** Контекст row-level шаблона (обогащённый, как AurCellContext минус value). */
   rowCtx(element: TableRow<T>): AurRowContext<T> {
-    return { $implicit: element.rowSrc, row: element, rowSrc: element.rowSrc, index: element.id };
+    return { $implicit: element.rowSrc, row: element, rowSrc: element.rowSrc, index: element.rowId };
   }
 
   /** Контекст кастомного шаблона ячейки (пересобирается в CD). */
   cellCtx(element: TableRow<T>, key: string): AurCellContext<T> {
     const value = element[key];
-    return { $implicit: value, value, row: element, rowSrc: element.rowSrc, index: element.id };
+    return { $implicit: value, value, row: element, rowSrc: element.rowSrc, index: element.rowId };
   }
 
   /** Пересобирает карту key → деф заголовка из спроецированных ngxAurHeaderCellDef. */
@@ -767,18 +767,18 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
         ? segmentColorFn(visibleData[i], visibleData[i + 1])
         : null;
 
-      this._timelineGaps.set(visibleData[i].id, {
+      this._timelineGaps.set(visibleData[i].rowId, {
         topGap: detectGaps && i > 0
-          && visibleData[i].id !== visibleData[i - 1].id + 1,
+          && visibleData[i].rowId !== visibleData[i - 1].rowId + 1,
         bottomGap: detectGaps && i < visibleData.length - 1
-          && visibleData[i].id !== visibleData[i + 1].id - 1,
+          && visibleData[i].rowId !== visibleData[i + 1].rowId - 1,
         topColor,
         bottomColor
       });
     }
 
-    this._timelineFirstId = visibleData.length > 0 ? visibleData[0].id : -1;
-    this._timelineLastId = visibleData.length > 0 ? visibleData[visibleData.length - 1].id : -1;
+    this._timelineFirstId = visibleData.length > 0 ? visibleData[0].rowId : -1;
+    this._timelineLastId = visibleData.length > 0 ? visibleData[visibleData.length - 1].rowId : -1;
   }
 
   private getTimelineVisibleData(): TableRow<T>[] {
@@ -915,7 +915,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   /** [style] для <tr> тела: base -> overlay наведения -> overlay подсветки (побеждает подсветка). */
   rowStyle(row: TableRow<T>): string | null {
-    let acc: StyleBuilder.Row | string | null = this.rowStyles[row.id]?.style ?? null;
+    let acc: StyleBuilder.Row | string | null = this.rowStyles[row.rowId]?.style ?? null;
     if (this.hoverActive(row)) {
       acc = this.mergeStyle(acc, this.resolveRow(this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style, row) ?? null);
     }
@@ -936,7 +936,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       'pointer': this.resolveRow(hover?.pointer, row) || false,
       'new-color': isHighlighted && hlHasColor,
     };
-    const custom = this.rowStyles[row.id]?.class;
+    const custom = this.rowStyles[row.rowId]?.class;
     if (custom) cls[custom] = true;
     const hcls = this.hoverActive(row) ? this.resolveRow(hover?.styleCfg?.class, row) : null;
     if (hcls) cls[hcls] = true;
@@ -1142,7 +1142,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   onDragStart($event: DragEvent, row: TableRow<T>) {
     if (this.selectionProvider.isEnabled && this.dragDropProvider.multiple && this.selectionProvider.selection.selected.length > 1) {
       let selectedRows = this.selectionProvider.getSelectedRows();
-      if (selectedRows.find(r => r.id === row.id)) {
+      if (selectedRows.find(r => r.rowId === row.rowId)) {
         this.dragDropProvider.manager.startDrag(this._tableName, selectedRows, $event);
         return;
       }

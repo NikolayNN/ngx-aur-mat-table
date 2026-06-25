@@ -1,11 +1,12 @@
 export class TableRow<T> {
-  id: number;
+  /** Page-local позиционный индекс строки 0..N-1 (служебный; наружу — только через контекст `index`). */
+  rowId: number;
   rowSrc: T;
 
   [key: string]: any;
 
-  constructor(id: number, rowSrc: T) {
+  constructor(rowId: number, rowSrc: T) {
     this.rowSrc = rowSrc;
-    this.id = id;
+    this.rowId = rowId;
   }
 }

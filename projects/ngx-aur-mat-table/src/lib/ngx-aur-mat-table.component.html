@@ -67,10 +67,10 @@
             <div class="aur-timeline-marker-container">
 
               <div class="aur-timeline-line"
-                   *ngIf="element.id !== _timelineFirstId"
+                   *ngIf="element.rowId !== _timelineFirstId"
                    [style.border-left-width.px]="timelineProvider.line.width"
-                   [style.border-left-color]="_timelineGaps.get(element.id)?.topColor ?? timelineProvider.line.color"
-                   [style.border-left-style]="_timelineGaps.get(element.id)?.topGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+                   [style.border-left-color]="_timelineGaps.get(element.rowId)?.topColor ?? timelineProvider.line.color"
+                   [style.border-left-style]="_timelineGaps.get(element.rowId)?.topGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
               </div>
 
               <ng-container *ngIf="rowMarkerTemplate; else defaultMarker">
@@ -83,10 +83,10 @@
               </ng-template>
 
               <div class="aur-timeline-line"
-                   *ngIf="element.id !== _timelineLastId"
+                   *ngIf="element.rowId !== _timelineLastId"
                    [style.border-left-width.px]="timelineProvider.line.width"
-                   [style.border-left-color]="_timelineGaps.get(element.id)?.bottomColor ?? timelineProvider.line.color"
-                   [style.border-left-style]="_timelineGaps.get(element.id)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+                   [style.border-left-color]="_timelineGaps.get(element.rowId)?.bottomColor ?? timelineProvider.line.color"
+                   [style.border-left-style]="_timelineGaps.get(element.rowId)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
               </div>
 
             </div>
@@ -162,7 +162,7 @@
               [style.--aur-cell-padding-left]="indexProvider.size?.paddingLeft"
               [style.--aur-cell-padding-right]="indexProvider.size?.paddingRight"
               [ngClass]="_alignClass[indexProvider.COLUMN_NAME]">
-            {{ indexProvider.format(element.id + _indexPageOffset) }}
+            {{ indexProvider.format(element.rowId + _indexPageOffset) }}
           </td>
 
           <td mat-footer-cell *matFooterCellDef
@@ -254,7 +254,7 @@
               [class.aur-col-fit]="col.size?.fit"
               [style.--aur-cell-padding-left]="col.size?.paddingLeft"
               [style.--aur-cell-padding-right]="col.size?.paddingRight">
-            <ng-container *ngFor="let action of col.actionView.get(element.id)">
+            <ng-container *ngFor="let action of col.actionView.get(element.rowId)">
               <!-- action with dropdown menu -->
               <ng-container *ngIf="action.menu; else directAction">
                 <ng-container *ngIf="action.visible !== false">
@@ -395,7 +395,7 @@
             <ng-template #builtinCell>
               <!-- колонки без valueView минуют компоненты ячейки: лёгкий span дешевле пары компонентов с обёртками -->
               <lib-column-view *ngIf="columnConfig.valueView; else plainCell"
-                               [config]="tableView[element.id]?.get(columnConfig.key)"
+                               [config]="tableView[element.rowId]?.get(columnConfig.key)"
                                [value]="element | dataPropertyGetter: columnConfig.key">
               </lib-column-view>
               <ng-template #plainCell>
@@ -484,8 +484,8 @@
                 <div *ngIf="timelineProvider.isEnabled"
                      class="aur-timeline-continuation"
                      [style.border-left-width.px]="timelineProvider.line.width"
-                     [style.border-left-color]="_timelineGaps.get(element.id)?.bottomColor ?? timelineProvider.line.color"
-                     [style.border-left-style]="_timelineGaps.get(element.id)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
+                     [style.border-left-color]="_timelineGaps.get(element.rowId)?.bottomColor ?? timelineProvider.line.color"
+                     [style.border-left-style]="_timelineGaps.get(element.rowId)?.bottomGap ? timelineProvider.line.gapStyle : timelineProvider.line.style">
                 </div>
                 <!-- lazy-load of details -->
                 <ng-container *ngIf="isExpanded(element)">

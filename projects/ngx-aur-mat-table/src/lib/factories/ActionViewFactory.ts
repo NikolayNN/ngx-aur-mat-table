@@ -11,7 +11,7 @@ export class ActionViewFactory {
   public static create<T>(rows: TableRow<T>[], actionConfig: ActionConfig<T>): Map<number, Action<string>[]> {
     const result = new Map<number, Action<string>[]>();
     for (const row of rows) {
-      result.set(row.id, this.prepareActionsForRow(row, actionConfig));
+      result.set(row.rowId, this.prepareActionsForRow(row, actionConfig));
     }
     return result;
   }

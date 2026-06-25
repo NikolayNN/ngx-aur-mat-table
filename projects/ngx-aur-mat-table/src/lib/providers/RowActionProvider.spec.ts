@@ -51,7 +51,7 @@ describe('RowActionProvider — мульти-колоночный (start/end)', 
     const p = RowActionProvider.create(cfgOf([{ key: 'a', actions: [
       { action: () => 'edit', icon: { name: () => 'edit' } },
     ] }]));
-    const rows = [{ id: 0, rowSrc: { name: 'x' } } as unknown as TableRow<Row>];
+    const rows = [{ rowId: 0, rowSrc: { name: 'x' } } as unknown as TableRow<Row>];
     p.setView(rows);
     expect(p.columns[0].actionView.get(0)!.length).toBe(1);
     expect(p.columns[0].actionView.get(0)![0].action).toBe('edit');

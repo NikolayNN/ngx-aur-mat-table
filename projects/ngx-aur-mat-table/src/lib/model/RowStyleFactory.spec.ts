@@ -50,7 +50,7 @@ describe('RowStyleFactory', () => {
   it('aligns result order/length with row.id', () => {
     const cfg: TableConfig<Row> = {
       ...baseCfg(),
-      bodyRowCfg: { styleCfg: { style: r => `color: c${r.id}` } },
+      bodyRowCfg: { styleCfg: { style: r => `color: c${r.rowId}` } },
     };
     const result = RowStyleFactory.toRowStyles(rows({ name: 'a' }, { name: 'b' }, { name: 'c' }), cfg);
     expect(result.length).toBe(3);
