@@ -1,8 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { NgxAurMatTableComponent } from './ngx-aur-mat-table.component';
-import { HighlightContainer } from './ngx-aur-mat-table.component';
+import { NgxAurMatTableComponent, HighlightContainer } from './ngx-aur-mat-table.component';
 import { NgxAurMatTableModule } from './ngx-aur-mat-table.module';
 import { TableConfig } from './model/ColumnConfig';
 import { StyleBuilder } from './style-builder/style-builder';
