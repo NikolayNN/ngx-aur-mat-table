@@ -7,7 +7,6 @@ import { TableConfig } from './model/ColumnConfig';
 import { StyleBuilder } from './style-builder/style-builder';
 import Row = StyleBuilder.Row;
 
-
 interface R { name: string; }
 
 /** Хост: highlightCfg.styleCfg задан И clickCfg.styleCfg задан — должен победить highlightCfg. */
@@ -100,10 +99,10 @@ describe('NgxAurMatTable highlight — row-click', () => {
 
   it('[highlightedRow] сидит состояние только на первом изменении (row-click владеет дальше)', () => {
     host.sel = host.data[0];
-    fixture.detectChanges();                    // firstChange -> seed
+    fixture.detectChanges();                    // previousValue==null, currentValue!=null → seed
     expect(host.table.highlighted).toBe(host.data[0]);
     host.sel = host.data[1];
-    fixture.detectChanges();                    // НЕ firstChange -> row-click игнорирует
+    fixture.detectChanges();                    // previousValue!=null → row-click игнорирует
     expect(host.table.highlighted).toBe(host.data[0]);
   });
 
