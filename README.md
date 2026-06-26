@@ -397,6 +397,35 @@ tr.aur-total-row { font-weight: 600; }
 > separator *between* them) is controlled by the parent data row's cell `border-bottom`,
 > and is out of scope here.
 
+### Управляемый highlight (`highlightCfg`)
+
+Подсветка строки настраивается через `bodyRowCfg.highlightCfg` и поддерживает
+two-way `[(highlightedRow)]`.
+
+| mode | владелец | клик подсвечивает | `(highlightedRowChange)` | `(rowClick)` |
+|---|---|---|---|---|
+| `row-click` (default) | таблица | да | да | да |
+| `controlled` | `[highlightedRow]` | нет (эмит-запрос) | да | да |
+| `manual` | `[highlightedRow]` | нет | нет | да |
+
+```html
+<aur-mat-table [tableConfig]="cfg" [tableData]="data"
+               [(highlightedRow)]="selected"></aur-mat-table>
+```
+
+```ts
+bodyRowCfg: {
+  highlightCfg: {
+    mode: 'controlled',
+    cancelable: true,
+    styleCfg: { class: 'is-selected', style: StyleBuilder.Row.builder().background('blue') },
+  },
+}
+```
+
+> Устарело: `[highlight]`/`HighlightContainer`, `clickCfg.cancelable`, `clickCfg.styleCfg` —
+> работают как fallback, переезжают в `highlightCfg`/`[(highlightedRow)]`, удаление в мажоре.
+
 ### Migration from pre-19.1.0
 
 ```ts

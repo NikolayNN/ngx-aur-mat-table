@@ -1,14 +1,15 @@
 <div>
-  Подсвечивается последняя нажатая строчка таблицы
+  Управляемый highlight (mode: 'controlled'): подсветка — внешнее состояние,
+  клик по строке и клик по чипу меняют его через [(highlightedRow)].
 </div>
 
 <aur-mat-table
   class="limit-size"
   [tableData]="tableData"
   [tableConfig]="tableConfig"
-  [highlight]="highlightedCustomer"
+  [(highlightedRow)]="highlightedCustomer"
 ></aur-mat-table>
 
 <mat-chip-listbox>
-  <mat-chip-option *ngFor="let customer of tableData" (click)="highlightedCustomer = {value: customer}"> {{customer.name}} </mat-chip-option>
+  <mat-chip-option *ngFor="let customer of tableData" (click)="highlightedCustomer = customer"> {{customer.name}} </mat-chip-option>
 </mat-chip-listbox>
