@@ -21,7 +21,7 @@ import {
   ViewChildren,
   ViewContainerRef
 } from '@angular/core';
-import {ColumnAlign, ColumnConfig, ColumnView, RowValue, TableConfig} from './model/ColumnConfig';
+import {ColumnAlign, ColumnConfig, ColumnView, HighlightStyleConfig, RowValue, TableConfig} from './model/ColumnConfig';
 import {StyleBuilder} from './style-builder/style-builder';
 import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
@@ -935,14 +935,15 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       acc = this.mergeStyle(acc, this.resolveRow(this.tableConfig.bodyRowCfg?.hoverCfg?.styleCfg?.style, row) ?? null);
     }
     if (this.highlighted === row.rowSrc) {
-      acc = this.mergeStyle(acc, this.resolveRow(this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg?.style, row) ?? null);
+      const sc = this.resolvedHighlightStyleCfg();
+      acc = this.mergeStyle(acc, this.resolveRow(sc?.style, row) ?? null);
     }
     return this.toCss(acc);
   }
 
   rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
     const hover = this.tableConfig.bodyRowCfg?.hoverCfg;
-    const click = this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg;
+    const click = this.resolvedHighlightStyleCfg();
     const isHighlighted = this.highlighted === row.rowSrc;
     // click-style резолвим только для подсвеченной строки (иначе функция зря зовётся на каждую)
     const hl = isHighlighted ? this.resolveRow(click?.style, row) : null;
@@ -958,6 +959,12 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     const ccls = isHighlighted ? this.resolveRow(click?.class, row) : null;
     if (ccls) cls[ccls] = true;
     return cls;
+  }
+
+  /** Источник highlight-стиля: highlightCfg.styleCfg, с fallback на устаревший clickCfg.styleCfg. */
+  private resolvedHighlightStyleCfg(): HighlightStyleConfig<T> | undefined {
+    return this.tableConfig.bodyRowCfg?.highlightCfg?.styleCfg
+        ?? this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg;
   }
 
   handleRowClick(row: TableRow<T>) {

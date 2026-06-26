@@ -96,6 +96,7 @@ export interface ClickConfig<T = any> {
    * Стиль/класс, применяемый к кликнутой/подсвеченной строке.
    * Цвет текста ячеек при class задаётся селектором потребителя,
    * например `tr.my-highlight td { color: white; }`.
+   * @deprecated Используйте highlightCfg.styleCfg. Поле работает как fallback и будет удалено в мажоре.
    */
   styleCfg?: ClickStyleConfig<T>;
 
@@ -103,6 +104,7 @@ export interface ClickConfig<T = any> {
    * По умолчанию false (от строки не зависит).
    * false: и первый, и второй клик испускают эту строку; выделение не сбрасывается.
    * true: первый клик испускает эту строку, второй клик испускает undefined; первый выделяет, второй снимает выделение.
+   * @deprecated Используйте highlightCfg.cancelable. Поле работает как fallback и будет удалено в мажоре.
    */
   cancelable?: boolean;
 }
@@ -138,6 +140,37 @@ export interface BodyRowConfig<T> {
   clickCfg?: ClickConfig<T>;
   hoverCfg?: HoverConfig<T>;
   styleCfg?: BodyStyleConfig<T>;
+  /** Подсветка строки: режим владения, cancelable, выделенный styling contract. */
+  highlightCfg?: HighlightConfig<T>;
+}
+
+export interface HighlightConfig<T = any> {
+  /**
+   * Кто владеет состоянием подсветки.
+   * 'row-click' (по умолчанию): таблица владеет, клик подсвечивает/снимает (текущее поведение).
+   * 'controlled': источник правды — [highlightedRow]; клик шлёт (highlightedRowChange),
+   *   контейнер применяет (см. two-way [(highlightedRow)]); highlighted не мутируется кликом.
+   * 'manual': состояние только из [highlightedRow]; клик НЕ подсвечивает (rowClick всё равно летит).
+   */
+  mode?: 'row-click' | 'controlled' | 'manual';
+
+  /**
+   * По умолчанию false. Повторный клик по подсвеченной строке:
+   * false — оставляет подсветку (эмит той же строки);
+   * true — снимает подсветку (эмит null в row-click / запрос null в controlled).
+   * В manual нерелевантно.
+   */
+  cancelable?: boolean;
+
+  /** Выделенный styling contract подсвеченной строки. */
+  styleCfg?: HighlightStyleConfig<T>;
+}
+
+export interface HighlightStyleConfig<T = any> {
+  /** CSS-класс(ы) на подсвеченном <tr>; значение или (row) => значение. */
+  class?: RowValue<T, string | null>;
+  /** Инлайн-стиль; StyleBuilder.Row | строка, либо (row) => то же. */
+  style?: RowValue<T, StyleBuilder.Row | string>;
 }
 
 export interface ExtendedRowConfig {
