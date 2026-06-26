@@ -299,6 +299,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   //Значение передаётся в контейнере, иначе OnChange не видит изменений, когда передаются одинаковые значения, и подсветка строки не отключается
   // @ts-ignore
   @Input() highlight: HighlightContainer<T> | undefined;
+  @Input()  highlightedRow: T | null = null;
+  @Output() highlightedRowChange = new EventEmitter<T | null>();
 
   constructor(private viewContainerRef: ViewContainerRef,
               private cdr: ChangeDetectorRef) {
@@ -323,6 +325,16 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     }
     if (changes['highlight'] && this.highlight) {
       this.handleHighlightChange(this.highlight);
+    }
+    if (changes['highlightedRow']) {
+      const mode = this.tableConfig.bodyRowCfg?.highlightCfg?.mode ?? 'row-click';
+      const authoritative = mode === 'controlled' || mode === 'manual';
+      const firstSeed = mode === 'row-click'
+        && changes['highlightedRow'].previousValue == null
+        && this.highlightedRow != null;
+      if (authoritative || firstSeed) {
+        this.syncHighlightFromInput();
+      }
     }
     if (changes['expandedRow'] || changes['expandedRows']) {
       const mode = this.tableConfig.extendedRowCfg?.mode ?? 'row-click';
@@ -381,14 +393,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       this.highlighted = undefined;
     } else {
       this.highlighted = h.value;
-      const index = this.tableDataSource.data.findIndex(row => row.rowSrc === h.value);
-      if (index >= 0) {
-        this.rows?.toArray()[index]?.nativeElement.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-          inline: "center"
-        });
-      }
+      this.scrollHighlightedIntoView(h.value);
     }
   }
 
@@ -967,17 +972,42 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
         ?? this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg;
   }
 
+  /** cancelable подсветки: highlightCfg.cancelable, с fallback на устаревший clickCfg.cancelable. */
+  private resolvedHighlightCancelable(): boolean {
+    return this.tableConfig.bodyRowCfg?.highlightCfg?.cancelable
+        ?? this.tableConfig.bodyRowCfg?.clickCfg?.cancelable
+        ?? false;
+  }
+
+  /** Применяет [highlightedRow] во внутреннее состояние (controlled/manual + первый seed row-click). */
+  private syncHighlightFromInput(): void {
+    this.highlighted = this.highlightedRow ?? undefined;
+    if (this.highlighted !== undefined) this.scrollHighlightedIntoView(this.highlighted);
+  }
+
+  /** Прокрутка строки с данным rowSrc в видимую область (smooth/center). */
+  private scrollHighlightedIntoView(src: T): void {
+    const index = this.tableDataSource.data.findIndex(row => row.rowSrc === src);
+    if (index >= 0) {
+      this.rows?.toArray()[index]?.nativeElement.scrollIntoView({
+        behavior: "smooth", block: "center", inline: "center",
+      });
+    }
+  }
+
   handleRowClick(row: TableRow<T>) {
     // clickCfg.enable: false — строка полностью неинтерактивна (Group 2 opt-out):
     // ни rowClick, ни highlight, ни авто-раскрытие. Покрывает и клавиатуру (handleRowKeydown делегирует сюда).
     if (this.tableConfig.bodyRowCfg?.clickCfg?.enable === false) return;
-    if (row.rowSrc !== this.highlighted || (row.rowSrc === this.highlighted && !this.tableConfig.bodyRowCfg?.clickCfg?.cancelable)) {
-      this.rowClick.emit(row.rowSrc);
-      this.highlighted = row.rowSrc;
-    } else {
-      this.rowClick.emit(undefined);
-      this.highlighted = undefined;
-    }
+
+    const cancelable = this.resolvedHighlightCancelable();
+    const src = row.rowSrc;
+    const toggleOff = src === this.highlighted && cancelable;
+
+    this.rowClick.emit(toggleOff ? undefined : src);
+    this.highlighted = toggleOff ? undefined : src;
+    this.highlightedRowChange.emit(this.highlighted ?? null);
+
     this.handleExpandOnClick(row);
   }
 
