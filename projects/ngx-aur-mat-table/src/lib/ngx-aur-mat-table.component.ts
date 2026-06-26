@@ -64,10 +64,6 @@ import {AurExtraHeaderContext} from './model/AurExtraHeaderContext';
 import {NgxAurHeaderCellDefDirective} from './directive/ngx-aur-header-cell-def.directive';
 import {AurHeaderCellContext} from './model/AurHeaderCellContext';
 
-export interface HighlightContainer<T> {
-  value: any;
-}
-
 export interface ColumnOffset {
   left: number,
   width: number,
@@ -283,10 +279,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   highlighted: T | undefined;
 
-  private _warnedClickCancelable = false;
-  private _warnedClickStyleCfg = false;
-  private _warnedHighlightInput = false;
-
   /** Состояние раскрытия detail-строк: ключ идентичности → исходный объект (rowSrc). */
   private _expanded = new Map<unknown, T>();
 
@@ -300,10 +292,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   private _searchText = '';
   private _defaultFilterPredicate: (data: TableRow<T>, filter: string) => boolean;
 
-  //Значение передаётся в контейнере, иначе OnChange не видит изменений, когда передаются одинаковые значения, и подсветка строки не отключается
-  /** @deprecated Используйте [(highlightedRow)] (controlled) или [highlightedRow] (row-click seed). Поле работает и будет удалено в мажоре. */
-  // @ts-ignore
-  @Input() highlight: HighlightContainer<T> | undefined;
   @Input()  highlightedRow: T | null = null;
   @Output() highlightedRowChange = new EventEmitter<T | null>();
 
@@ -327,15 +315,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   ngOnChanges(changes: SimpleChanges): void {
     if ((changes['tableData'] && this.tableData) || (changes['displayColumns'] && this._displayColumns)) {
       this.refreshTable();
-    }
-    if (changes['highlight'] && this.highlight) {
-      if (isDevMode() && !this._warnedHighlightInput) {
-        this._warnedHighlightInput = true;
-        console.warn('[aur-mat-table] [highlight] устарел — используйте [(highlightedRow)].');
-      }
-      if (!changes['highlightedRow']) {        // конфликт: [highlightedRow] авторитетнее
-        this.handleHighlightChange(this.highlight);
-      }
     }
     if (changes['highlightedRow']) {
       const mode = this.tableConfig.bodyRowCfg?.highlightCfg?.mode ?? 'row-click';
@@ -396,16 +375,6 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     const selected = this.selectionProvider?.selection?.selected ?? [];
     this.tableData = this.tableData || [];
     this.prepareTableData(selected);
-  }
-
-  private handleHighlightChange(h: HighlightContainer<T>) {
-    if (this.highlighted === h.value) {
-      this.highlight = undefined;
-      this.highlighted = undefined;
-    } else {
-      this.highlighted = h.value;
-      this.scrollHighlightedIntoView(h.value);
-    }
   }
 
   ngOnInit(): void {
@@ -977,32 +946,14 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     return cls;
   }
 
-  /** Источник highlight-стиля: highlightCfg.styleCfg, с fallback на устаревший clickCfg.styleCfg. */
+  /** Источник highlight-стиля. */
   private resolvedHighlightStyleCfg(): HighlightStyleConfig<T> | undefined {
-    const hl = this.tableConfig.bodyRowCfg?.highlightCfg?.styleCfg;
-    const click = this.tableConfig.bodyRowCfg?.clickCfg?.styleCfg;
-    if (!hl && click) {
-      if (isDevMode() && !this._warnedClickStyleCfg) {
-        this._warnedClickStyleCfg = true;
-        console.warn('[aur-mat-table] clickCfg.styleCfg устарел — используйте highlightCfg.styleCfg.');
-      }
-      return click;
-    }
-    return hl;
+    return this.tableConfig.bodyRowCfg?.highlightCfg?.styleCfg;
   }
 
-  /** cancelable подсветки: highlightCfg.cancelable, с fallback на устаревший clickCfg.cancelable. */
+  /** cancelable подсветки. */
   private resolvedHighlightCancelable(): boolean {
-    const hl = this.tableConfig.bodyRowCfg?.highlightCfg?.cancelable;
-    const click = this.tableConfig.bodyRowCfg?.clickCfg?.cancelable;
-    if (hl === undefined && click !== undefined) {
-      if (isDevMode() && !this._warnedClickCancelable) {
-        this._warnedClickCancelable = true;
-        console.warn('[aur-mat-table] clickCfg.cancelable устарел — используйте highlightCfg.cancelable.');
-      }
-      return click;
-    }
-    return hl ?? false;
+    return this.tableConfig.bodyRowCfg?.highlightCfg?.cancelable ?? false;
   }
 
   /** Применяет [highlightedRow] во внутреннее состояние (controlled/manual + первый seed row-click). */

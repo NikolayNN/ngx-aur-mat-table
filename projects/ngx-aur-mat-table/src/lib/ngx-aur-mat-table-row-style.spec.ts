@@ -19,7 +19,7 @@ class HostComponent {
   cfg: TableConfig<R> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
     bodyRowCfg: {
-      clickCfg: { styleCfg: { style: Row.builder().background('yellow'), class: 'row-selected' }, cancelable: true },
+      highlightCfg: { styleCfg: { style: Row.builder().background('yellow'), class: 'row-selected' }, cancelable: true },
       hoverCfg: { pointer: true, styleCfg: { style: Row.builder().background('#eee'), class: 'hovering' } },
       styleCfg: {
         style: r => r.rowSrc.bold ? Row.builder().fontWeight(FontWeight.BOLD).color('black') : '',
@@ -63,7 +63,7 @@ describe('NgxAurMatTable bodyRowCfg', () => {
     const [boldRow] = host.table.tableDataSource.data;
     host.table.highlighted = boldRow.rowSrc;
     const style = host.table.rowStyle(boldRow)!;
-    expect(style).toContain('background: yellow;'); // from clickCfg.styleCfg.style
+    expect(style).toContain('background: yellow;'); // from highlightCfg.styleCfg.style
     expect(style).toContain('font-weight: bold;');  // base preserved
   });
 
@@ -195,12 +195,12 @@ class ClassOnlyHighlightHostComponent {
   @ViewChild('t') table!: NgxAurMatTableComponent<R>;
   cfg: TableConfig<R> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
-    bodyRowCfg: { clickCfg: { styleCfg: { class: 'row-selected' } } },
+    bodyRowCfg: { highlightCfg: { styleCfg: { class: 'row-selected' } } },
   };
   data: R[] = [{ name: 'a' }];
 }
 
-describe('NgxAurMatTable clickCfg class-only (без style)', () => {
+describe('NgxAurMatTable highlightCfg class-only (без style)', () => {
   let fixture: ComponentFixture<ClassOnlyHighlightHostComponent>;
   let host: ClassOnlyHighlightHostComponent;
 

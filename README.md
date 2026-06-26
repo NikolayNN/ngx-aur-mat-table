@@ -193,7 +193,7 @@ actionCfg: [
 
 ### Управление раскрытием (`extendedRowCfg`)
 
-Раскрытие detail-строки — самостоятельное состояние, не связанное с подсветкой (`highlight`).
+Раскрытие detail-строки — самостоятельное состояние, не связанное с подсветкой (`highlightCfg`).
 
 | Поле | Значения | По умолчанию | Смысл |
 |---|---|---|---|
@@ -228,7 +228,7 @@ Multiple (`multiple:true`) → `[expandedRows]`/`(expandedRowsChange)` (`T[]`).
 
 > **Миграция с ≤19.9.x:** `[extendedRowTemplate]`, `[timelineMarkerTemplate]`, `[extraHeaderCellTopTemplate]`, `[extraHeaderCellBottomTemplate]` удалены. Используйте директивы `ngxAurExpandedRowDef`, `ngxAurRowMarkerDef`, `ngxAurExtraHeaderTopDef`, `ngxAurExtraHeaderBottomDef` внутри `<aur-mat-table>`. См. `docs/MIGRATION-19.10.0.md`.
 
-> **Миграция с ≤19.8.x:** `[highlight]` больше не раскрывает detail-строку (только подсветка/скролл). Для программного раскрытия используйте `[expandedRow]`/`[expandedRows]`.
+> **Миграция с ≤19.14.x:** `[highlight]`/`HighlightContainer` удалены в 19.15.0. Используйте `[(highlightedRow)]` / `highlightCfg`. Для программного раскрытия используйте `[expandedRow]`/`[expandedRows]`.
 
 ### Template directives and context types
 
@@ -355,10 +355,10 @@ tableConfig: TableConfig<ReportRow> = {
 ```
 
 - `bodyRowCfg.styleCfg.style` / `class` are per-row hooks called once per data refresh (OnPush-friendly).
-- `bodyRowCfg.clickCfg.styleCfg.style` задаёт стиль подсветки кликнутой строки; `styleCfg.class` задаёт CSS-класс подсвеченной строки; `overrideWith` merges builder fields so base styles survive.
+- `bodyRowCfg.highlightCfg.styleCfg.style` задаёт стиль подсветки кликнутой строки; `styleCfg.class` задаёт CSS-класс подсвеченной строки; `overrideWith` merges builder fields so base styles survive.
 - `bodyRowCfg.clickCfg.enable: false` makes rows fully non-interactive — no `rowClick`, no internal highlight, no auto-expand of the detail row, and no `tabindex`/keyboard activation. The default (rows interactive) is unchanged.
 - `bodyRowCfg.hoverCfg` drives a mouse-enter/leave overlay; the `#f2f2f2` hardcoded hover background is gone — configure it via `hoverCfg.styleCfg` or suppress hover entirely by omitting `hoverCfg`.
-- `hoverCfg.pointer` / `hoverCfg.styleCfg.*` / `clickCfg.styleCfg.*` accept a static value **or** a `(row: TableRow<T>) => value` function — e.g. `pointer: row => !row.rowSrc.system` disables the pointer/hover for system rows while leaving others interactive.
+- `hoverCfg.pointer` / `hoverCfg.styleCfg.*` / `highlightCfg.styleCfg.*` accept a static value **or** a `(row: TableRow<T>) => value` function — e.g. `pointer: row => !row.rowSrc.system` disables the pointer/hover for system rows while leaving others interactive.
 - `totalRowCfg.styleCfg.style` / `class` can be a **static value** or a **function of `(totals: Map<string,any>, data: TableRow<T>[])`** — value-driven total styling.
 - For per-row **text color** prefer a `class` over the `style` hook, since Material cells set their own `color` and can override a `color` inherited from the row.
 
@@ -423,8 +423,7 @@ bodyRowCfg: {
 }
 ```
 
-> Устарело: `[highlight]`/`HighlightContainer`, `clickCfg.cancelable`, `clickCfg.styleCfg` —
-> работают как fallback, переезжают в `highlightCfg`/`[(highlightedRow)]`, удаление в мажоре.
+> Removed in 19.15.0 (breaking): `[highlight]`/`HighlightContainer`, `clickCfg.cancelable`, `clickCfg.styleCfg` — use `highlightCfg` / `[(highlightedRow)]`.
 
 ### Migration from pre-19.1.0
 
@@ -436,7 +435,7 @@ totalRowCfg: { enable: true, totalRowView: { style: StyleBuilder.Row.builder().c
 
 // after
 bodyRowCfg: {
-  clickCfg: { styleCfg: { style: StyleBuilder.Row.builder().background('blue').color('red') }, cancelable: true },
+  highlightCfg: { styleCfg: { style: StyleBuilder.Row.builder().background('blue').color('red') }, cancelable: true },
   hoverCfg: { pointer: true },
   styleCfg: { style: r => r.rowSrc.bold ? StyleBuilder.Row.builder().fontWeight(StyleBuilder.FontWeight.BOLD) : '' },
 },

@@ -25,7 +25,7 @@ export class ExpandingRowComponent {
       }
     ],
     bodyRowCfg: {
-      clickCfg: {
+      highlightCfg: {
         styleCfg: {
           style: StyleBuilder.Row.builder()
             .background('blue').color('red')

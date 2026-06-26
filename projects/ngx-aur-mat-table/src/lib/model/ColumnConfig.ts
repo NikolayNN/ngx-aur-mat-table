@@ -91,29 +91,6 @@ export interface ClickConfig<T = any> {
    * tabindex/клавиатура появляются только когда clickCfg задан.
    */
   enable?: boolean;
-
-  /**
-   * Стиль/класс, применяемый к кликнутой/подсвеченной строке.
-   * Цвет текста ячеек при class задаётся селектором потребителя,
-   * например `tr.my-highlight td { color: white; }`.
-   * @deprecated Используйте highlightCfg.styleCfg. Поле работает как fallback и будет удалено в мажоре.
-   */
-  styleCfg?: ClickStyleConfig<T>;
-
-  /**
-   * По умолчанию false (от строки не зависит).
-   * false: и первый, и второй клик испускают эту строку; выделение не сбрасывается.
-   * true: первый клик испускает эту строку, второй клик испускает undefined; первый выделяет, второй снимает выделение.
-   * @deprecated Используйте highlightCfg.cancelable. Поле работает как fallback и будет удалено в мажоре.
-   */
-  cancelable?: boolean;
-}
-
-export interface ClickStyleConfig<T = any> {
-  /** CSS-класс(ы) на подсвеченном <tr>; значение или (row) => значение. */
-  class?: RowValue<T, string | null>;
-  /** Инлайн-стиль; StyleBuilder.Row | строка, либо (row) => то же. */
-  style?: RowValue<T, StyleBuilder.Row | string>;
 }
 
 export interface HoverConfig<T = any> {

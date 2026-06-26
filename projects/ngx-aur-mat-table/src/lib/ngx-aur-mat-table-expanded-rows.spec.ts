@@ -1,18 +1,18 @@
 import { Component, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { NgxAurMatTableComponent, HighlightContainer } from './ngx-aur-mat-table.component';
+import { NgxAurMatTableComponent } from './ngx-aur-mat-table.component';
 import { NgxAurMatTableModule } from './ngx-aur-mat-table.module';
 import { TableConfig } from './model/ColumnConfig';
 
 interface R { id: number; name: string; }
 
-/** Базовый хост: дефолтный режим (row-click), single, + [highlight] для проверки развязки. */
+/** Базовый хост: дефолтный режим (row-click), single, + [highlightedRow] для проверки развязки. */
 @Component({
   standalone: false,
   template: `
     <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
-                   [highlight]="hl"
+                   [highlightedRow]="hl"
                    (expandedRowChange)="single.push($event)">
       <ng-template ngxAurExpandedRowDef let-row="row"><span class="detail-marker">{{ row.rowSrc.name }} details</span></ng-template>
     </aur-mat-table>
@@ -21,7 +21,7 @@ interface R { id: number; name: string; }
 class RowClickHostComponent {
   @ViewChild('t') table!: NgxAurMatTableComponent<R>;
   single: (R | null)[] = [];
-  hl: HighlightContainer<R> | undefined;
+  hl: R | null = null;
   cfg: TableConfig<R> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
   };
@@ -71,9 +71,9 @@ describe('NgxAurMatTable expanded rows — row-click (default)', () => {
     expect(host.single).toEqual([host.data[0], null]);
   });
 
-  it('[highlight] не раскрывает и не закрывает уже раскрытую деталь', () => {
+  it('[highlightedRow] не раскрывает и не закрывает уже раскрытую деталь', () => {
     mainRows()[0].click(); fixture.detectChanges();   // раскрыта строка a
-    host.hl = { value: host.data[1] };                // подсветить строку b
+    host.hl = host.data[1];                           // подсветить строку b (seed: null→non-null)
     fixture.detectChanges();
     expect(markers()).toEqual(['a details']);          // деталь a осталась, b не раскрылась
     expect(host.table.highlighted).toBe(host.data[1]); // highlight отработал

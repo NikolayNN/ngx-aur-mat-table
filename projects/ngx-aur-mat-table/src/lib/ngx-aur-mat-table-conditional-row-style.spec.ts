@@ -94,7 +94,7 @@ class ClickStyleHostComponent {
   @ViewChild('t') table!: NgxAurMatTableComponent<Row>;
   cfg: TableConfig<Row> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
-    bodyRowCfg: { clickCfg: { styleCfg: { style: row => 'color: ' + (row.rowSrc.vip ? 'gold' : 'gray') } } },
+    bodyRowCfg: { highlightCfg: { styleCfg: { style: row => 'color: ' + (row.rowSrc.vip ? 'gold' : 'gray') } } },
   };
   data: Row[] = [{ name: 'a', vip: true }, { name: 'b', vip: false }];
 }

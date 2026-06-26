@@ -16,7 +16,7 @@ class A11yHostComponent {
   events: (R | undefined)[] = [];
   cfg: TableConfig<R> = {
     columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
-    bodyRowCfg: { clickCfg: { cancelable: true } },
+    bodyRowCfg: { clickCfg: {}, highlightCfg: { cancelable: true } },
   };
   data: R[] = [{ name: 'a' }, { name: 'b' }];
 }
