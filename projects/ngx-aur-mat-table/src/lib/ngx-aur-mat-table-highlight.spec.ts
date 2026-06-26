@@ -179,9 +179,11 @@ describe('NgxAurMatTable highlight — controlled', () => {
   it('клик НЕ мутирует highlighted напрямую, а эмитит запрос; эхо замыкает цикл', () => {
     const [rowA] = host.table.tableDataSource.data;
     host.table.handleRowClick(rowA);            // эмит -> host.sel = data[0]
+    expect(host.table.highlighted).toBeUndefined();   // controlled: клик не мутирует напрямую (до detectChanges)
     expect(host.hlChanges).toEqual([host.data[0]]);
     fixture.detectChanges();                    // authoritative sync из [highlightedRow]
     expect(host.table.highlighted).toBe(host.data[0]);
+    expect(host.clicks).toEqual([host.data[0]]);
   });
 
   it('[highlightedRow] авторитетен на каждое изменение', () => {
@@ -199,6 +201,7 @@ describe('NgxAurMatTable highlight — controlled', () => {
     host.table.handleRowClick(rowA); fixture.detectChanges();   // toggleOff -> null
     expect(host.hlChanges).toEqual([host.data[0], null]);
     expect(host.table.highlighted).toBeUndefined();
+    expect(host.clicks).toEqual([host.data[0], undefined]);
   });
 });
 
