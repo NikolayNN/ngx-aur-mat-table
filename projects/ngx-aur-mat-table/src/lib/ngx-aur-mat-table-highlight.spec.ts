@@ -12,6 +12,7 @@ interface R { name: string; }
 /** Хост: highlightCfg.styleCfg задан И clickCfg.styleCfg задан — должен победить highlightCfg. */
 @Component({
   standalone: false,
+  selector: 'test-style-winner-host',
   template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
 })
 class StyleWinnerHost {
@@ -29,6 +30,7 @@ class StyleWinnerHost {
 /** Хост: только clickCfg.styleCfg (legacy) — должен работать как fallback. */
 @Component({
   standalone: false,
+  selector: 'test-style-fallback-host',
   template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
 })
 class StyleFallbackHost {

@@ -943,9 +943,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
     const hover = this.tableConfig.bodyRowCfg?.hoverCfg;
-    const click = this.resolvedHighlightStyleCfg();
     const isHighlighted = this.highlighted === row.rowSrc;
     // click-style резолвим только для подсвеченной строки (иначе функция зря зовётся на каждую)
+    const click = isHighlighted ? this.resolvedHighlightStyleCfg() : undefined;
     const hl = isHighlighted ? this.resolveRow(click?.style, row) : null;
     const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
     const cls: { [klass: string]: boolean } = {
