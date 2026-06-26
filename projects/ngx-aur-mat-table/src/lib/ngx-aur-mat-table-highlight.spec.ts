@@ -117,6 +117,119 @@ describe('NgxAurMatTable highlight — row-click', () => {
   });
 });
 
+/** Controlled: контейнер владеет; эхо highlightedRowChange -> sel замыкает [(highlightedRow)]. */
+@Component({
+  standalone: false,
+  selector: 'test-controlled-host',
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [highlightedRow]="sel"
+                   (highlightedRowChange)="sel = $event; hlChanges.push($event)"
+                   (rowClick)="clicks.push($event)"></aur-mat-table>
+  `,
+})
+class ControlledHost {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  sel: R | null = null;
+  hlChanges: (R | null)[] = [];
+  clicks: (R | undefined)[] = [];
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    bodyRowCfg: { highlightCfg: { mode: 'controlled', cancelable: true } },
+  };
+  data: R[] = [{ name: 'a' }, { name: 'b' }];
+}
+
+/** Manual: клик не подсвечивает; только [highlightedRow] управляет подсветкой. */
+@Component({
+  standalone: false,
+  selector: 'test-manual-host',
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [highlightedRow]="sel"
+                   (highlightedRowChange)="hlChanges.push($event)"
+                   (rowClick)="clicks.push($event)"></aur-mat-table>
+  `,
+})
+class ManualHost {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  sel: R | null = null;
+  hlChanges: (R | null)[] = [];
+  clicks: (R | undefined)[] = [];
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    bodyRowCfg: { highlightCfg: { mode: 'manual' } },
+  };
+  data: R[] = [{ name: 'a' }, { name: 'b' }];
+}
+
+describe('NgxAurMatTable highlight — controlled', () => {
+  let fixture: ComponentFixture<ControlledHost>;
+  let host: ControlledHost;
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [ControlledHost],
+    }).compileComponents();
+    fixture = TestBed.createComponent(ControlledHost);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('клик НЕ мутирует highlighted напрямую, а эмитит запрос; эхо замыкает цикл', () => {
+    const [rowA] = host.table.tableDataSource.data;
+    host.table.handleRowClick(rowA);            // эмит -> host.sel = data[0]
+    expect(host.hlChanges).toEqual([host.data[0]]);
+    fixture.detectChanges();                    // authoritative sync из [highlightedRow]
+    expect(host.table.highlighted).toBe(host.data[0]);
+  });
+
+  it('[highlightedRow] авторитетен на каждое изменение', () => {
+    host.sel = host.data[1];
+    fixture.detectChanges();
+    expect(host.table.highlighted).toBe(host.data[1]);
+    host.sel = null;
+    fixture.detectChanges();
+    expect(host.table.highlighted).toBeUndefined();
+  });
+
+  it('cancelable: повторный клик по подсвеченной эмитит null', () => {
+    const [rowA] = host.table.tableDataSource.data;
+    host.table.handleRowClick(rowA); fixture.detectChanges();   // sel=data[0]
+    host.table.handleRowClick(rowA); fixture.detectChanges();   // toggleOff -> null
+    expect(host.hlChanges).toEqual([host.data[0], null]);
+    expect(host.table.highlighted).toBeUndefined();
+  });
+});
+
+describe('NgxAurMatTable highlight — manual', () => {
+  let fixture: ComponentFixture<ManualHost>;
+  let host: ManualHost;
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [ManualHost],
+    }).compileComponents();
+    fixture = TestBed.createComponent(ManualHost);
+    host = fixture.componentInstance;
+    fixture.detectChanges();
+  });
+
+  it('клик не подсвечивает и не эмитит highlightedRowChange, но rowClick летит', () => {
+    const [rowA] = host.table.tableDataSource.data;
+    host.table.handleRowClick(rowA);
+    expect(host.table.highlighted).toBeUndefined();
+    expect(host.hlChanges).toEqual([]);
+    expect(host.clicks).toEqual([host.data[0]]);
+  });
+
+  it('только [highlightedRow] подсвечивает', () => {
+    host.sel = host.data[1];
+    fixture.detectChanges();
+    expect(host.table.highlighted).toBe(host.data[1]);
+  });
+});
+
 describe('NgxAurMatTable highlight — styling source', () => {
   function make<H>(type: new () => H): { fixture: ComponentFixture<H>; host: H } {
     const fixture = TestBed.createComponent(type);

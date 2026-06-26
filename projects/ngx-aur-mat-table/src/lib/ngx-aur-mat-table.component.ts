@@ -1000,13 +1000,25 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     // ни rowClick, ни highlight, ни авто-раскрытие. Покрывает и клавиатуру (handleRowKeydown делегирует сюда).
     if (this.tableConfig.bodyRowCfg?.clickCfg?.enable === false) return;
 
+    const mode = this.tableConfig.bodyRowCfg?.highlightCfg?.mode ?? 'row-click';
     const cancelable = this.resolvedHighlightCancelable();
     const src = row.rowSrc;
     const toggleOff = src === this.highlighted && cancelable;
 
+    if (mode === 'manual') {
+      this.rowClick.emit(src);                 // только action-намерение; highlight не трогаем
+      this.handleExpandOnClick(row);
+      return;
+    }
+
     this.rowClick.emit(toggleOff ? undefined : src);
-    this.highlighted = toggleOff ? undefined : src;
-    this.highlightedRowChange.emit(this.highlighted ?? null);
+
+    if (mode === 'controlled') {
+      this.highlightedRowChange.emit(toggleOff ? null : src);   // запрос, без мутации
+    } else {                                                    // row-click
+      this.highlighted = toggleOff ? undefined : src;
+      this.highlightedRowChange.emit(this.highlighted ?? null);
+    }
 
     this.handleExpandOnClick(row);
   }
