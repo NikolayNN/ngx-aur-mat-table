@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxAurMatTableComponent } from './ngx-aur-mat-table.component';
+import { HighlightContainer } from './ngx-aur-mat-table.component';
 import { NgxAurMatTableModule } from './ngx-aur-mat-table.module';
 import { TableConfig } from './model/ColumnConfig';
 import { StyleBuilder } from './style-builder/style-builder';
@@ -263,5 +264,102 @@ describe('NgxAurMatTable highlight — styling source', () => {
     host.table.highlighted = row.rowSrc;
     expect(host.table.rowNgClass(row)['click-class']).toBeTrue();
     expect(host.table.rowStyle(row)!).toContain('background: red;');
+  });
+});
+
+@Component({
+  standalone: false,
+  selector: 'test-conflict-host',
+  template: `
+    <aur-mat-table #t [tableConfig]="cfg" [tableData]="data"
+                   [highlight]="legacy"
+                   [highlightedRow]="sel"></aur-mat-table>
+  `,
+})
+class ConflictHost {
+  @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+  legacy: HighlightContainer<R> | undefined;
+  sel: R | null = null;
+  cfg: TableConfig<R> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    bodyRowCfg: { highlightCfg: { mode: 'controlled' } },
+  };
+  data: R[] = [{ name: 'a' }, { name: 'b' }];
+}
+
+describe('NgxAurMatTable highlight — депрекейты и конфликт', () => {
+  let fixture: ComponentFixture<ConflictHost>;
+  let host: ConflictHost;
+  let warn: jasmine.Spy;
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [ConflictHost],
+    }).compileComponents();
+    fixture = TestBed.createComponent(ConflictHost);
+    host = fixture.componentInstance;
+    warn = spyOn(console, 'warn');
+    fixture.detectChanges();
+  });
+
+  it('старый [highlight] всё ещё подсвечивает (back-compat) и предупреждает один раз', () => {
+    host.legacy = { value: host.data[0] };
+    fixture.detectChanges();
+    host.legacy = { value: host.data[1] };
+    fixture.detectChanges();
+    expect(host.table.highlighted).toBe(host.data[1]);
+    expect(warn.calls.allArgs().filter(a => String(a[0]).includes('[highlight]')).length).toBe(1);
+  });
+
+  it('при обоих входах выигрывает [highlightedRow]', () => {
+    host.legacy = { value: host.data[0] };
+    host.sel = host.data[1];
+    fixture.detectChanges();
+    expect(host.table.highlighted).toBe(host.data[1]);
+  });
+});
+
+describe('NgxAurMatTable highlight — fallback clickCfg предупреждает', () => {
+  @Component({
+    standalone: false,
+    selector: 'test-legacy-click-host',
+    template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+  })
+  class LegacyClickHost {
+    @ViewChild('t') table!: NgxAurMatTableComponent<R>;
+    cfg: TableConfig<R> = {
+      columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+      bodyRowCfg: { clickCfg: { cancelable: true, styleCfg: { class: 'click-class' } } },
+    };
+    data: R[] = [{ name: 'a' }];
+  }
+
+  let fixture: ComponentFixture<LegacyClickHost>;
+  let host: LegacyClickHost;
+  let warn: jasmine.Spy;
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [LegacyClickHost],
+    }).compileComponents();
+    fixture = TestBed.createComponent(LegacyClickHost);
+    host = fixture.componentInstance;
+    warn = spyOn(console, 'warn');
+    fixture.detectChanges();
+  });
+
+  it('clickCfg.cancelable работает как fallback и предупреждает', () => {
+    const [rowA] = host.table.tableDataSource.data;
+    host.table.handleRowClick(rowA);
+    host.table.handleRowClick(rowA);            // cancelable -> снимется
+    expect(host.table.highlighted).toBeUndefined();
+    expect(warn.calls.allArgs().some(a => String(a[0]).includes('clickCfg.cancelable'))).toBeTrue();
+  });
+
+  it('clickCfg.styleCfg работает как fallback и предупреждает', () => {
+    const [rowA] = host.table.tableDataSource.data;
+    host.table.highlighted = rowA.rowSrc;
+    expect(host.table.rowNgClass(rowA)['click-class']).toBeTrue();
+    expect(warn.calls.allArgs().some(a => String(a[0]).includes('clickCfg.styleCfg'))).toBeTrue();
   });
 });
