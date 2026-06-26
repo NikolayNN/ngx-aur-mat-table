@@ -929,9 +929,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   rowNgClass(row: TableRow<T>): { [klass: string]: boolean } {
     const hover = this.tableConfig.bodyRowCfg?.hoverCfg;
     const isHighlighted = this.highlighted === row.rowSrc;
-    // click-style резолвим только для подсвеченной строки (иначе функция зря зовётся на каждую)
-    const click = isHighlighted ? this.resolvedHighlightStyleCfg() : undefined;
-    const hl = isHighlighted ? this.resolveRow(click?.style, row) : null;
+    // highlight-style резолвим только для подсвеченной строки (иначе функция зря зовётся на каждую)
+    const hlStyleCfg = isHighlighted ? this.resolvedHighlightStyleCfg() : undefined;
+    const hl = isHighlighted ? this.resolveRow(hlStyleCfg?.style, row) : null;
     const hlHasColor = hl instanceof StyleBuilder.Row ? !!hl.colorValue : !!hl;
     const cls: { [klass: string]: boolean } = {
       'pointer': this.resolveRow(hover?.pointer, row) || false,
@@ -941,7 +941,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     if (custom) cls[custom] = true;
     const hcls = this.hoverActive(row) ? this.resolveRow(hover?.styleCfg?.class, row) : null;
     if (hcls) cls[hcls] = true;
-    const ccls = isHighlighted ? this.resolveRow(click?.class, row) : null;
+    const ccls = isHighlighted ? this.resolveRow(hlStyleCfg?.class, row) : null;
     if (ccls) cls[ccls] = true;
     return cls;
   }
