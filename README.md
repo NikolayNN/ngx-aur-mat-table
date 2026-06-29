@@ -290,8 +290,6 @@ onFilterChange() { this.rebuildFilters(); this.table.reload(); }
 
 **Row index across pages:** with `indexCfg` in server mode the index column shows the absolute row number (`pageIndex * pageSize + position`), so page 2 continues 21, 22, … rather than restarting at 1. Client-mode pagination is unaffected (the index already spans the full dataset).
 
-> The legacy manual wiring (`[paginatorState]` + `(pageChange)` + `NgxAurTablePageEventUtils.createEmpty`) still works but is deprecated in favour of `pageSource`.
-
 ### Using an external paginator (`externalPaginator`)
 
 Bind a host-owned `<mat-paginator>` so the table uses it instead of its built-in one. Works with both client and server data:
