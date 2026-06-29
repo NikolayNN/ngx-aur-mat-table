@@ -8,7 +8,10 @@
       "Bash(git push:*)",
       "Bash(bash \"C:/Users/Nikolay/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.5/skills/brainstorming/scripts/start-server.sh\" --project-dir \"C:/Users/Nikolay/IdeaProjects/ngx-aur-mat-table-libs\")",
       "Bash(git stash:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm run *)",
+      "mcp__aurora-epic__list_epics",
+      "Bash(node -p \"require\\('C:/Users/Nikolay/IdeaProjects/ngx-aur-mat-table-libs/projects/ngx-aur-mat-table/package.json'\\).version\")"
     ]
   }
 }
