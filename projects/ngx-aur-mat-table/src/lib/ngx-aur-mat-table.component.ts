@@ -382,7 +382,8 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       throw new Error("init inputs [tableConfig] is mandatory!")
     }
     this.assertNoReservedColumnKeys();
-    if (this.isServerWiring() && !this.paginatorState) {
+    this.warnPaginationModeMisconfig();
+    if (this.isServerMode() && !this.paginatorState) {
       this.paginatorState = PaginatorState.empty();
     }
   }
@@ -523,7 +524,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
       this.resizeColumnOffsetsObserver = new ResizeObserver(() => this.updateColumnOffsets());
       this.resizeColumnOffsetsObserver.observe(this.table.nativeElement);
     }
-    if (this.isServerMode()) {
+    if (this.hasPageSource()) {
       this.startServerController();
     }
   }
@@ -545,7 +546,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     // _orderData пересортировал бы серверную страницу по значениям valueConverter
     // (зеркало initPaginator(), который по той же причине не привязывает пагинатор).
     // Стрелки и matSortChange живут на директиве MatSort и от привязки не зависят.
-    const sort = this.isServerWiring() ? null : (this.matSort ?? null);
+    const sort = this.isServerMode() ? null : (this.matSort ?? null);
     if (this.tableDataSource.sort !== sort) {
       // тот же гвард: сеттер .sort тоже пересоздаёт подписку
       this.tableDataSource.sort = sort;
@@ -582,10 +583,9 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     this.initCustomSortFunctionsMap();
     this.initTable();
     this.removeWrongKeysFromDisplayColumns();
-    if (!this.paginatorState) {
-      // Если пагинатор не серверный, то я инициализирую его здесь, иначе при обновлении данных пагинатор ломается и отображаются все элементы
-      this.initPaginator();
-    }
+    // initPaginator() идемпотентен (гвард по target) и сам держит paginator=null в server-режиме —
+    // отдельная проверка paginatorState больше не нужна.
+    this.initPaginator();
     this.initSortingDataAccessor();
 
     this.indexProvider = IndexProvider.create(this.tableConfig)
@@ -604,7 +604,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     // Серверная страница содержит только свои строки (id = позиция в странице) — смещаем индекс
     // на номер страницы. Клиентский режим режет весь датасет локально (id сквозной) → offset 0.
     const pageSize = this.activePaginator?.pageSize ?? this.paginationProvider.size;
-    this._indexPageOffset = this.paginatorState ? this.paginatorState.pageIndex * pageSize : 0;
+    this._indexPageOffset = (this.isServerMode() && this.paginatorState) ? this.paginatorState.pageIndex * pageSize : 0;
 
     this.totalRowProvider = TotalRowProvider.create(this.tableConfig, this.tableDataSource)
       .setTotalRow();
@@ -726,7 +726,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   sortTable(sortParameters: Sort) {
     this.sort.emit(sortParameters);
-    if (this.isServerMode() && this.serverPageController) {
+    if (this.serverPageController) {
       this.serverPageController.onSort(sortParameters);
     }
     // MatTableDataSource обрабатывает sort через RxJS-подписку —
@@ -740,7 +740,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   onPageChangeInternal(event: PageEvent): void {
     this.updateTimelineBounds();
     this.pageChange.emit(event);
-    if (this.isServerMode() && this.serverPageController) {
+    if (this.serverPageController) {
       this.serverPageController.onPage({ pageIndex: event.pageIndex, pageSize: event.pageSize });
     }
     this.cdr.markForCheck();
@@ -785,7 +785,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     const data = this.tableDataSource.filteredData;
 
     // Server-side: данные уже постраничные, не режем повторно
-    if (this.paginatorState) return data;
+    if (this.isServerMode()) return data;
 
     // Client-side с пагинацией: вырезаем видимый срез
     if (this.paginationProvider.isEnabled && this.activePaginator) {
@@ -892,9 +892,10 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
    */
   private currentPaging(): { pageIndex: number; lastPageIndex: number } {
     let total: number, pageIndex: number, pageSize: number;
-    if (this.paginatorState) {
-      total = this.paginatorState.length;
-      pageIndex = this.paginatorState.pageIndex;
+    if (this.isServerMode()) {
+      const st = this.paginatorState ?? PaginatorState.empty();
+      total = st.length;
+      pageIndex = st.pageIndex;
       pageSize = this.activePaginator?.pageSize ?? this.paginationProvider.size;
     } else {
       total = this.tableDataSource.filteredData.length;
@@ -1098,12 +1099,25 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
     return this.selectionProvider.selection;
   }
 
+  /** Server contract: no client paginator/sort binding, no re-slicing, server index offset/timeline. */
   private isServerMode(): boolean {
+    return this.tableConfig?.paginationCfg?.mode === 'server' || !!this.pageSource;
+  }
+
+  /** Table owns the load loop (declarative). Gates ServerPageController only. */
+  private hasPageSource(): boolean {
     return !!this.pageSource;
   }
 
-  private isServerWiring(): boolean {
-    return !!this.pageSource || this.tableConfig?.paginationCfg?.mode === 'server';
+  /** Dev-mode guards for contradictory pagination wiring. */
+  private warnPaginationModeMisconfig(): void {
+    if (!isDevMode()) return;
+    if (this.tableConfig.paginationCfg?.mode === 'client' && this.pageSource) {
+      console.warn('[aur-mat-table] paginationCfg.mode:"client" игнорируется при заданном [pageSource] — режим серверный.');
+    }
+    if (this.isServerMode() && this.externalPaginator && !this.hasPageSource()) {
+      console.warn('[aur-mat-table] внешний пагинатор в ручном серверном режиме не поддерживается; используйте [pageSource] или встроенный пагинатор.');
+    }
   }
 
   private startServerController(): void {
@@ -1163,7 +1177,7 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
 
   /** Повторно вызывает pageSource (серверный режим). resetPageIndex по умолчанию true (например, изменился внешний фильтр). */
   public reload(opts?: { resetPageIndex?: boolean }): void {
-    if (this.isServerMode() && this.serverPageController) {
+    if (this.serverPageController) {
       this.serverPageController.reload(opts);
     } else {
       // Клиентский режим: повторно применяем текущие данные/фильтры.
