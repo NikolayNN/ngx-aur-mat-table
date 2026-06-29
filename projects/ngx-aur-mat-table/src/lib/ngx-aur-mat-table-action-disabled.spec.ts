@@ -124,3 +124,121 @@ describe('NgxAurMatTable action disabled (menu trigger)', () => {
     expect(document.querySelector('.mat-mdc-menu-panel')).toBeNull();
   });
 });
+
+// ---------- disabled: нейтральный цвет иконки (Spec B) ----------
+
+/** Все <mat-icon> в строках тела, в DOM-порядке. */
+function rowIcons(fixture: ComponentFixture<unknown>): HTMLElement[] {
+  return Array.from(fixture.nativeElement.querySelectorAll('tr.mat-mdc-row mat-icon'));
+}
+
+@Component({
+  selector: 'spec-disabled-color-direct-host',
+  standalone: false,
+  template: `<aur-mat-table [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class DisabledColorDirectHostComponent {
+  cfg: TableConfig<Row> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    actionCfg: {
+      actions: [
+        {
+          action: () => 'edit',
+          icon: { name: () => 'edit', color: () => 'red' },
+          disabled: row => row.system,
+        },
+      ],
+    },
+  };
+  // row0 system → disabled (цвет должен сняться); row1 → enabled (цвет на месте)
+  data: Row[] = [{ name: 'a', system: true }, { name: 'b', system: false }];
+}
+
+@Component({
+  selector: 'spec-disabled-color-menu-item-host',
+  standalone: false,
+  template: `<aur-mat-table [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class DisabledColorMenuItemHostComponent {
+  cfg: TableConfig<Row> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    actionCfg: {
+      actions: [
+        {
+          action: () => 'more',
+          icon: { name: () => 'more_vert' },
+          menu: [
+            { action: () => 'copy', text: () => 'Copy',
+              icon: { name: () => 'content_copy', color: () => 'blue' } },
+            { action: () => 'archive', text: () => 'Archive',
+              icon: { name: () => 'archive', color: () => 'blue' },
+              disabled: () => true },
+          ],
+        },
+      ],
+    },
+  };
+  data: Row[] = [{ name: 'a', system: false }];
+}
+
+@Component({
+  selector: 'spec-disabled-color-trigger-host',
+  standalone: false,
+  template: `<aur-mat-table [tableConfig]="cfg" [tableData]="data"></aur-mat-table>`,
+})
+class DisabledColorTriggerHostComponent {
+  cfg: TableConfig<Row> = {
+    columnsCfg: [{ key: 'name', name: 'Name', valueConverter: v => v.name }],
+    actionCfg: {
+      actions: [
+        {
+          action: () => 'more',
+          icon: { name: () => 'more_vert', color: () => 'blue' },
+          disabled: () => true,
+          menu: [{ action: () => 'x', text: () => 'X' }],
+        },
+      ],
+    },
+  };
+  data: Row[] = [{ name: 'a', system: false }];
+}
+
+describe('NgxAurMatTable action disabled — нейтральный цвет иконки', () => {
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [NgxAurMatTableModule, NoopAnimationsModule],
+      declarations: [
+        DisabledColorDirectHostComponent,
+        DisabledColorMenuItemHostComponent,
+        DisabledColorTriggerHostComponent,
+      ],
+    }).compileComponents();
+  });
+
+  it('прямое действие: при disabled inline-цвет снят, при enabled — сохранён', () => {
+    const fixture = TestBed.createComponent(DisabledColorDirectHostComponent);
+    fixture.detectChanges();
+    const icons = rowIcons(fixture);
+    expect(icons[0].style.color).toBe('');     // disabled → нейтральный (нет inline-цвета)
+    expect(icons[1].style.color).toBe('red');  // enabled → цвет на месте
+  });
+
+  it('пункт меню: disabled-пункт без inline-цвета, enabled-пункт с цветом', () => {
+    const fixture = TestBed.createComponent(DisabledColorMenuItemHostComponent);
+    fixture.detectChanges();
+    (fixture.nativeElement.querySelector('tr.mat-mdc-row button') as HTMLButtonElement).click();
+    fixture.detectChanges();
+    const items = Array.from(
+      document.querySelectorAll('.mat-mdc-menu-panel button mat-icon')
+    ) as HTMLElement[];
+    expect(items[0].style.color).toBe('blue');  // enabled (copy)
+    expect(items[1].style.color).toBe('');      // disabled (archive) → снят
+  });
+
+  it('кнопка-триггер меню: при disabled inline-цвет иконки триггера снят', () => {
+    const fixture = TestBed.createComponent(DisabledColorTriggerHostComponent);
+    fixture.detectChanges();
+    const icon = fixture.nativeElement.querySelector('tr.mat-mdc-row mat-icon') as HTMLElement;
+    expect(icon.style.color).toBe('');
+  });
+});

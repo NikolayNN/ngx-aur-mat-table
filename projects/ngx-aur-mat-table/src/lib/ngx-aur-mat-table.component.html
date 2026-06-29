@@ -239,7 +239,8 @@
         </ng-container>
 
         <!-- action columns (одна или несколько) -->
-        <ng-container *ngFor="let col of rowActionsProvider.columns" [matColumnDef]="col.columnName">
+        <ng-container *ngFor="let col of rowActionsProvider.columns; trackBy: trackByActionColumn"
+                      [matColumnDef]="col.columnName">
           <th mat-header-cell *matHeaderCellDef
               [style.width]="col.size?.width"
               [style.min-width]="col.size?.minWidth"
@@ -264,7 +265,7 @@
                               *ngIf="item.visible !== false"
                               [disabled]="item.disabled === true"
                               (click)="emitMenuAction(item.action, element.rowSrc)">
-                        <mat-icon *ngIf="item.icon" [style.color]="item.icon.color">
+                        <mat-icon *ngIf="item.icon" [style.color]="iconColorOf(item)">
                           {{ item.icon.name }}
                         </mat-icon>
                         <span>{{ item.text }}</span>
@@ -278,7 +279,7 @@
                     <button mat-icon-button
                             [matMenuTriggerFor]="actionMenu"
                             [disabled]="action.disabled === true">
-                      <mat-icon [style.color]="action.icon.color">
+                      <mat-icon [style.color]="iconColorOf(action)">
                         {{ action.icon.name }}
                       </mat-icon>
                     </button>
@@ -286,7 +287,7 @@
                   <ng-template #menuBtnPlain>
                     <button mat-icon-button [matMenuTriggerFor]="actionMenu"
                             [disabled]="action.disabled === true">
-                      <mat-icon [style.color]="action.icon.color">
+                      <mat-icon [style.color]="iconColorOf(action)">
                         {{ action.icon.name }}
                       </mat-icon>
                     </button>
@@ -304,7 +305,7 @@
                     <button mat-icon-button
                             [disabled]="action.disabled === true"
                             (click)="emitRowAction(action.action, element.rowSrc, $event)">
-                      <mat-icon [style.color]="action.icon.color">
+                      <mat-icon [style.color]="iconColorOf(action)">
                         {{ action.icon.name }}
                       </mat-icon>
                     </button>
@@ -313,7 +314,7 @@
                     <button mat-icon-button
                             [disabled]="action.disabled === true"
                             (click)="emitRowAction(action.action, element.rowSrc, $event)">
-                      <mat-icon [style.color]="action.icon.color">
+                      <mat-icon [style.color]="iconColorOf(action)">
                         {{ action.icon.name }}
                       </mat-icon>
                     </button>

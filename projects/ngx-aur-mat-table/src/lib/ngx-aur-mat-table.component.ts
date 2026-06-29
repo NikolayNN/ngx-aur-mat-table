@@ -27,7 +27,7 @@ import {MatSort, Sort} from '@angular/material/sort';
 import {MatTableDataSource} from '@angular/material/table';
 import {MatPaginator, PageEvent} from '@angular/material/paginator';
 import {SelectionProvider, SelectionProviderDummy} from './providers/SelectionProvider';
-import {ActionEvent, RowActionProvider, RowActionProviderDummy} from './providers/RowActionProvider';
+import {ActionColumnView, ActionEvent, RowActionProvider, RowActionProviderDummy} from './providers/RowActionProvider';
 import {TableRow} from "./model/TableRow";
 import {TableViewFactory} from "./model/TableViewFactory";
 import {ResolvedRowStyle, RowStyleFactory} from "./model/RowStyleFactory";
@@ -835,6 +835,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   trackByRow = (_: number, row: TableRow<T>): unknown =>
     this.tableConfig.trackBy ? this.tableConfig.trackBy(row.rowSrc) : row.rowSrc;
 
+  /** trackBy для *ngFor по action-колонкам: columnName стабилен/уникален (RowActionProvider
+   *  дедупит ключи), поэтому MatColumnDef переиспользуется между сменами [tableData] —
+   *  пересозданный провайдер обновляет col на месте, а не пересоздаёт def (иначе уже
+   *  отрисованные ячейки держат старый col → устаревший/пустой actionView). Фикс #1 (иконки
+   *  не обновляются) и #3 (пустые ячейки при async-первой загрузке). */
+  trackByActionColumn = (_: number, col: ActionColumnView<T>): string => col.columnName;
+
   /** StyleBuilder.Row | string | null -> CSS-строка | null. */
   private toCss(s?: StyleBuilder.Row | string | null): string | null {
     if (s == null) return null;
@@ -870,6 +877,13 @@ export class NgxAurMatTableComponent<T> implements OnInit, OnChanges, AfterConte
   /** Хелпер для шаблона: функция активна, когда её конфигурация присутствует, если только не задано `enable: false`. */
   isFeatureEnabled(cfg: { enable?: boolean } | null | undefined): boolean {
     return isFeatureEnabledFn(cfg);
+  }
+
+  /** Цвет иконки действия/пункта меню: при disabled — null, чтобы не перекрывать
+   *  своим icon.color нейтральный disabled-цвет Material (иначе disabled-кнопка
+   *  выглядит активной). Принимает и Action, и MenuItem (структурно). */
+  iconColorOf(el: { disabled?: boolean; icon?: { color?: string } }): string | null {
+    return el.disabled ? null : (el.icon?.color ?? null);
   }
 
   /**

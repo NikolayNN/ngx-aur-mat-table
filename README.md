@@ -462,4 +462,4 @@ totalRowCfg: { enable: true, styleCfg: { style: StyleBuilder.Row.builder().color
 > :host ::ng-deep tr.not-hover:hover { background-color: inherit !important; cursor: default; }
 > ```
 
-**Disabled actions:** `actionCfg.actions[].disabled: row => boolean` keeps a row action visible but greyed out — for both direct actions and menu triggers. When `icon.tooltip` is set, the tooltip is rendered on a wrapper element so it still shows on the disabled button, which is handy for explaining why the action is unavailable.
+**Disabled actions:** `actionCfg.actions[].disabled: row => boolean` keeps a row action visible but greyed out — for direct actions, menu triggers and menu items. A disabled icon drops its configured `icon.color` and inherits Material's neutral disabled color, so it looks inactive without any `::ng-deep` on your side. When `icon.tooltip` is set, the tooltip is rendered on a wrapper element so it still shows on the disabled button, which is handy for explaining why the action is unavailable.
