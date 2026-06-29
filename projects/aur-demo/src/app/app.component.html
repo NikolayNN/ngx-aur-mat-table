@@ -53,6 +53,13 @@
     </ng-template>
   </mat-tab>
 
+  <mat-tab label="Ручная server пагинация">
+    <ng-template matTabContent>
+      <h3>mode:'server' + [paginatorState] + (pageChange), без pageSource</h3>
+      <app-table-with-manual-server-pagination></app-table-with-manual-server-pagination>
+    </ng-template>
+  </mat-tab>
+
   <mat-tab label="С пагинацией BATCH and Select">
     <ng-template matTabContent>
       <app-table-with-server-pagination-and-select></app-table-with-server-pagination-and-select>

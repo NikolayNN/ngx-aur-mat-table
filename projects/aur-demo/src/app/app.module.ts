@@ -79,6 +79,9 @@ import {
 import {
   TableWithMultipleActionsComponent
 } from "./table-with-multiple-actions/table-with-multiple-actions.component";
+import {
+  TableWithManualServerPaginationComponent
+} from "./table-with-manual-server-pagination/table-with-manual-server-pagination.component";
 
 @NgModule({
   declarations: [
@@ -110,6 +113,7 @@ import {
     TableWithSubFooterComponent,
     TableWithServerPaginationComponent,
     TableWithServerPaginationAndSelectComponent,
+    TableWithManualServerPaginationComponent,
     TableWithTopColumnComponent,
     TablesDragDropComponent,
     TableDragComponent,
