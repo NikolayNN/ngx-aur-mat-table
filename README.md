@@ -257,6 +257,22 @@ interface AurExtraHeaderContext {
 }
 ```
 
+## Pagination modes (`paginationCfg.mode`)
+
+`paginationCfg.mode` is the single switch that controls how pagination and sorting work.
+`paginatorState` is **state only** — it carries `total` and `pageIndex` for the paginator
+UI, but does not activate server mode. A `pageSource` always implies server mode.
+
+| Configuration | Behavior |
+|---|---|
+| `mode: 'client'` or unset | Client pagination + sort in memory |
+| `mode: 'server'` + `[paginatorState]` + `(pageChange)` | Manual server — host loads pages; table never re-slices the data |
+| `mode: 'server'` + `[pageSource]` | Auto server — table owns the load loop (recommended) |
+
+> **Note:** `[paginatorState]` without `mode` is fully client since 19.16.0 (previously
+> it was a contradictory half-server state). If you rely on server behavior, set
+> `mode: 'server'` explicitly. `pageSource` always means server regardless of `mode`.
+
 ## Server pagination via `pageSource` (recommended)
 
 Provide a typed loader; the table performs the initial load and refetches on page/sort changes itself.
@@ -289,8 +305,6 @@ onFilterChange() { this.rebuildFilters(); this.table.reload(); }
 **First/last buttons:** `paginationCfg.showFirstLastButtons: false` hides the built-in paginator's jump-to-first/last buttons (default shown). Bound straight to the config, so swapping the `tableConfig` reference at runtime (e.g. on a breakpoint) toggles them without rebuilding data.
 
 **Row index across pages:** with `indexCfg` in server mode the index column shows the absolute row number (`pageIndex * pageSize + position`), so page 2 continues 21, 22, … rather than restarting at 1. Client-mode pagination is unaffected (the index already spans the full dataset).
-
-> The legacy manual wiring (`[paginatorState]` + `(pageChange)` + `NgxAurTablePageEventUtils.createEmpty`) still works but is deprecated in favour of `pageSource`.
 
 ### Using an external paginator (`externalPaginator`)
 

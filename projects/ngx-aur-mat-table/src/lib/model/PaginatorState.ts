@@ -1,6 +1,6 @@
 export class PaginatorState {
 
-  constructor(private _length: number, private _pageIndex: number) {
+  private constructor(private _length: number, private _pageIndex: number) {
   }
 
   get length(): number {

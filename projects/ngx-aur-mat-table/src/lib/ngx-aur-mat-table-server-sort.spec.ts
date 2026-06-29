@@ -180,38 +180,44 @@ describe('NgxAurMatTable client sort (регрессия)', () => {
   }));
 });
 
-// ---------- legacy manual (paginatorState без mode): регрессия ----------
+// ---------- bare paginatorState без mode → полностью client (новый контракт 19.16.0) ----------
 
 @Component({
   standalone: false,
   template: `<aur-mat-table #t [tableConfig]="cfg" [tableData]="data" [paginatorState]="state"></aur-mat-table>`,
 })
-class LegacyManualHostComponent {
+class BareStateNoModeHostComponent {
   @ViewChild('t') table!: NgxAurMatTableComponent<Row>;
-  cfg = sortableCfg({ paginationCfg: { enable: true, size: 10 } }); // БЕЗ mode: legacy-путь
+  cfg = sortableCfg({ paginationCfg: { enable: true, size: 10 } }); // БЕЗ mode → client
   data: Row[] = [{ name: 'b' }, { name: 'a' }];
   state = PaginatorState.of({ total: 42, pageIndex: 0 });
 }
 
-describe('NgxAurMatTable legacy manual sort (регрессия)', () => {
-  let fixture: ComponentFixture<LegacyManualHostComponent>;
-  let host: LegacyManualHostComponent;
+describe('NgxAurMatTable bare paginatorState без mode → client', () => {
+  let fixture: ComponentFixture<BareStateNoModeHostComponent>;
+  let host: BareStateNoModeHostComponent;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NgxAurMatTableModule, NoopAnimationsModule],
-      declarations: [LegacyManualHostComponent],
+      declarations: [BareStateNoModeHostComponent],
     }).compileComponents();
-    fixture = TestBed.createComponent(LegacyManualHostComponent);
+    fixture = TestBed.createComponent(BareStateNoModeHostComponent);
     host = fixture.componentInstance;
   });
 
-  it('paginatorState без mode сохраняет локальную сортировку', fakeAsync(() => {
+  it('без mode пагинатор и сортировка привязаны к dataSource (client)', fakeAsync(() => {
     fixture.detectChanges();
     tick();
     fixture.detectChanges();
     expect(host.table.tableDataSource.sort).toBe(host.table.matSort);
+    expect(host.table.tableDataSource.paginator).toBe(host.table.matPaginator);
+  }));
 
+  it('сортировка работает локально', fakeAsync(() => {
+    fixture.detectChanges();
+    tick();
+    fixture.detectChanges();
     sortByNameAsc(host.table);
     tick();
     fixture.detectChanges();

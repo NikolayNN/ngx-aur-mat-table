@@ -2,7 +2,6 @@
  * Public API Surface of ngx-aur-mat-table
  */
 export * from './lib/utils/ngx-aur-table-config.util'
-export * from './lib/utils/ngx-aur-table-page-event.utils'
 export * from './lib/ngx-aur-mat-table-public';
 export * from './lib/ngx-aur-mat-table-filterable';
 export * from './lib/ngx-aur-mat-table.component';
